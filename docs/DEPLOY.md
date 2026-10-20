@@ -3,17 +3,20 @@
 Works on any cPanel host with **PHP 8.3 or newer**, **MySQL** and **SSH** (GoDaddy, HostGator, Bluehost, and similar). It is the same layout the owner's other Laravel site uses on Bluehost: the app lives in a folder **outside** `public_html`, and only the public files are in `public_html`.
 
 ```
-~/td-global/      the Laravel app (code, vendor/, storage/, .env)
-~/public_html/    the web root: index.php (special), .htaccess, build/, photos/, brand/, images/, icons
+~/td-global/                          the Laravel app (code, vendor/, storage/, .env)
+~/public_html/website_d3b60c6c/       this site's web root: index.php (special), .htaccess, build/, photos/, brand/, images/, icons
+~/public_html/                        NOT TOUCHED: on the current account it holds the Edulink Digital website
 ```
+
+On an account where `public_html` is shared with another website, this site lives in its own sub-folder (Bluehost: *Websites → the site → Files & Access → Document Root*). Everything below says **web root** for that folder. The deploy refuses to run unless `HOST_WEB_ROOT` names it, so it cannot overwrite the other site.
 
 ## One-time set-up on the server
 
 1. **PHP version.** cPanel → *MultiPHP Manager* → choose PHP 8.3 or 8.4 for the domain. Note the path to the PHP binary (cPanel's is often `/opt/cpanel/ea-php84/root/usr/bin/php`).
 2. **Database.** cPanel → *MySQL Databases*: create a database, a user, and add the user to the database with all privileges. Write down the three names and the password.
 3. **Composer.** Make sure `~/bin/composer` exists (cPanel's Terminal: `curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/bin --filename=composer`), or ask the host.
-4. **Create the folders and the first upload.** Either let the GitHub Action do it (step 6), or by hand: upload the project (without `node_modules`, `vendor`, `.env`) to `~/td-global/`, and the contents of `public/` to `~/public_html/`.
-5. **`~/public_html/index.php`.** Copy `deploy/public_html-index.php` over it (once). It points at `~/td-global`. The deploy never overwrites it.
+4. **Create the folders and the first upload.** Either let the GitHub Action do it (step 6), or by hand: upload the project (without `node_modules`, `vendor`, `.env`) to `~/td-global/`, and the contents of `public/` to the web root.
+5. **`<web root>/index.php`.** Copy `deploy/public_html-index.php` over it (once). It points two folders up at `~/td-global` (edit the path if your web root is at a different depth). The deploy never overwrites it.
 6. **`~/td-global/.env`.** Copy `.env.example` and set at least:
 
    ```
@@ -55,6 +58,7 @@ Every push to `main` runs `.github/workflows/deploy.yml`: build the front end, r
 | `HOST_NAME` | the server's SSH host name |
 | `HOST_USER` | the cPanel user name |
 | `HOST_PHP` *(optional)* | path to PHP 8.3+, if not the cPanel default above |
+| `HOST_WEB_ROOT` | **required**: this site's folder under the home directory, e.g. `public_html/website_d3b60c6c` |
 | `HOST_APP_DIR` *(optional)* | the app folder, if not `td-global` |
 
 If a deploy fails with "Connection closed" or "reset by peer", wait 15–30 minutes and re-run it (some hosts rate-limit SSH after many connections).

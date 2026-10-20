@@ -3,6 +3,9 @@ name: Deploy to shared hosting (cPanel)
 # Builds the front end, copies the app to the server over SSH and runs the post-deploy commands.
 # Needs these repository secrets: HOST_SSH_KEY (private key), HOST_NAME, HOST_USER, and optionally
 # HOST_PHP (path to PHP 8.3+; default is the cPanel EasyApache 8.4 binary) and HOST_APP_DIR (default td-global).
+# HOST_WEB_ROOT is REQUIRED: the folder (relative to the home directory) that this site is served from, e.g.
+# public_html/website_d3b60c6c. The deploy refuses to run against plain "public_html", because on this account
+# that folder belongs to another website.
 # One-time server set-up is in docs/DEPLOY.md.
 
 on:
@@ -15,10 +18,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_DIR: ${{ secrets.HOST_APP_DIR || 'td-global' }}
+      WEB_ROOT: ${{ secrets.HOST_WEB_ROOT }}
       PHP_BIN: ${{ secrets.HOST_PHP || '/opt/cpanel/ea-php84/root/usr/bin/php' }}
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Refuse to deploy over the wrong folder
+        run: |
+          case "$WEB_ROOT" in
+            ""|public_html|public_html/|/*|*..*)
+              echo "HOST_WEB_ROOT must be set to this site's own folder (e.g. public_html/website_d3b60c6c), never public_html itself."
+              exit 1 ;;
+          esac
 
       - uses: actions/setup-node@v4
         with:
@@ -84,23 +96,23 @@ jobs:
         env:
           SSH_AUTH_SOCK: ""
         run: |
-          rsync -az --delete -e ssh public/build/ server:~/public_html/build/
-          rsync -az --delete -e ssh public/photos/ server:~/public_html/photos/
-          rsync -az -e ssh public/brand/ server:~/public_html/brand/
-          rsync -az -e ssh public/images/ server:~/public_html/images/
-          rsync -az -e ssh public/icon.png public/apple-icon.png public/favicon.ico public/.htaccess server:~/public_html/
+          rsync -az --delete -e ssh public/build/ server:~/$WEB_ROOT/build/
+          rsync -az --delete -e ssh public/photos/ server:~/$WEB_ROOT/photos/
+          rsync -az -e ssh public/brand/ server:~/$WEB_ROOT/brand/
+          rsync -az -e ssh public/images/ server:~/$WEB_ROOT/images/
+          rsync -az -e ssh public/icon.png public/apple-icon.png public/favicon.ico public/.htaccess server:~/$WEB_ROOT/
 
       - name: Post-deploy commands
         env:
           SSH_AUTH_SOCK: ""
         run: |
-          ssh server "APP_DIR=$APP_DIR PHP_BIN=$PHP_BIN bash -s" <<'ENDSSH'
+          ssh server "APP_DIR=$APP_DIR WEB_ROOT=$WEB_ROOT PHP_BIN=$PHP_BIN bash -s" <<'ENDSSH'
             set -e
             cd ~/$APP_DIR
             $PHP_BIN ~/bin/composer install --no-dev --optimize-autoloader --no-interaction
             chmod -R 775 storage bootstrap/cache
-            find ~/public_html -type f -exec chmod 644 {} \;
-            find ~/public_html -type d -exec chmod 755 {} \;
+            find ~/$WEB_ROOT -type f -exec chmod 644 {} \;
+            find ~/$WEB_ROOT -type d -exec chmod 755 {} \;
             # Clear stale caches, then rebuild config and views (routes are not cached: not needed at this size).
             $PHP_BIN artisan config:clear
             $PHP_BIN artisan route:clear
