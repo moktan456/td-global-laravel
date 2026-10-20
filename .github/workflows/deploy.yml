@@ -1,0 +1,112 @@
+name: Deploy to shared hosting (cPanel)
+
+# Builds the front end, copies the app to the server over SSH and runs the post-deploy commands.
+# Needs these repository secrets: HOST_SSH_KEY (private key), HOST_NAME, HOST_USER, and optionally
+# HOST_PHP (path to PHP 8.3+; default is the cPanel EasyApache 8.4 binary) and HOST_APP_DIR (default td-global).
+# One-time server set-up is in docs/DEPLOY.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      APP_DIR: ${{ secrets.HOST_APP_DIR || 'td-global' }}
+      PHP_BIN: ${{ secrets.HOST_PHP || '/opt/cpanel/ea-php84/root/usr/bin/php' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Build front-end assets
+        run: |
+          npm ci
+          npm run build
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Run the tests before anything is uploaded
+        run: |
+          composer install --no-interaction --prefer-dist
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
+
+      - name: Set up SSH (one connection, reused, because some hosts drop rapid reconnects)
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOST_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          for i in 1 2 3 4 5; do
+            ssh-keyscan -H ${{ secrets.HOST_NAME }} >> ~/.ssh/known_hosts && break
+            echo "keyscan attempt $i failed, retrying"; sleep 15
+          done
+          cat >> ~/.ssh/config <<EOF
+          Host server
+            HostName ${{ secrets.HOST_NAME }}
+            User ${{ secrets.HOST_USER }}
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            IdentityAgent none
+            StrictHostKeyChecking no
+            ControlMaster auto
+            ControlPath ~/.ssh/cm-%C
+            ControlPersist 10m
+            ServerAliveInterval 15
+          EOF
+          for i in 1 2 3 4 5; do
+            ssh -fN server && break
+            echo "ssh attempt $i failed, retrying"; sleep 20
+          done
+          ssh -O check server
+
+      - name: Upload the app
+        env:
+          SSH_AUTH_SOCK: ""
+        run: |
+          rsync -az --delete \
+            --exclude='.git/' --exclude='.github/' --exclude='.env' --exclude='node_modules/' --exclude='vendor/' \
+            --exclude='storage/framework/' --exclude='storage/logs/' --exclude='storage/app/' \
+            --exclude='database/database.sqlite' --exclude='tests/' --exclude='public/index.php' \
+            -e ssh ./ server:~/$APP_DIR/
+
+      - name: Upload the public files (css/js build, photos, icons) to the web root
+        env:
+          SSH_AUTH_SOCK: ""
+        run: |
+          rsync -az --delete -e ssh public/build/ server:~/public_html/build/
+          rsync -az --delete -e ssh public/photos/ server:~/public_html/photos/
+          rsync -az -e ssh public/brand/ server:~/public_html/brand/
+          rsync -az -e ssh public/images/ server:~/public_html/images/
+          rsync -az -e ssh public/icon.png public/apple-icon.png public/favicon.ico public/.htaccess server:~/public_html/
+
+      - name: Post-deploy commands
+        env:
+          SSH_AUTH_SOCK: ""
+        run: |
+          ssh server "APP_DIR=$APP_DIR PHP_BIN=$PHP_BIN bash -s" <<'ENDSSH'
+            set -e
+            cd ~/$APP_DIR
+            $PHP_BIN ~/bin/composer install --no-dev --optimize-autoloader --no-interaction
+            chmod -R 775 storage bootstrap/cache
+            find ~/public_html -type f -exec chmod 644 {} \;
+            find ~/public_html -type d -exec chmod 755 {} \;
+            # Clear stale caches, then rebuild config and views (routes are not cached: not needed at this size).
+            $PHP_BIN artisan config:clear
+            $PHP_BIN artisan route:clear
+            $PHP_BIN artisan view:clear
+            $PHP_BIN artisan config:cache
+            $PHP_BIN artisan view:cache
+            $PHP_BIN artisan migrate --force
+            echo "Deploy complete"
+          ENDSSH
