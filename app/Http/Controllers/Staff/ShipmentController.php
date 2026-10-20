@@ -60,8 +60,8 @@ class ShipmentController extends Controller
         ]);
         $this->notify->client(
             $client, 'tracking_number', $shipment->id,
-            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number),
-            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number),
+            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, Messages::about($shipment)),
+            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, Messages::about($shipment)),
         );
 
         return $this->formRedirect($request, "/staff/shipments/{$shipment->tracking_number}?new=1");
@@ -108,8 +108,8 @@ class ShipmentController extends Controller
         if ($request->input('notify') === 'on' && $shipment->client) {
             $outcomes = $this->notify->client(
                 $shipment->client, 'status_update', $shipment->id,
-                Messages::statusUpdateEmail($shipment->client->full_name, $shipment->tracking_number, $status, $note ?: null),
-                Messages::telegramStatusUpdate($shipment->client->full_name, $shipment->tracking_number, Statuses::info($status), $note ?: null),
+                Messages::statusUpdateEmail($shipment->client->full_name, $shipment->tracking_number, $status, $note ?: null, Messages::about($shipment)),
+                Messages::telegramStatusUpdate($shipment->client->full_name, $shipment->tracking_number, Statuses::info($status), $note ?: null, Messages::about($shipment)),
             );
             $told = ' '.Notify::describe($outcomes);
         }

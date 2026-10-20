@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Shipment;
+
 /**
  * Message templates: Telegram (HTML parse mode, every piece of user-supplied text escaped) and plain-text email
  * (ported from src/lib/portal/messages.ts and email.ts).
@@ -36,20 +38,30 @@ class Messages
         return rtrim(site('url'), '/');
     }
 
+    /** One line saying which shipment this is, so a new client recognises it: "Import · Road freight · 2 pallets of auto parts". */
+    public static function about(Shipment $shipment): string
+    {
+        $label = fn (string $list, string $value) => collect(content("statuses.{$list}"))->firstWhere('value', $value)['label'] ?? $value;
+
+        return $label('directions', $shipment->direction).' · '.$label('modes', $shipment->mode).' · '.self::clip($shipment->goods, 120);
+    }
+
     /* ---------- Telegram ---------- */
 
-    public static function telegramTrackingNumber(string $name, string $tracking): string
+    public static function telegramTrackingNumber(string $name, string $tracking, ?string $about = null): string
     {
         return 'Hello '.self::e($name).", we've received your clearance request.\n\n"
-            .'Tracking number: <code>'.self::e($tracking)."</code>\n\n"
+            .'Your tracking number: <code>'.self::e($tracking)."</code>\n"
+            .($about ? 'Shipment: '.self::e($about)."\n" : '')."\n"
             .'Follow it any time: '.self::link(self::origin()."/track?n={$tracking}", 'open your shipment')
             .self::sign();
     }
 
-    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note): string
+    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note, ?string $about = null): string
     {
-        return '<b>Update on '.self::e($tracking)."</b>\n"
-            .'Hello '.self::e($name).'. Stage: <b>'.self::e($info['label'])."</b>\n".self::e($info['clientText'])
+        return '<b>Update on your tracking number '.self::e($tracking)."</b>\n"
+            .($about ? 'Shipment: '.self::e($about)."\n" : '')
+            .'Hello '.self::e($name).'. New stage: <b>'.self::e($info['label'])."</b>\n".self::e($info['clientText'])
             .($note ? "\n\nNote from our team: ".self::e(self::clip($note)) : '')
             ."\n\n".self::link(self::origin()."/track?n={$tracking}", 'Open your shipment')
             .self::sign();
@@ -125,21 +137,21 @@ class Messages
     }
 
     /** @return array{subject: string, text: string} */
-    public static function trackingNumberEmail(string $name, string $tracking): array
+    public static function trackingNumberEmail(string $name, string $tracking, ?string $about = null): array
     {
         return [
             'subject' => "Your tracking number: {$tracking}",
-            'text' => "Hello {$name},\n\nWe've received your clearance request. Your tracking number is:\n\n{$tracking}\n\nCheck its progress any time, no sign-in needed:\n".self::origin()."/track?n={$tracking}".self::signature(),
+            'text' => "Hello {$name},\n\nWe've received your clearance request. Your tracking number is:\n\n{$tracking}\n".($about ? "\nShipment: {$about}\n" : '')."\nCheck its progress any time, no sign-in needed:\n".self::origin()."/track?n={$tracking}".self::signature(),
         ];
     }
 
-    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note): array
+    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note, ?string $about = null): array
     {
         $info = Statuses::info($status);
 
         return [
             'subject' => "{$tracking}: {$info['label']}",
-            'text' => "Hello {$name},\n\nUpdate on {$tracking}: {$info['clientText']}".($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
+            'text' => "Hello {$name},\n\nUpdate on your tracking number {$tracking}".($about ? " ({$about})" : '').": {$info['clientText']}".($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
         ];
     }
 
