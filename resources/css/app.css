@@ -1,0 +1,180 @@
+/*
+ * Fonts: the same two families as the Next.js site (Newsreader headings, Source Sans 3 body), self-hosted from
+ * npm packages instead of fetched from Google at build time.
+ */
+@import "@fontsource-variable/newsreader";
+@import "@fontsource-variable/source-sans-3";
+@import "tailwindcss";
+@source "../views";
+@source "../js";
+
+:root {
+  --font-newsreader: "Newsreader Variable";
+  --font-source-sans: "Source Sans 3 Variable";
+}
+
+/*
+ * TD Global Clearing & Logistics design tokens — see design-system/td-clearing-agency/MASTER.md.
+ * Every text/background pairing used on the site is AA (4.5:1+) and every
+ * control border is 3:1+ against its surface (WCAG 1.4.3 / 1.4.11).
+ */
+@theme {
+  /* Brand colours, taken from the TD Global logo (blue D, green T, red curve,
+     gold khata). Blue leads; green and gold accent; logo red stays in the logo. */
+  --color-brand: #3853a4;        /* logo blue: buttons, links, active states */
+  --color-brand-dark: #2c4596;   /* hover/pressed blue */
+  --color-gold: #f7c02f;         /* khata gold: labels, badges, focus on dark */
+  --color-green: #69bd44;        /* logo green: icons on dark sections only */
+  --color-green-dark: #2f7d32;   /* green text/ticks on light backgrounds */
+  --color-logo-red: #ed1e26;     /* reserved for the logo */
+
+  /* Deep blues for dark sections (derived from the logo blue) */
+  --color-navy-950: #0f1a38;
+  --color-navy-900: #14224a;
+  --color-navy-800: #1e3066;
+  --color-navy-700: #2a3f7f;
+
+  /* Neutrals */
+  --color-ivory: #fbfaf6;
+  --color-sand: #f3f1ea;
+  --color-ink: #1b1f24;
+  --color-muted: #545b64;
+  --color-line: #e4e1d8;
+  --color-control: #8a8f96;
+  --color-on-dark: #e8ecf4;
+  --color-on-dark-muted: #a9b6d6;
+  --color-line-dark: #34487f;
+  --color-control-dark: #8193c4;
+  --color-whatsapp: #1a9e4b;     /* WhatsApp green, deepened so the white icon reaches 3.5:1 */
+  --color-whatsapp-dark: #158a41;
+  --color-success: #1f6f43;
+  --color-error: #a4262c;
+
+  --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* Motion tokens: decelerate on the way in, accelerate on the way out,
+     exits ~65% of enters. Durations scale with distance travelled. */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-quad: cubic-bezier(0.5, 0, 0.75, 0);
+  --duration-hover: 200ms;
+  --duration-enter: 220ms;
+  --duration-exit: 140ms;
+  --duration-reveal: 520ms;
+
+  --shadow-lift: 0 14px 30px -12px rgb(20 34 74 / 0.3);
+
+  /* Corner radius scale: large, soft corners on media and cards; smaller on
+     controls so a button inside a card nests comfortably. */
+  --radius-card: 1.25rem;
+  --radius-tile: 0.875rem;
+  --radius-control: 0.625rem;
+}
+
+:root {
+  --focus: var(--color-brand);
+  color-scheme: light;
+}
+
+.on-dark {
+  --focus: var(--color-gold);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 7rem;
+    scroll-padding-bottom: 8rem; /* keeps a focused control clear of the floating contact buttons */
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* One visible, high-contrast focus style everywhere (WCAG 2.4.7 / 2.4.13). */
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+}
+
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-navy-950);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Arrow icons slide forward when their link or button is hovered or focused. */
+.arrow-nudge {
+  transition: translate var(--duration-hover) var(--ease-out-quart);
+}
+:is(a, button):is(:hover, :focus-visible) .arrow-nudge {
+  translate: 4px 0;
+}
+:is(a, button):is(:hover, :focus-visible) .arrow-nudge-up {
+  translate: 0 -3px;
+}
+
+/*
+ * Scroll reveal. Content is only hidden once JS has marked <html> with
+ * .js-reveal, so it's always visible without JS, in print, and for anyone who
+ * prefers reduced motion. See components/motion/RevealObserver.tsx.
+ */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+
+/* A one-off animation (not a transition) so it never overrides an element's
+   own hover transitions; fill-mode "backwards" leaves no styles behind. */
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal [data-reveal]:not(.is-revealed) {
+    opacity: 0;
+  }
+  .js-reveal [data-reveal].is-revealed {
+    animation: reveal-in var(--duration-reveal) var(--ease-out-quart) backwards;
+    animation-delay: calc(var(--reveal-index, 0) * 60ms);
+  }
+}
+
+@media print {
+  .js-reveal [data-reveal] {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+}
