@@ -110,6 +110,7 @@ jobs:
             set -e
             cd ~/$APP_DIR
             $PHP_BIN ~/bin/composer install --no-dev --optimize-autoloader --no-interaction
+            mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs storage/app/public bootstrap/cache
             chmod -R 775 storage bootstrap/cache
             find ~/$WEB_ROOT -type f -exec chmod 644 {} \;
             find ~/$WEB_ROOT -type d -exec chmod 755 {} \;
