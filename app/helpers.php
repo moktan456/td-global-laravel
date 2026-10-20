@@ -109,3 +109,19 @@ if (! function_exists('form_state')) {
         return $flashed ? FormState::fromArray($flashed) : FormState::idle();
     }
 }
+
+if (! function_exists('image_srcset')) {
+    /** `srcset` of resized WebP copies for a local photo (made by `npm run photos`), or null when there are none. */
+    function image_srcset(string $key): ?string
+    {
+        $img = content('images')[$key] ?? null;
+        if (! $img || ! isset($img['local'])) {
+            return null;
+        }
+        static $manifest = null;
+        $manifest ??= json_decode((string) @file_get_contents(resource_path('content/photo-widths.json')), true) ?: [];
+        $widths = $manifest[$img['local']]['widths'] ?? [];
+
+        return $widths ? implode(', ', array_map(fn ($w) => "/photos/w/{$img['local']}-{$w}.webp {$w}w", $widths)) : null;
+    }
+}

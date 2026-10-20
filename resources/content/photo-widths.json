@@ -1,0 +1,185 @@
+{
+  "container-inspection-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "container-trucks-queue": {
+    "width": 1600,
+    "height": 1200,
+    "widths": [
+      480,
+      768,
+      1080,
+      1440,
+      1600
+    ]
+  },
+  "container-unloading-crew": {
+    "width": 900,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      900
+    ]
+  },
+  "containers-on-trailers": {
+    "width": 1600,
+    "height": 1200,
+    "widths": [
+      480,
+      768,
+      1080,
+      1440,
+      1600
+    ]
+  },
+  "crane-container-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "crane-heavy-lift-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "crane-lifting-machinery-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "crane-truck-offloading-machinery": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "crane-warehouse-interior": {
+    "width": 1600,
+    "height": 1200,
+    "widths": [
+      480,
+      768,
+      1080,
+      1440,
+      1600
+    ]
+  },
+  "crew-securing-machinery": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "forklift-container-truck": {
+    "width": 900,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      900
+    ]
+  },
+  "forklift-unloading-container": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "machinery-handling-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "machinery-parts-warehouse": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "night-cargo-border-gate": {
+    "width": 1600,
+    "height": 900,
+    "widths": [
+      480,
+      768,
+      1080,
+      1440,
+      1600
+    ]
+  },
+  "staff-inspecting-machinery": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  },
+  "sunset-container-yard": {
+    "width": 1600,
+    "height": 1200,
+    "widths": [
+      480,
+      768,
+      1080,
+      1440,
+      1600
+    ]
+  },
+  "trucks-border-yard": {
+    "width": 1200,
+    "height": 1600,
+    "widths": [
+      480,
+      768,
+      1080,
+      1200
+    ]
+  }
+}

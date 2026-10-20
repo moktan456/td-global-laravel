@@ -2,6 +2,7 @@
 {{-- A photo from the image manifest that fills its (relatively positioned, sized) parent. --}}
 <img
     src="{{ image_src($name) }}"
+    @if ($srcset = image_srcset($name)) srcset="{{ $srcset }}" @endif
     alt="{{ $decorative ? '' : image_alt($name) }}"
     sizes="{{ $sizes }}"
     @if ($priority) fetchpriority="high" loading="eager" @else loading="lazy" @endif
