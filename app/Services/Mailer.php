@@ -24,7 +24,23 @@ class Mailer
         } catch (\Throwable $e) {
             Log::error("[mail] sending failed for {$subject}: ".$e->getMessage());
 
-            return ['ok' => false, 'error' => 'Email service did not accept the message'];
+            return ['ok' => false, 'error' => $this->reason($e->getMessage())];
         }
+    }
+
+    /** A short, staff-readable reason (this text only appears on staff screens). */
+    private function reason(string $message): string
+    {
+        if (str_contains($message, 'only send testing emails') || str_contains($message, 'verify a domain')) {
+            return 'Email service is in test mode: it only delivers to the account owner until the sending domain is verified (resend.com/domains)';
+        }
+        if (preg_match('/Expected response code .* but got code "(\d{3})", with message "([^"]{1,160})/', $message, $m)) {
+            return "Email service refused it ({$m[1]}: ".trim($m[2]).')';
+        }
+        if (str_contains($message, 'Connection could not be established') || str_contains($message, 'timed out')) {
+            return 'Could not reach the email service';
+        }
+
+        return 'Email service did not accept the message';
     }
 }
