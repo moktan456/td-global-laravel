@@ -13,6 +13,13 @@ The aim was a carbon copy. These are the places where it is not, and why.
 | Supabase row-level security | Server-side checks | The Laravel controllers and middleware decide who may do what (`EnsureStaff`, `EnsureAdmin`), and the database is never exposed to the browser. |
 | `scripts/telegram-webhook.mjs` | Staff → Telegram page | The same one-click set-up. |
 
+## Added here (not in the Next.js version)
+
+| What | Where |
+|---|---|
+| **Track page in two columns.** The tracking-number box and "Lost your tracking number?" on the left; on the right an animated "What you'll see" example shipment (`TD-2610-SAMPLE`, CSS only, stops moving for people who ask for reduced motion). After a lookup the real result takes the right column. On phones the example card goes below the form. | `resources/views/pages/track.blade.php`, `track/lookup.blade.php`, `track/sample.blade.php`, end of `resources/css/app.css` |
+| **QR code next to the Telegram connect link** (staff Clients page), so a client standing at the counter can scan and connect. Drawn on the server as SVG (`bacon/bacon-qr-code`); nothing is stored, and the link keeps its one-use, 48-hour rules. | `app/Support/Qr.php`, `resources/views/staff/telegram-link-form.blade.php` |
+
 ## Different underneath, same on screen
 
 | Next.js | Laravel |
