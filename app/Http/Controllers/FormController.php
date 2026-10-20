@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PlainMessage;
 use App\Support\FormState;
 use App\Support\NotConnected;
 use Illuminate\Http\Request;
@@ -117,7 +118,7 @@ class FormController extends Controller
         }
         $subject = $form === 'quote' ? 'Quote request' : 'Website enquiry';
         $body = collect($values)->filter()->map(fn ($v, $k) => "{$k}: {$v}")->implode("\n");
-        $message = new \App\Mail\PlainMessage($subject, $body);
+        $message = new PlainMessage($subject, $body);
         if (! empty($values['email'])) {
             $message->replyTo($values['email']);
         }

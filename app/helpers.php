@@ -1,6 +1,9 @@
 <?php
 
 use App\Support\Content;
+use App\Support\FormState;
+use App\Support\Ui;
+use Carbon\Carbon;
 
 if (! function_exists('site')) {
     /** The `site` block from resources/content/site.php. Pass a dotted key, e.g. site('contact.email'). */
@@ -66,7 +69,8 @@ if (! function_exists('image_alt')) {
 if (! function_exists('format_date')) {
     function format_date(string $iso): string
     {
-        return \Carbon\Carbon::parse($iso, 'UTC')->format('j F Y');
+        // Same as Intl.DateTimeFormat('en', {day:'numeric', month:'long', year:'numeric'}): "September 1, 2026".
+        return Carbon::parse($iso, 'UTC')->format('F j, Y');
     }
 }
 
@@ -85,7 +89,7 @@ if (! function_exists('ui')) {
     /** Shared class recipes (buttons, card lift, photo frame), identical to the Next.js components. */
     function ui(string $name, string $variant = 'primary'): string
     {
-        return \App\Support\Ui::class($name, $variant);
+        return Ui::class($name, $variant);
     }
 }
 
@@ -98,10 +102,10 @@ if (! function_exists('site_plans')) {
 
 if (! function_exists('form_state')) {
     /** The state a form was left in by the last submit (flashed to the session), or idle. */
-    function form_state(string $name): \App\Support\FormState
+    function form_state(string $name): FormState
     {
         $flashed = session("forms.{$name}");
 
-        return $flashed ? \App\Support\FormState::fromArray($flashed) : \App\Support\FormState::idle();
+        return $flashed ? FormState::fromArray($flashed) : FormState::idle();
     }
 }

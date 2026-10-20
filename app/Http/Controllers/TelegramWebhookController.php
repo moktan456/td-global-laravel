@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\NotificationLog;
+use App\Models\Shipment;
 use App\Models\TelegramLinkToken;
 use App\Services\Telegram;
 use App\Support\Messages;
@@ -82,7 +83,7 @@ class TelegramWebhookController extends Controller
 
                 return;
             }
-            $items = \App\Models\Shipment::whereIn('client_id', $ids)->latest()->limit(5)->get()
+            $items = Shipment::whereIn('client_id', $ids)->latest()->limit(5)->get()
                 ->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->status)['label']])->all();
             $this->telegram->send($chatId, Messages::telegramShipmentList($items));
 

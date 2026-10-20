@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\Content;
+use App\Support\SearchIndex;
 use Illuminate\Http\Request;
 
 /** Public marketing pages (no closures in the routes, so `route:cache` stays safe on the server). */
@@ -29,7 +30,7 @@ class PageController extends Controller
         $q = $request->query('q');
         $query = mb_substr(trim(is_array($q) ? (string) ($q[0] ?? '') : (string) $q), 0, 100);
 
-        return view('pages.search', ['query' => $query, 'results' => $query !== '' ? \App\Support\SearchIndex::search($query) : []]);
+        return view('pages.search', ['query' => $query, 'results' => $query !== '' ? SearchIndex::search($query) : []]);
     }
 
     public function quote(Request $request)

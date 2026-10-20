@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Staff;
 use App\Http\Controllers\TelegramWebhookController;
 use App\Http\Controllers\TrackController;
@@ -23,6 +24,9 @@ Route::view('/contact', 'pages.contact')->name('contact');
 Route::get('/quote', [PageController::class, 'quote'])->name('quote');
 Route::post('/contact', [FormController::class, 'contact'])->name('forms.contact');
 Route::post('/quote', [FormController::class, 'quote'])->name('forms.quote');
+
+Route::get('/robots.txt', [SeoController::class, 'robots']);
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap']);
 
 /* Tracking: the tracking number alone is enough. */
 Route::get('/track', [TrackController::class, 'show'])->name('track');

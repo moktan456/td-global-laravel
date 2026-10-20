@@ -40,7 +40,7 @@ class Messages
 
     public static function telegramTrackingNumber(string $name, string $tracking): string
     {
-        return "Hello ".self::e($name).", we've received your clearance request.\n\n"
+        return 'Hello '.self::e($name).", we've received your clearance request.\n\n"
             .'Tracking number: <code>'.self::e($tracking)."</code>\n\n"
             .'Follow it any time: '.self::link(self::origin()."/track?n={$tracking}", 'open your shipment')
             .self::sign();

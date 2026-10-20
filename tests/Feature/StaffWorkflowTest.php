@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Client;
+use App\Mail\PlainMessage;
 use App\Models\Shipment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -37,7 +37,7 @@ class StaffWorkflowTest extends TestCase
         $res->assertNoContent()->assertHeader('X-Redirect', "/staff/shipments/{$shipment->tracking_number}?new=1");
         $this->assertSame('received', $shipment->status);
         $this->assertSame(1, $shipment->events()->count());
-        Mail::assertSent(\App\Mail\PlainMessage::class, 1);
+        Mail::assertSent(PlainMessage::class, 1);
         $this->assertDatabaseHas('notification_log', ['shipment_id' => $shipment->id, 'kind' => 'tracking_number', 'status' => 'sent']);
         $this->get("/staff/shipments/{$shipment->tracking_number}?new=1")->assertOk()->assertSee('Request created.')->assertSee('Tracking number');
     }
@@ -62,7 +62,7 @@ class StaffWorkflowTest extends TestCase
         $this->assertCount(2, $events);
         $this->assertSame('Looks fine', $events->last()->note);
         $this->assertSame($staff->id, (int) $events->last()->created_by);
-        Mail::assertSent(\App\Mail\PlainMessage::class, 1);
+        Mail::assertSent(PlainMessage::class, 1);
     }
 
     public function test_no_notification_when_the_box_is_not_ticked_and_a_note_alone_is_its_own_entry(): void

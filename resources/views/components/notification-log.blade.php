@@ -19,7 +19,7 @@
                     <span class="font-semibold text-navy-900">{{ $kinds[$r->kind] ?? $r->kind }} · {{ $r->channel === 'email' ? 'Email' : 'Telegram' }} to {{ $r->audience === 'staff' ? 'staff' : 'client' }}</span>
                 </p>
                 <p class="mt-1 text-sm text-muted">
-                    <time datetime="{{ $r->created_at->toIso8601String() }}">{{ $r->created_at->timezone('Asia/Thimphu')->format('j M Y, g:i a') }}</time>{{ $r->error ? ' · '.$r->error : '' }}
+                    <time datetime="{{ $r->created_at->toIso8601String() }}">{{ $r->created_at->timezone('Asia/Thimphu')->format('j M Y, H:i') }}</time>{{ $r->error ? ' · '.$r->error : '' }}
                 </p>
             </li>
         @endforeach

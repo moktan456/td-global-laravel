@@ -2,8 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Client;
-use App\Models\Shipment;
+use App\Mail\PlainMessage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\Support\MakesStaff;
@@ -70,7 +69,7 @@ class TrackingTest extends TestCase
         $res->assertSee('If that phone number or email belongs to one of our clients');
         $res->assertDontSee('karma@example.com')->assertDontSee($a->tracking_number);
 
-        Mail::assertSent(\App\Mail\PlainMessage::class, 1);
+        Mail::assertSent(PlainMessage::class, 1);
         $this->assertDatabaseHas('notification_log', ['client_id' => $client->id, 'kind' => 'tracking_reminder', 'channel' => 'email', 'status' => 'sent']);
     }
 
@@ -83,7 +82,7 @@ class TrackingTest extends TestCase
 
         $known = $this->post('/track/reminder', ['contact' => 'KARMA@example.com'], ['X-Enhance' => '1'])->getContent();
         $unknown = $this->post('/track/reminder', ['contact' => 'nobody@example.com'], ['X-Enhance' => '1'])->getContent();
-        Mail::assertSent(\App\Mail\PlainMessage::class, 1);
+        Mail::assertSent(PlainMessage::class, 1);
         $strip = fn ($html) => preg_replace('/(value|data-reveal|name)="[^"]*"|_token[^>]*>/', '', $html);
         $this->assertSame($strip($known), $strip(preg_replace('/nobody@example\.com/', 'karma@example.com', $unknown)));
     }
@@ -95,7 +94,7 @@ class TrackingTest extends TestCase
         $client = $this->client(['email' => 'karma@example.com', 'notify_email' => false]);
         $this->shipment($client);
         $this->post('/track/reminder', ['contact' => 'karma@example.com'], ['X-Enhance' => '1']);
-        Mail::assertSent(\App\Mail\PlainMessage::class, 1);
+        Mail::assertSent(PlainMessage::class, 1);
     }
 
     public function test_reminder_validates_the_input_and_is_rate_limited_per_contact(): void
