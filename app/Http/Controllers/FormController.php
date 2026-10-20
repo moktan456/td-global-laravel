@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Support\FormState;
+use App\Support\NotConnected;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +31,7 @@ class FormController extends Controller
             ? FormState::invalid($errors, $values)
             : $this->send('contact', $values, "Thanks, {$values['name']}. We've received your message and will reply by email.");
 
-        return $this->respond($request, 'contact', $state, ['tone' => $request->input('tone') === 'dark' ? 'dark' : 'light']);
+        return $this->formResponse($request, 'contact', 'forms.contact', $state, ['tone' => $request->input('tone') === 'dark' ? 'dark' : 'light']);
     }
 
     public function quote(Request $request)
@@ -51,21 +52,7 @@ class FormController extends Controller
             ? FormState::invalid($errors, $values)
             : $this->send('quote', $values, "Thanks, {$values['name']}. We'll email your quote to {$values['email']}.");
 
-        return $this->respond($request, 'quote', $state, ['plan' => $values['plan'] ?: null]);
-    }
-
-    /**
-     * Script-enhanced submits get the re-rendered form back and swap it in place; without JavaScript the state is
-     * flashed to the session and the visitor goes back to the page.
-     */
-    protected function respond(Request $request, string $form, FormState $state, array $viewData)
-    {
-        if ($request->header('X-Enhance')) {
-            return response(view("forms.{$form}", ['state' => $state] + $viewData)->render());
-        }
-        session()->flash("forms.{$form}", $state->toArray());
-
-        return redirect()->to(url()->previous().'#'.$form.'-form');
+        return $this->formResponse($request, 'quote', 'forms.quote', $state, ['plan' => $values['plan'] ?: null]);
     }
 
     protected function fields(Request $request, array $names): array
@@ -130,12 +117,11 @@ class FormController extends Controller
         }
         $subject = $form === 'quote' ? 'Quote request' : 'Website enquiry';
         $body = collect($values)->filter()->map(fn ($v, $k) => "{$k}: {$v}")->implode("\n");
-        Mail::raw($body, function ($m) use ($subject, $values) {
-            $m->to(site('contact.email'))->subject($subject);
-            if (! empty($values['email'])) {
-                $m->replyTo($values['email']);
-            }
-        });
+        $message = new \App\Mail\PlainMessage($subject, $body);
+        if (! empty($values['email'])) {
+            $message->replyTo($values['email']);
+        }
+        Mail::to(site('contact.email'))->send($message);
     }
 
     protected function mailto(string $form, array $values): string
@@ -146,5 +132,3 @@ class FormController extends Controller
         return 'mailto:'.site('contact.email').'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
     }
 }
-
-class NotConnected extends \RuntimeException {}

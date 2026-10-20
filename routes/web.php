@@ -2,20 +2,65 @@
 
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\Staff;
+use App\Http\Controllers\TelegramWebhookController;
+use App\Http\Controllers\TrackController;
 use Illuminate\Support\Facades\Route;
 
+/* Public site (no closures in the routes, so `route:cache` stays safe on the server). */
 Route::view('/', 'home')->name('home');
 Route::view('/services', 'pages.services')->name('services');
 Route::get('/services/{slug}', [PageController::class, 'service'])->name('services.show');
+Route::view('/clearing-agent-gelephu', 'pages.clearing-agent-gelephu')->name('clearing');
+Route::get('/search', [PageController::class, 'search'])->name('search');
+Route::view('/credits', 'pages.credits')->name('credits');
 Route::view('/about', 'pages.about')->name('about');
 Route::view('/calculator', 'pages.calculator')->name('calculator');
 Route::view('/blog', 'blog.index')->name('blog');
 Route::get('/blog/{slug}', [PageController::class, 'article'])->name('blog.show');
-Route::view('/clearing-agent-gelephu', 'pages.clearing-agent-gelephu')->name('clearing');
-Route::get('/search', [PageController::class, 'search'])->name('search');
-Route::view('/credits', 'pages.credits')->name('credits');
 Route::view('/pricing', 'pages.pricing')->name('pricing');
 Route::view('/contact', 'pages.contact')->name('contact');
 Route::get('/quote', [PageController::class, 'quote'])->name('quote');
 Route::post('/contact', [FormController::class, 'contact'])->name('forms.contact');
 Route::post('/quote', [FormController::class, 'quote'])->name('forms.quote');
+
+/* Tracking: the tracking number alone is enough. */
+Route::get('/track', [TrackController::class, 'show'])->name('track');
+Route::post('/track', [TrackController::class, 'lookup'])->name('track.lookup');
+Route::post('/track/reminder', [TrackController::class, 'remind'])->name('track.remind');
+
+/* The old "Client login" address now leads to the staff sign-in (clients don't sign in). */
+Route::redirect('/login', '/staff/login');
+
+/* Telegram bot webhook (CSRF-exempt; proves itself with a secret header). */
+Route::post('/api/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+
+/* Staff. */
+Route::prefix('staff')->group(function () {
+    Route::get('login', [Staff\LoginController::class, 'show'])->name('login');
+    Route::post('login', [Staff\LoginController::class, 'login'])->name('staff.login');
+
+    Route::middleware('staff')->group(function () {
+        Route::post('logout', [Staff\LoginController::class, 'logout'])->name('staff.logout');
+        Route::get('password', [Staff\PasswordController::class, 'show'])->name('staff.password');
+        Route::post('password', [Staff\PasswordController::class, 'update']);
+
+        Route::get('/', [Staff\DashboardController::class, 'index'])->name('staff.dashboard');
+        Route::get('shipments/new', [Staff\ShipmentController::class, 'create'])->name('staff.shipments.new');
+        Route::post('shipments', [Staff\ShipmentController::class, 'store'])->name('staff.shipments.store');
+        Route::get('shipments/{tracking}', [Staff\ShipmentController::class, 'show'])->name('staff.shipments.show');
+        Route::post('shipments/{tracking}/status', [Staff\ShipmentController::class, 'updateStatus'])->name('staff.shipments.status');
+        Route::get('clients', [Staff\ClientController::class, 'index'])->name('staff.clients');
+        Route::post('clients', [Staff\ClientController::class, 'store'])->name('staff.clients.store');
+        Route::post('clients/{client}/telegram-link', [Staff\ClientController::class, 'telegramLink'])->name('staff.clients.telegram-link');
+
+        Route::middleware('admin')->group(function () {
+            Route::get('team', [Staff\TeamController::class, 'index'])->name('staff.team');
+            Route::post('team', [Staff\TeamController::class, 'store'])->name('staff.team.store');
+            Route::post('team/{user}/password', [Staff\TeamController::class, 'resetPassword'])->name('staff.team.password');
+            Route::post('team/{user}/active', [Staff\TeamController::class, 'setActive'])->name('staff.team.active');
+            Route::get('telegram', [Staff\TelegramController::class, 'index'])->name('staff.telegram');
+            Route::post('telegram/connect', [Staff\TelegramController::class, 'connect'])->name('staff.telegram.connect');
+        });
+    });
+});

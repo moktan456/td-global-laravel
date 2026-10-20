@@ -14,6 +14,8 @@ class FormState
         public array $errors = [],
         public array $values = [],
         public ?string $mailto = null,
+        /** Extra data the page shows next to the form (the tracking result). */
+        public mixed $result = null,
     ) {}
 
     public static function idle(): self
@@ -56,6 +58,6 @@ class FormState
 
     public static function fromArray(array $a): self
     {
-        return new self($a['status'] ?? 'idle', $a['message'] ?? '', $a['errors'] ?? [], $a['values'] ?? [], $a['mailto'] ?? null);
+        return new self($a['status'] ?? 'idle', $a['message'] ?? '', $a['errors'] ?? [], $a['values'] ?? [], $a['mailto'] ?? null, $a['result'] ?? null);
     }
 }

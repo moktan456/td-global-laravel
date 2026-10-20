@@ -16,8 +16,10 @@
     <meta name="application-name" content="{{ site('name') }}">
     <meta name="keywords" content="{{ implode(', ', site('seo.keywords')) }}">
     <meta name="theme-color" content="#14224a">
-    @if (! empty($noindex))
-        <meta name="robots" content="noindex, follow">
+    @if (! empty($robots))
+        <meta name="robots" content="{{ $robots }}">
+    @elseif (! empty($noindex))
+        <meta name="robots" content="noindex">
     @endif
     @if (isset($canonical))
         <link rel="canonical" href="{{ absolute_url($canonical) }}">

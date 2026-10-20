@@ -27,12 +27,19 @@ async function submit(form, event) {
             credentials: 'same-origin',
         });
         if (!response.ok) throw new Error(String(response.status));
+        const redirect = response.headers.get('X-Redirect');
+        if (redirect) {
+            window.location.assign(redirect);
+            return;
+        }
         const html = await response.text();
         const holder = document.createElement('div');
         holder.innerHTML = html.trim();
         const next = holder.firstElementChild;
-        form.replaceWith(next);
-        bindForm(next);
+        // A form can sit inside a wrapper that also shows its result (the Track page): swap the whole wrapper.
+        const root = form.closest('[data-enhance-root]') ?? form;
+        root.replaceWith(next);
+        bindAll(next);
         focusStatus(next);
     } catch {
         pending(form, false);
@@ -43,6 +50,30 @@ async function submit(form, event) {
 export function bindForm(form) {
     if (form.matches('[data-enhance]')) form.addEventListener('submit', (e) => submit(form, e));
     form.querySelectorAll('[data-password-toggle]').forEach(bindPasswordToggle);
+}
+
+/** Binds every enhanced form inside (or equal to) an element that was just swapped in. */
+function bindAll(el) {
+    if (el.matches('form[data-enhance]')) bindForm(el);
+    el.querySelectorAll('form[data-enhance]').forEach(bindForm);
+    bindCopyButtons(el);
+}
+
+/** "Copy link" buttons (the Telegram connect link on the Clients page). */
+export function bindCopyButtons(root = document) {
+    root.querySelectorAll('[data-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const field = document.getElementById(button.dataset.copy);
+            const status = button.parentElement.querySelector('[data-copy-status]');
+            try {
+                await navigator.clipboard.writeText(field.value);
+                status.textContent = 'Copied.';
+            } catch {
+                status.textContent = ''; // The link stays selectable in the field.
+            }
+        });
+    });
+    root.querySelectorAll('[data-select-on-focus]').forEach((field) => field.addEventListener('focus', () => field.select()));
 }
 
 /** Show / hide a password (WCAG: an eye button with a state, never a placeholder-only label). */
@@ -62,6 +93,7 @@ export function bindPasswordToggle(button) {
 
 export function initForms() {
     document.querySelectorAll('form[data-enhance]').forEach(bindForm);
+    bindCopyButtons();
     document.querySelectorAll('[data-password-toggle]').forEach((b) => {
         if (!b.closest('form[data-enhance]')) bindPasswordToggle(b);
     });

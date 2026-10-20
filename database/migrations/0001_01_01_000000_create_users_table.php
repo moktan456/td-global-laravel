@@ -4,19 +4,24 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Staff accounts. Everyone in `users` is staff (clients never sign in). A username maps to a private address
+ * `<username>@staff.td-global.invalid` in `email`, which never receives mail; `role = admin` is the super admin.
+ */
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('username')->unique()->nullable();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role', 10)->default('staff'); // staff | admin
+            $table->boolean('active')->default(true);
+            // Set when an admin creates the account or resets the password: the person must choose their own.
+            $table->boolean('must_change_password')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -37,9 +42,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
