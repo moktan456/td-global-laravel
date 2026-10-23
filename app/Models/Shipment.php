@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Statuses;
 use App\Support\TrackingNumber;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,7 +20,7 @@ class Shipment extends Model
     {
         static::creating(function (Shipment $s) {
             $s->tracking_number ??= TrackingNumber::generate();
-            $s->status ??= 'received';
+            $s->status ??= Statuses::keys()[0];
         });
         static::created(fn (Shipment $s) => $s->logStage());
         static::updated(function (Shipment $s) {

@@ -35,7 +35,7 @@ class StaffWorkflowTest extends TestCase
         $res = $this->actingAs($this->staff())->post('/staff/shipments', ['client_id' => $client->id, 'direction' => 'import', 'mode' => 'road', 'goods' => '2 pallets', 'details' => ''], ['X-Enhance' => '1']);
         $shipment = Shipment::firstOrFail();
         $res->assertNoContent()->assertHeader('X-Redirect', "/staff/shipments/{$shipment->tracking_number}?new=1");
-        $this->assertSame('received', $shipment->status);
+        $this->assertSame('declaration_submitted', $shipment->status);
         $this->assertSame(1, $shipment->events()->count());
         Mail::assertSent(PlainMessage::class, 1);
         $this->assertDatabaseHas('notification_log', ['shipment_id' => $shipment->id, 'kind' => 'tracking_number', 'status' => 'sent']);
@@ -54,10 +54,10 @@ class StaffWorkflowTest extends TestCase
         Mail::fake();
         $s = $this->shipment();
         $staff = $this->staff();
-        $this->actingAs($staff)->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'documents_checked', 'note' => 'Looks fine', 'notify' => 'on'], ['X-Enhance' => '1'])
+        $this->actingAs($staff)->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'pending_valuation', 'note' => 'Looks fine', 'notify' => 'on'], ['X-Enhance' => '1'])
             ->assertSee('Status updated.')->assertSee('Email sent.');
         $s->refresh();
-        $this->assertSame('documents_checked', $s->status);
+        $this->assertSame('pending_valuation', $s->status);
         $events = $s->events;
         $this->assertCount(2, $events);
         $this->assertSame('Looks fine', $events->last()->note);
@@ -70,7 +70,7 @@ class StaffWorkflowTest extends TestCase
         config(['mail.default' => 'smtp']);
         Mail::fake();
         $s = $this->shipment();
-        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'received', 'note' => 'Waiting for the driver'], ['X-Enhance' => '1']);
+        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'declaration_submitted', 'note' => 'Waiting for the driver'], ['X-Enhance' => '1']);
         Mail::assertNothingSent();
         $this->assertCount(2, $s->fresh()->events);
         $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'bogus'], ['X-Enhance' => '1'])->assertSee('Choose a stage.');
@@ -80,7 +80,7 @@ class StaffWorkflowTest extends TestCase
     {
         config(['mail.default' => 'log']);
         $s = $this->shipment();
-        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'cleared', 'notify' => 'on'], ['X-Enhance' => '1'])->assertSee('Email skipped');
+        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'released', 'notify' => 'on'], ['X-Enhance' => '1'])->assertSee('Email skipped');
         $this->assertDatabaseHas('notification_log', ['shipment_id' => $s->id, 'status' => 'skipped']);
         $this->get("/staff/shipments/{$s->tracking_number}")->assertSee('Skipped');
     }
@@ -92,7 +92,7 @@ class StaffWorkflowTest extends TestCase
         Http::fake(['api.telegram.org/*' => Http::response(['ok' => true, 'result' => []])]);
         $client = $this->client(['telegram_chat_id' => 555]);
         $s = $this->shipment($client);
-        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'cleared', 'notify' => 'on'], ['X-Enhance' => '1'])
+        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'released', 'notify' => 'on'], ['X-Enhance' => '1'])
             ->assertSee('Email sent.')->assertSee('Telegram sent.');
         Http::assertSent(fn ($r) => str_contains($r->url(), '/botTESTTOKEN/sendMessage') && $r['chat_id'] === 555 && str_contains($r['text'], $s->tracking_number));
     }
@@ -104,7 +104,7 @@ class StaffWorkflowTest extends TestCase
         Http::fake(['api.telegram.org/*' => Http::response(['ok' => false, 'description' => 'Forbidden: bot was blocked by the user'], 403)]);
         $client = $this->client(['telegram_chat_id' => 555]);
         $s = $this->shipment($client);
-        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'cleared', 'notify' => 'on'], ['X-Enhance' => '1'])
+        $this->actingAs($this->staff())->post("/staff/shipments/{$s->tracking_number}/status", ['status' => 'released', 'notify' => 'on'], ['X-Enhance' => '1'])
             ->assertSee('Telegram failed')->assertSee('Telegram was disconnected');
         $this->assertNull($client->fresh()->telegram_chat_id);
     }
@@ -113,10 +113,10 @@ class StaffWorkflowTest extends TestCase
     {
         $a = $this->shipment();
         $b = $this->shipment();
-        $b->status = 'cleared';
+        $b->status = 'released';
         $b->save();
         $this->actingAs($this->staff());
-        $this->get('/staff?status=cleared')->assertSee($b->tracking_number)->assertDontSee($a->tracking_number);
+        $this->get('/staff?status=released')->assertSee($b->tracking_number)->assertDontSee($a->tracking_number);
         $this->get('/staff?q='.strtolower(substr($a->tracking_number, -4)))->assertSee($a->tracking_number);
     }
 

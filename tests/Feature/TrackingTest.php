@@ -16,19 +16,19 @@ class TrackingTest extends TestCase
     {
         $client = $this->client(['full_name' => 'Secret Person', 'phone' => '+97517123456']);
         $s = $this->shipment($client, ['goods' => 'secret goods']);
-        $s->status = 'documents_checked';
+        $s->status = 'pending_valuation';
         $s->save();
         $s->events()->latest('id')->first()->update(['note' => 'All good']);
 
         $res = $this->post('/track', ['tracking' => strtolower($s->tracking_number)], ['X-Enhance' => '1'])->assertOk();
-        $res->assertSee($s->tracking_number)->assertSee('Documents checked')->assertSee('All good')->assertSee('Request received');
+        $res->assertSee($s->tracking_number)->assertSee('Pending Valuation')->assertSee('All good')->assertSee('Declaration Submitted');
         $res->assertDontSee('Secret Person')->assertDontSee('secret goods')->assertDontSee('17123456');
     }
 
     public function test_hidden_events_are_not_shown(): void
     {
         $s = $this->shipment();
-        $s->events()->create(['status' => 'on_hold', 'note' => 'internal only', 'visible_to_client' => false]);
+        $s->events()->create(['status' => 'pending_risk', 'note' => 'internal only', 'visible_to_client' => false]);
         $this->post('/track', ['tracking' => $s->tracking_number], ['X-Enhance' => '1'])->assertDontSee('internal only');
     }
 
@@ -40,7 +40,7 @@ class TrackingTest extends TestCase
     public function test_link_from_an_email_opens_the_status(): void
     {
         $s = $this->shipment();
-        $this->get('/track?n='.$s->tracking_number)->assertOk()->assertSee('Request received');
+        $this->get('/track?n='.$s->tracking_number)->assertOk()->assertSee('Declaration Submitted');
     }
 
     public function test_wrong_and_malformed_numbers_get_a_plain_message(): void

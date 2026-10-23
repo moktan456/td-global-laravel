@@ -1,6 +1,6 @@
 {{-- Track page, right column: an example shipment that ticks through the real clearance stages (animation is CSS only). --}}
 @php
-    $keys = ['received', 'documents_checked', 'declaration_lodged', 'duties_due', 'cleared', 'delivered'];
+    $keys = \App\Support\Statuses::keys();
 @endphp
 <aside aria-labelledby="sample-heading" class="on-dark rounded-card bg-navy-900 p-6 text-white sm:p-8">
     <div class="flex flex-wrap items-center justify-between gap-3">

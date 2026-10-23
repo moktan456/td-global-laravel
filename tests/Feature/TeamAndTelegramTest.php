@@ -91,7 +91,7 @@ class TeamAndTelegramTest extends TestCase
         $client = $this->client(['telegram_chat_id' => 42]);
         $s = $this->shipment($client);
         $this->postJson('/api/telegram/webhook', ['message' => ['text' => '/status', 'chat' => ['id' => 42, 'type' => 'private']]], $h)->assertOk();
-        Http::assertSent(fn ($r) => str_contains($r['text'], $s->tracking_number) && str_contains($r['text'], 'Request received'));
+        Http::assertSent(fn ($r) => str_contains($r['text'], $s->tracking_number) && str_contains($r['text'], 'Declaration Submitted'));
         // Group chats other than /chatid are ignored.
         Http::fake(['api.telegram.org/*' => Http::response(['ok' => true, 'result' => []])]);
         $this->postJson('/api/telegram/webhook', ['message' => ['text' => '/status', 'chat' => ['id' => -1, 'type' => 'group']]], $h)->assertOk();

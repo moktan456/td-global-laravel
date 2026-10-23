@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('mode', 10);                        // air | road | rail
             $table->string('goods');
             $table->text('details')->nullable();
-            $table->string('status', 30)->default('received')->index();
+            $table->string('status', 30)->default('declaration_submitted')->index();
             $table->string('requested_by', 10)->default('staff');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

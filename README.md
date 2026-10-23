@@ -53,7 +53,7 @@ See **[docs/DEPLOY.md](docs/DEPLOY.md)** (cPanel shared hosting, step by step, i
 | Tracking logic | `app/Http/Controllers/TrackController.php`, `app/Services/Notify.php`, `app/Support/Messages.php` |
 | Staff screens | `app/Http/Controllers/Staff`, `resources/views/staff` |
 | Telegram bot | `app/Http/Controllers/TelegramWebhookController.php`, `app/Services/Telegram.php` |
-| The 8 stages | `resources/content/statuses.php` |
+| The 7 clearance stages (labels, the wording clients see, their order) | `resources/content/statuses.php` |
 
 **Photos:** put a new JPG in `public/photos`, add it to `resources/content/images.php`, run `npm run photos` (makes the resized WebP copies), commit the result.
 

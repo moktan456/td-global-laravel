@@ -1,17 +1,17 @@
 <?php
 
-// Clearance stages, in order (ported from src/lib/portal/statuses.ts). Keys are stored in shipments.status.
+// Clearance stages, in the order of the customs process. Keys are stored in shipments.status and shipment_events.status.
+// (The first one is where a new shipment starts. Reorder here to change the order of the dropdown and the Track page example.)
 
 return [
     'statuses' => [
-        ['key' => 'received', 'label' => 'Request received', 'clientText' => "We've received your request."],
-        ['key' => 'documents_pending', 'label' => 'Documents pending', 'clientText' => "We're waiting for documents from you."],
-        ['key' => 'documents_checked', 'label' => 'Documents checked', 'clientText' => 'Your documents have been checked.'],
-        ['key' => 'declaration_lodged', 'label' => 'Declaration lodged', 'clientText' => 'Your declaration has been lodged with customs.'],
-        ['key' => 'duties_due', 'label' => 'Duties to pay', 'clientText' => 'Duties and taxes are ready to be paid.'],
-        ['key' => 'cleared', 'label' => 'Cleared', 'clientText' => 'Your goods have been cleared by customs.'],
-        ['key' => 'delivered', 'label' => 'Delivered', 'clientText' => 'Delivered — this clearance is complete.'],
-        ['key' => 'on_hold', 'label' => 'On hold', 'clientText' => 'On hold — we need something from you. Please contact us.'],
+        ['key' => 'declaration_submitted', 'label' => 'Declaration Submitted', 'clientText' => 'Your declaration has been submitted to customs.'],
+        ['key' => 'pending_valuation', 'label' => 'Pending Valuation', 'clientText' => 'Customs is valuing your goods.'],
+        ['key' => 'pending_risk', 'label' => 'Pending Risk', 'clientText' => 'Your declaration is with customs for risk assessment.'],
+        ['key' => 'pending_physical_examination', 'label' => 'Pending Physical Examination', 'clientText' => 'Your goods are waiting for a physical examination by customs.'],
+        ['key' => 'pending_payment', 'label' => 'Pending Payment', 'clientText' => 'Your duties and taxes are ready to be paid.'],
+        ['key' => 'pending_release', 'label' => 'Pending Release', 'clientText' => "We're waiting for customs to release your goods."],
+        ['key' => 'released', 'label' => 'Released', 'clientText' => 'Customs has released your goods.'],
     ],
     'directions' => [
         ['value' => 'import', 'label' => 'Import'],

@@ -179,31 +179,35 @@
   }
 }
 
-/* Track page: the "What you'll see" sample shipment. Each stage ticks over in turn, holds, then resets (18s loop).
-   Pure CSS: --on is how complete a stage looks, --cur whether it is the stage being described. */
+/* Track page: the "What you'll see" sample shipment. Each stage ticks over in turn, holds, then resets (20s loop).
+   Pure CSS: --on is how complete a stage looks, --cur whether it is the stage being described.
+   One animation pair per stage: keep N in step with the number of stages in resources/content/statuses.php. */
 @property --on { syntax: '<number>'; inherits: true; initial-value: 0; }
 @property --cur { syntax: '<number>'; inherits: true; initial-value: 0; }
-@keyframes sample-on-0 { 0%, 4.44% { --on: 0; } 7.22%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-0 { 0%, 4.44% { --cur: 0; } 7.22%, 16.67% { --cur: 1; } 19.44%, 100% { --cur: 0; } }
-@keyframes sample-on-1 { 0%, 16.67% { --on: 0; } 19.44%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-1 { 0%, 16.67% { --cur: 0; } 19.44%, 28.89% { --cur: 1; } 31.67%, 100% { --cur: 0; } }
-@keyframes sample-on-2 { 0%, 28.89% { --on: 0; } 31.67%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-2 { 0%, 28.89% { --cur: 0; } 31.67%, 41.11% { --cur: 1; } 43.89%, 100% { --cur: 0; } }
-@keyframes sample-on-3 { 0%, 41.11% { --on: 0; } 43.89%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-3 { 0%, 41.11% { --cur: 0; } 43.89%, 53.33% { --cur: 1; } 56.11%, 100% { --cur: 0; } }
-@keyframes sample-on-4 { 0%, 53.33% { --on: 0; } 56.11%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-4 { 0%, 53.33% { --cur: 0; } 56.11%, 65.56% { --cur: 1; } 68.33%, 100% { --cur: 0; } }
-@keyframes sample-on-5 { 0%, 65.56% { --on: 0; } 68.33%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
-@keyframes sample-cur-5 { 0%, 65.56% { --cur: 0; } 68.33%, 94% { --cur: 1; } 97%, 100% { --cur: 0; } }
-.sample-step-0 { animation: sample-on-0 18s linear infinite, sample-cur-0 18s linear infinite; }
-.sample-step-1 { animation: sample-on-1 18s linear infinite, sample-cur-1 18s linear infinite; }
-.sample-step-2 { animation: sample-on-2 18s linear infinite, sample-cur-2 18s linear infinite; }
-.sample-step-3 { animation: sample-on-3 18s linear infinite, sample-cur-3 18s linear infinite; }
-.sample-step-4 { animation: sample-on-4 18s linear infinite, sample-cur-4 18s linear infinite; }
-.sample-step-5 { animation: sample-on-5 18s linear infinite, sample-cur-5 18s linear infinite; }
+@keyframes sample-on-0 { 0%, 4.0% { --on: 0; } 6.5%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-0 { 0%, 4.0% { --cur: 0; } 6.5%, 15.5% { --cur: 1; } 18.0%, 100% { --cur: 0; } }
+@keyframes sample-on-1 { 0%, 15.5% { --on: 0; } 18.0%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-1 { 0%, 15.5% { --cur: 0; } 18.0%, 27.0% { --cur: 1; } 29.5%, 100% { --cur: 0; } }
+@keyframes sample-on-2 { 0%, 27.0% { --on: 0; } 29.5%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-2 { 0%, 27.0% { --cur: 0; } 29.5%, 38.5% { --cur: 1; } 41.0%, 100% { --cur: 0; } }
+@keyframes sample-on-3 { 0%, 38.5% { --on: 0; } 41.0%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-3 { 0%, 38.5% { --cur: 0; } 41.0%, 50.0% { --cur: 1; } 52.5%, 100% { --cur: 0; } }
+@keyframes sample-on-4 { 0%, 50.0% { --on: 0; } 52.5%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-4 { 0%, 50.0% { --cur: 0; } 52.5%, 61.5% { --cur: 1; } 64.0%, 100% { --cur: 0; } }
+@keyframes sample-on-5 { 0%, 61.5% { --on: 0; } 64.0%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-5 { 0%, 61.5% { --cur: 0; } 64.0%, 73.0% { --cur: 1; } 75.5%, 100% { --cur: 0; } }
+@keyframes sample-on-6 { 0%, 73.0% { --on: 0; } 75.5%, 94% { --on: 1; } 97%, 100% { --on: 0; } }
+@keyframes sample-cur-6 { 0%, 73.0% { --cur: 0; } 75.5%, 94% { --cur: 1; } 97%, 100% { --cur: 0; } }
+.sample-step-0 { animation: sample-on-0 20s linear infinite, sample-cur-0 20s linear infinite; }
+.sample-step-1 { animation: sample-on-1 20s linear infinite, sample-cur-1 20s linear infinite; }
+.sample-step-2 { animation: sample-on-2 20s linear infinite, sample-cur-2 20s linear infinite; }
+.sample-step-3 { animation: sample-on-3 20s linear infinite, sample-cur-3 20s linear infinite; }
+.sample-step-4 { animation: sample-on-4 20s linear infinite, sample-cur-4 20s linear infinite; }
+.sample-step-5 { animation: sample-on-5 20s linear infinite, sample-cur-5 20s linear infinite; }
+.sample-step-6 { animation: sample-on-6 20s linear infinite, sample-cur-6 20s linear infinite; }
 @media (prefers-reduced-motion: reduce) {
   [class*='sample-step-'] { animation: none; --on: 1; --cur: 0; }
-  .sample-step-5 { --cur: 1; }
+  .sample-step-6 { --cur: 1; }
 }
 .sample-done { opacity: var(--on); }
 .sample-label { opacity: calc(0.55 + 0.45 * var(--on)); }

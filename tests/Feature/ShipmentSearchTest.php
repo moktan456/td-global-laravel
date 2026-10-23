@@ -61,14 +61,14 @@ class ShipmentSearchTest extends TestCase
     {
         $client = $this->client(['full_name' => 'Tashi Wangmo']);
         for ($i = 0; $i < 17; $i++) {
-            $this->shipment($client, ['status' => 'cleared']);
+            $this->shipment($client, ['status' => 'released']);
         }
-        $other = $this->shipment($this->client(['full_name' => 'Someone Else']), ['status' => 'cleared']);
+        $other = $this->shipment($this->client(['full_name' => 'Someone Else']), ['status' => 'released']);
         $this->actingAs($this->staff());
 
-        $this->get('/staff?status=cleared&q=tashi')->assertSee('17 shipments match')->assertDontSee($other->tracking_number);
-        $this->get('/staff?status=received&q=tashi')->assertSee('No shipments match');
-        $html = html_entity_decode($this->get('/staff?status=cleared&q=tashi')->getContent());
+        $this->get('/staff?status=released&q=tashi')->assertSee('17 shipments match')->assertDontSee($other->tracking_number);
+        $this->get('/staff?status=pending_risk&q=tashi')->assertSee('No shipments match');
+        $html = html_entity_decode($this->get('/staff?status=released&q=tashi')->getContent());
         $this->assertMatchesRegularExpression('#href="[^"]*q=tashi[^"]*page=2#', $html);
     }
 
