@@ -67,7 +67,9 @@ class TeamSearchTest extends TestCase
         $without = $this->client(['full_name' => 'Pema Choden', 'company' => null]);
         $html = $this->actingAs($this->staff())->get('/staff/clients')->assertOk()->getContent();
 
-        $this->assertMatchesRegularExpression('#<a href="/staff/clients/'.$with->id.'"[^>]*>Druk Motors</a> · Tashi Wangmo#', $html);
+        $this->assertMatchesRegularExpression('#<a href="/staff/clients/'.$with->id.'"[^>]*>Druk Motors</a>#', $html);
+        $this->assertDoesNotMatchRegularExpression('#<a href="/staff/clients/'.$with->id.'"[^>]*>Tashi Wangmo</a>#', $html);
+        $this->assertStringContainsString('Tashi Wangmo', $html, 'the person is still shown, under the company');
         $this->assertMatchesRegularExpression('#<a href="/staff/clients/'.$without->id.'"[^>]*>Pema Choden</a>#', $html);
     }
 }

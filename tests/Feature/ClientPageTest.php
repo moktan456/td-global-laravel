@@ -82,4 +82,33 @@ class ClientPageTest extends TestCase
         preg_match('/<details id="tracking-tools"[^>]*>/', $opened, $m);
         $this->assertStringContainsString(' open', $m[0], 'open after a resend so the result is seen');
     }
+
+    public function test_the_client_list_shows_a_status_and_keeps_the_telegram_tools_in_a_menu(): void
+    {
+        config(['td.telegram.bot_token' => 'TESTTOKEN', 'td.telegram.bot_username' => 'td_test_bot']);
+        $linked = $this->client(['full_name' => 'Linked Person', 'telegram_chat_id' => 555]);
+        $unlinked = $this->client(['full_name' => 'Unlinked Person']);
+        $html = $this->actingAs($this->staff())->get('/staff/clients')->assertOk()
+            ->assertSee('Connected')->assertSee('Not connected')->assertSee('Create Telegram link')->assertSee('Copy bot link')->getContent();
+
+        $this->assertSame(2, substr_count($html, '<details data-menu'), 'one Telegram menu per client');
+        // the tools sit inside the menu panels, not loose in the list
+        foreach (['Copy bot link', 'Create Telegram link', 'Create a new connect link'] as $tool) {
+            $at = strpos($html, $tool);
+            $this->assertNotFalse($at, $tool);
+            $this->assertNotFalse(strrpos(substr($html, 0, $at), '<details data-menu'), "{$tool} is inside a menu");
+        }
+        $this->assertStringNotContainsString('Registered by', $html);
+    }
+
+    public function test_registering_a_client_folds_away_until_needed(): void
+    {
+        $closed = $this->actingAs($this->staff())->get('/staff/clients')->assertOk()->assertSee('Register a new client')->getContent();
+        preg_match('/<details id="register-client"[^>]*>/', $closed, $m);
+        $this->assertStringNotContainsString(' open', $m[0]);
+
+        $opened = $this->withSession(['forms.client' => FormState::success('Client registered.')->toArray()])->get('/staff/clients')->getContent();
+        preg_match('/<details id="register-client"[^>]*>/', $opened, $m);
+        $this->assertStringContainsString(' open', $m[0], 'open after a submit so the result is seen');
+    }
 }
