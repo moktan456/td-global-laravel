@@ -9,6 +9,7 @@ use App\Services\Mailer;
 use App\Services\Telegram;
 use App\Support\FormState;
 use App\Support\Messages;
+use App\Support\Search;
 use App\Support\TrackingNumber;
 use Illuminate\Http\Request;
 
@@ -19,20 +20,18 @@ class ClientController extends Controller
     /** The client list: search by name, company, email or phone; optionally only those with (or without) Telegram; ten a page. */
     public function index(Request $request)
     {
-        $raw = $request->query('q');
-        $q = mb_substr(trim(is_array($raw) ? '' : (string) $raw), 0, 60);
+        $q = Search::text($request->query('q'));
         $telegramFilter = in_array($request->query('telegram'), ['connected', 'not'], true) ? $request->query('telegram') : '';
-        // "!" is the LIKE escape character, so a typed % or _ is searched for literally.
-        $like = fn (string $t) => '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $t).'%';
+        $like = Search::like(...);
 
         $clients = Client::query()
             ->when($q !== '', function ($query) use ($q, $like) {
-                foreach (preg_split('/\s+/', $q) as $term) {   // every word must match somewhere
+                foreach (Search::words($q) as $term) {   // every word must match somewhere
                     $query->where(function ($w) use ($term, $like) {
                         $w->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
                             ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
                             ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
-                        $digits = preg_replace('/\D/', '', $term);
+                        $digits = Search::digits($term);
                         if ($digits !== '') {                  // phone numbers are stored as +97517975757
                             $w->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
                         }

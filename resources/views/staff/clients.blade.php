@@ -15,7 +15,7 @@
             <section aria-labelledby="list-heading">
                 <h2 id="list-heading" class="font-display text-2xl font-semibold text-navy-900">Clients ({{ $total }})</h2>
                 <form method="get" action="/staff/clients" role="search" aria-label="Search clients" class="mt-4 flex flex-wrap items-end gap-3">
-                    <div class="min-w-0 flex-1 basis-56">
+                    <div class="min-w-56 flex-1 basis-56">
                         <label for="client-q" class="block font-semibold text-navy-900">Search</label>
                         <input id="client-q" type="search" name="q" value="{{ $q }}" placeholder="Name, company, email or phone" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
                     </div>

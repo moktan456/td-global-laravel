@@ -4,10 +4,10 @@
     <x-page-header title="Shipments" :crumbs="[['label' => 'Staff']]" />
     <x-container class="py-10">
         <x-staff-nav current="/staff" :name="auth()->user()->name" :role="auth()->user()->role" />
-        <form class="mt-6 flex flex-wrap items-end gap-4" role="search" aria-label="Filter shipments" method="get" action="/staff">
-            <div>
-                <label for="q" class="block font-semibold text-navy-900">Tracking number</label>
-                <input id="q" name="q" value="{{ $query }}" class="mt-2 min-h-11 rounded-control border border-control bg-white px-3 uppercase">
+        <form class="mt-6 flex flex-wrap items-end gap-4" role="search" aria-label="Search shipments" method="get" action="/staff">
+            <div class="min-w-56 flex-1 basis-64">
+                <label for="q" class="block font-semibold text-navy-900">Search</label>
+                <input id="q" type="search" name="q" value="{{ $query }}" placeholder="Tracking number, client, phone or goods" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
             </div>
             <div>
                 <label for="status" class="block font-semibold text-navy-900">Stage</label>
@@ -18,8 +18,20 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-5 font-semibold text-white hover:bg-navy-800">Filter</button>
+            <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-5 font-semibold text-white hover:bg-navy-800">Search</button>
+            @if ($query !== '' || $status !== '')
+                <a href="/staff" class="inline-flex min-h-11 items-center px-2 font-semibold text-brand underline underline-offset-2">Clear</a>
+            @endif
         </form>
+        <p role="status" class="mt-4 text-muted">
+            @if ($shipments->total() === 0)
+                No shipments match{{ $query !== '' ? ' “'.$query.'”' : '' }}.
+            @elseif ($query !== '' || $status !== '')
+                {{ $shipments->total() }} {{ $shipments->total() === 1 ? 'shipment matches' : 'shipments match' }}{{ $query !== '' ? ' “'.$query.'”' : '' }}. Showing {{ $shipments->firstItem() }}–{{ $shipments->lastItem() }}.
+            @else
+                Showing {{ $shipments->firstItem() }}–{{ $shipments->lastItem() }} of {{ $shipments->total() }}, most recently updated first.
+            @endif
+        </p>
 
         <div class="mt-6 overflow-x-auto rounded-card border border-line bg-white">
             <table class="w-full min-w-[720px] text-left">
@@ -48,5 +60,6 @@
                 </tbody>
             </table>
         </div>
+        <x-pager :paginator="$shipments" label="shipments" />
     </x-container>
 @endsection

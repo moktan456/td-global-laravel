@@ -4,24 +4,52 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shipment;
+use App\Support\Search;
 use App\Support\Statuses;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    private const PER_PAGE = 15;
+
     public function index(Request $request)
     {
-        $status = Statuses::exists($request->query('status')) ? $request->query('status') : '';
-        $q = $request->query('q');
-        $query = mb_substr(strtoupper(trim(is_array($q) ? (string) ($q[0] ?? '') : (string) $q)), 0, 20);
+        $stage = $request->query('status');
+        $status = is_string($stage) && Statuses::exists($stage) ? $stage : '';
+        $query = Search::text($request->query('q'));
+        $like = Search::like(...);
 
+        // Every word must match the tracking number (with or without dashes), the goods, or the client's name, company, email or phone.
         $shipments = Shipment::with('client')
             ->when($status, fn ($qb) => $qb->where('status', $status))
-            ->when($query, fn ($qb) => $qb->where('tracking_number', 'like', '%'.preg_replace('/[^A-Z0-9-]/', '', $query).'%'))
-            ->orderByDesc('updated_at')
-            ->limit(100)
-            ->get();
+            ->when($query !== '', function ($qb) use ($query, $like) {
+                foreach (Search::words($query) as $term) {
+                    $qb->where(function ($w) use ($term, $like) {
+                        $w->whereRaw("tracking_number LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereRaw("REPLACE(tracking_number, '-', '') LIKE ? ESCAPE '!'", [$like(str_replace('-', '', $term))])
+                            ->orWhereRaw("goods LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereHas('client', function ($c) use ($term, $like) {
+                                $c->where(function ($x) use ($term, $like) {
+                                    $x->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
+                                        ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
+                                        ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
+                                    $digits = Search::digits($term);
+                                    if ($digits !== '') {
+                                        $x->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
+                                    }
+                                });
+                            });
+                    });
+                }
+            })
+            ->orderByDesc('updated_at')->orderByDesc('id')
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
 
-        return view('staff.dashboard', ['shipments' => $shipments, 'status' => $status, 'query' => $query]);
+        if ($shipments->isEmpty() && $shipments->currentPage() > 1) {   // e.g. a bookmarked page that no longer exists
+            return redirect()->to($shipments->url(max(1, $shipments->lastPage())));
+        }
+
+        return view('staff.dashboard', ['shipments' => $shipments, 'status' => $status, 'query' => $query, 'total' => Shipment::count()]);
     }
 }
