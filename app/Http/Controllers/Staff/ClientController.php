@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Client;
+use App\Models\Shipment;
 use App\Models\TelegramLinkToken;
 use App\Services\Mailer;
 use App\Services\Telegram;
@@ -56,6 +57,17 @@ class ClientController extends Controller
             'state' => form_state('client'),
             'telegram' => Telegram::configured(),
         ]);
+    }
+
+    /** One client with every request made for them (newest first, fifteen a page). */
+    public function show(Client $client)
+    {
+        $shipments = Shipment::where('client_id', $client->id)
+            ->orderByDesc('updated_at')->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('staff.client-show', ['client' => $client, 'shipments' => $shipments, 'telegram' => Telegram::configured()]);
     }
 
     /** Staff register a client on their behalf (e.g. after a phone call). */

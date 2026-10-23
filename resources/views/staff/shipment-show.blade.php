@@ -31,9 +31,9 @@
                     $trackUrl = absolute_url('/track?n='.$s->tracking_number);
                     $waUrl = $s->client?->phone ? \App\Support\Messages::waLink($s->client->phone, \App\Support\Messages::whatsappTrackingNumber($s->client->full_name, $s->tracking_number, \App\Support\Messages::about($s), $trackUrl)) : null;
                 @endphp
-                <section aria-labelledby="share-heading" class="rounded-card border border-line bg-white p-6">
-                    <h2 id="share-heading" class="font-display text-2xl font-semibold text-navy-900">Tracking number</h2>
-                    <p class="mt-2 text-muted">The client lost it or never got it? Send it again, or copy it and give it yourself.</p>
+                <details id="tracking-tools" @if ($resendState->status !== 'idle') open @endif class="rounded-card border border-line bg-white p-5">
+                    <summary class="min-h-11 cursor-pointer py-2 font-semibold text-brand">Client lost the tracking number? Show it and the link</summary>
+                    <p class="mt-2 text-muted">Send it again, or copy it and give it yourself.</p>
                     <div class="mt-5 grid gap-5">
                         <div class="grid gap-2">
                             <label for="share-number" class="text-sm font-semibold text-navy-900">Tracking number</label>
@@ -56,7 +56,7 @@
                         </div>
                         @include('staff.resend-form', ['state' => $resendState, 's' => $s])
                     </div>
-                </section>
+                </details>
                 <section aria-labelledby="update-heading" class="rounded-card border border-line bg-white p-6">
                     <h2 id="update-heading" class="font-display text-2xl font-semibold text-navy-900">Update stage</h2>
                     <div class="mt-5">

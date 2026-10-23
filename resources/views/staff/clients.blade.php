@@ -46,7 +46,7 @@
                 <ul class="mt-4 grid gap-3">
                     @foreach ($clients as $c)
                         <li class="rounded-tile border border-line bg-white p-4">
-                            <p class="font-semibold text-navy-900">{{ $c->full_name }}{{ $c->company ? ' · '.$c->company : '' }}</p>
+                            <p class="font-semibold text-navy-900"><a href="/staff/clients/{{ $c->id }}" class="text-brand underline underline-offset-2">{{ $c->full_name }}</a>{{ $c->company ? ' · '.$c->company : '' }}</p>
                             <p class="text-muted">{{ $c->email }} · {{ $c->phone }}</p>
                             <p class="mt-1 text-sm text-muted">Registered by {{ $c->registered_by === 'staff' ? 'staff' : 'the client' }}</p>
                             @if ($telegram)

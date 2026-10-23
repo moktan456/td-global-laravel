@@ -18,14 +18,16 @@ class ShipmentController extends Controller
 {
     public function __construct(private Notify $notify) {}
 
-    public function create()
+    public function create(Request $request)
     {
         $clients = Client::orderBy('full_name')->get()->map(fn ($c) => [
             'value' => (string) $c->id,
             'label' => $c->full_name.($c->company ? " ({$c->company})" : '')." · {$c->phone}",
         ])->all();
 
-        return view('staff.shipment-new', ['clients' => $clients, 'state' => form_state('shipment')]);
+        $chosen = $request->query('client');   // /staff/shipments/new?client=12 (from a client's page) starts with them chosen
+
+        return view('staff.shipment-new', ['clients' => $clients, 'state' => form_state('shipment'), 'chosenClient' => is_string($chosen) && ctype_digit($chosen) ? $chosen : null]);
     }
 
     /** Staff create a clearance request on a client's behalf. */

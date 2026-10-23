@@ -57,6 +57,7 @@ Route::prefix('staff')->group(function () {
         Route::post('shipments/{tracking}/resend', [Staff\ShipmentController::class, 'resendTracking'])->name('staff.shipments.resend');
         Route::get('clients', [Staff\ClientController::class, 'index'])->name('staff.clients');
         Route::post('clients', [Staff\ClientController::class, 'store'])->name('staff.clients.store');
+        Route::get('clients/{client}', [Staff\ClientController::class, 'show'])->whereNumber('client')->name('staff.clients.show');
         Route::post('clients/{client}/telegram-link', [Staff\ClientController::class, 'telegramLink'])->name('staff.clients.telegram-link');
 
         Route::middleware('admin')->group(function () {

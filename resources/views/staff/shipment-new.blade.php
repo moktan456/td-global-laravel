@@ -5,7 +5,7 @@
     <x-container class="py-10">
         <x-staff-nav current="/staff/shipments/new" :name="auth()->user()->name" :role="auth()->user()->role" />
         <div class="mt-8 max-w-3xl">
-            @include('staff.shipment-form', ['state' => $state, 'clients' => $clients])
+            @include('staff.shipment-form', ['state' => $state, 'clients' => $clients, 'chosenClient' => $chosenClient ?? null])
         </div>
     </x-container>
 @endsection
