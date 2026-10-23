@@ -14,10 +14,46 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    public function index()
+    private const PER_PAGE = 10;
+
+    /** The client list: search by name, company, email or phone; optionally only those with (or without) Telegram; ten a page. */
+    public function index(Request $request)
     {
+        $raw = $request->query('q');
+        $q = mb_substr(trim(is_array($raw) ? '' : (string) $raw), 0, 60);
+        $telegramFilter = in_array($request->query('telegram'), ['connected', 'not'], true) ? $request->query('telegram') : '';
+        // "!" is the LIKE escape character, so a typed % or _ is searched for literally.
+        $like = fn (string $t) => '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $t).'%';
+
+        $clients = Client::query()
+            ->when($q !== '', function ($query) use ($q, $like) {
+                foreach (preg_split('/\s+/', $q) as $term) {   // every word must match somewhere
+                    $query->where(function ($w) use ($term, $like) {
+                        $w->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
+                        $digits = preg_replace('/\D/', '', $term);
+                        if ($digits !== '') {                  // phone numbers are stored as +97517975757
+                            $w->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
+                        }
+                    });
+                }
+            })
+            ->when($telegramFilter === 'connected', fn ($query) => $query->whereNotNull('telegram_chat_id'))
+            ->when($telegramFilter === 'not', fn ($query) => $query->whereNull('telegram_chat_id'))
+            ->orderByDesc('created_at')->orderByDesc('id')
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
+
+        if ($clients->isEmpty() && $clients->currentPage() > 1) {   // e.g. a bookmarked page that no longer exists
+            return redirect()->to($clients->url(max(1, $clients->lastPage())));
+        }
+
         return view('staff.clients', [
-            'clients' => Client::orderByDesc('created_at')->limit(200)->get(),
+            'clients' => $clients,
+            'total' => Client::count(),
+            'q' => $q,
+            'telegramFilter' => $telegramFilter,
             'state' => form_state('client'),
             'telegram' => Telegram::configured(),
         ]);

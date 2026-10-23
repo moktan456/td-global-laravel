@@ -13,8 +13,37 @@
                 </div>
             </section>
             <section aria-labelledby="list-heading">
-                <h2 id="list-heading" class="font-display text-2xl font-semibold text-navy-900">All clients ({{ count($clients) }})</h2>
-                <ul class="mt-6 grid gap-3">
+                <h2 id="list-heading" class="font-display text-2xl font-semibold text-navy-900">Clients ({{ $total }})</h2>
+                <form method="get" action="/staff/clients" role="search" aria-label="Search clients" class="mt-4 flex flex-wrap items-end gap-3">
+                    <div class="min-w-0 flex-1 basis-56">
+                        <label for="client-q" class="block font-semibold text-navy-900">Search</label>
+                        <input id="client-q" type="search" name="q" value="{{ $q }}" placeholder="Name, company, email or phone" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
+                    </div>
+                    @if ($telegram)
+                        <div>
+                            <label for="client-telegram" class="block font-semibold text-navy-900">Telegram</label>
+                            <select id="client-telegram" name="telegram" class="mt-2 min-h-11 rounded-control border border-control bg-white px-3">
+                                <option value="">All clients</option>
+                                <option value="connected" @selected($telegramFilter === 'connected')>Connected</option>
+                                <option value="not" @selected($telegramFilter === 'not')>Not connected</option>
+                            </select>
+                        </div>
+                    @endif
+                    <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-5 font-semibold text-white hover:bg-navy-800">Search</button>
+                    @if ($q !== '' || $telegramFilter !== '')
+                        <a href="/staff/clients" class="inline-flex min-h-11 items-center px-2 font-semibold text-brand underline underline-offset-2">Clear</a>
+                    @endif
+                </form>
+                <p role="status" class="mt-4 text-muted">
+                    @if ($clients->total() === 0)
+                        No clients match{{ $q !== '' ? ' “'.$q.'”' : '' }}.
+                    @elseif ($q !== '' || $telegramFilter !== '')
+                        {{ $clients->total() }} {{ $clients->total() === 1 ? 'client matches' : 'clients match' }}{{ $q !== '' ? ' “'.$q.'”' : '' }}. Showing {{ $clients->firstItem() }}–{{ $clients->lastItem() }}.
+                    @else
+                        Showing {{ $clients->firstItem() }}–{{ $clients->lastItem() }} of {{ $clients->total() }}, newest first.
+                    @endif
+                </p>
+                <ul class="mt-4 grid gap-3">
                     @foreach ($clients as $c)
                         <li class="rounded-tile border border-line bg-white p-4">
                             <p class="font-semibold text-navy-900">{{ $c->full_name }}{{ $c->company ? ' · '.$c->company : '' }}</p>
@@ -32,6 +61,7 @@
                         </li>
                     @endforeach
                 </ul>
+                <x-pager :paginator="$clients" label="clients" />
             </section>
         </div>
     </x-container>
