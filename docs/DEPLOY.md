@@ -71,6 +71,19 @@ If a deploy fails with "Connection closed" or "reset by peer", wait 15–30 minu
 4. Staff alert group (optional): add the bot to a group, send `/chatid`, put the number in `TELEGRAM_STAFF_CHAT_ID`, `php artisan config:cache`.
 5. A client connects from **Staff → Clients → Create Telegram link** (send it, e.g. by WhatsApp; it works once and expires in 48 hours).
 
+## Forgotten password
+
+- **Staff member:** a super admin opens **Staff → Team** and uses *New temporary password* next to their name.
+- **Super admin (nobody else can sign in):** over SSH on the hosting account:
+
+  ```bash
+  cd ~/td-global
+  /opt/cpanel/ea-php84/root/usr/bin/php artisan staff:reset-password nima
+  ```
+
+  It asks for a temporary password (hidden), signs the person out everywhere, and makes them choose their own at the next sign-in. Only someone with SSH access to the hosting account can do this, which is the point.
+- Keep **two** super admins so one can always reset the other.
+
 ## Good to know
 
 - **Backups.** Most hosts back up daily; also export the database from cPanel (*phpMyAdmin → Export*) now and then.

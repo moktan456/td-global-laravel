@@ -34,6 +34,7 @@ touch database/database.sqlite && php artisan migrate
 npm install && npm run build        # or: npm run dev
 php artisan staff:create nima "Nima Moktan" --admin   # first super admin (asks for a temporary password)
 php artisan serve                   # http://localhost:8000
+php artisan staff:reset-password nima   # forgotten password (asks for a temporary one)
 php artisan test
 ```
 
