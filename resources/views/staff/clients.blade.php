@@ -24,9 +24,10 @@
                                 <p class="mt-1 text-sm text-muted">
                                     Telegram: {{ $c->telegram_chat_id ? ($c->notify_telegram ? 'connected' : 'connected, switched off by the client') : 'not connected' }}{{ $c->notify_email ? '' : ' · Email switched off by the client' }}
                                 </p>
-                                @unless ($c->telegram_chat_id)
-                                    @include('staff.telegram-link-form', ['client' => $c, 'state' => form_state('tglink'.$c->id)])
-                                @endunless
+                                @if ($c->telegram_chat_id)
+                                    @include('staff.telegram-bot-link', ['client' => $c])
+                                @endif
+                                @include('staff.telegram-link-form', ['client' => $c, 'state' => form_state('tglink'.$c->id)])
                             @endif
                         </li>
                     @endforeach

@@ -46,6 +46,31 @@ class Messages
         return $label('directions', $shipment->direction).' · '.$label('modes', $shipment->mode).' · '.self::clip($shipment->goods, 120);
     }
 
+    /* ---------- WhatsApp (staff send these by hand; the wa.me link only pre-fills the message) ---------- */
+
+    /** https://wa.me/<digits>?text=<message>: opens WhatsApp with the message ready for staff to press Send. */
+    public static function waLink(string $phone, string $text): ?string
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+
+        return $digits ? "https://wa.me/{$digits}?text=".rawurlencode($text) : null;
+    }
+
+    public static function whatsappTelegramInvite(string $name, string $link): string
+    {
+        return "Hello {$name}, this is ".site('name').". Tap this link to get your clearance updates on Telegram, then press Start:\n{$link}";
+    }
+
+    public static function whatsappBotLink(string $name, string $link): string
+    {
+        return "Hello {$name}, this is ".site('name').". Here is our updates bot on Telegram:\n{$link}";
+    }
+
+    public static function whatsappTrackingNumber(string $name, string $tracking, ?string $about, string $url): string
+    {
+        return "Hello {$name}, this is ".site('name').". Your tracking number is {$tracking}".($about ? " ({$about})" : '').".\nFollow it any time, no sign-in needed:\n{$url}";
+    }
+
     /* ---------- Telegram ---------- */
 
     public static function telegramTrackingNumber(string $name, string $tracking, ?string $about = null): string

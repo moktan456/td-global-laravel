@@ -12,6 +12,7 @@ use App\Support\Messages;
 use App\Support\Statuses;
 use App\Support\TrackingNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class ShipmentController extends Controller
 {
@@ -67,6 +68,35 @@ class ShipmentController extends Controller
         return $this->formRedirect($request, "/staff/shipments/{$shipment->tracking_number}?new=1");
     }
 
+    /** Send the tracking number to the client again (email and Telegram, following their settings). */
+    public function resendTracking(Request $request, string $tracking)
+    {
+        $shipment = Shipment::with('client')->where('tracking_number', TrackingNumber::normalize($tracking))->first();
+        abort_if(! $shipment || ! $shipment->client, 404);
+
+        $key = "resend-tracking:{$shipment->id}";
+        if (RateLimiter::tooManyAttempts($key, 6)) {
+            $minutes = max(1, (int) ceil(RateLimiter::availableIn($key) / 60));
+
+            return $this->formResponse($request, 'resend', 'staff.resend-form', FormState::failed("Already sent several times. Try again in {$minutes} minutes, or copy the link above and send it yourself."), ['s' => $shipment]);
+        }
+        RateLimiter::hit($key, 3600);
+
+        $client = $shipment->client;
+        $about = Messages::about($shipment);
+        $outcomes = $this->notify->client(
+            $client, 'tracking_number', $shipment->id,
+            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, $about),
+            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, $about),
+        );
+        $described = Notify::describe($outcomes);
+        $state = collect($outcomes)->contains('status', 'sent')
+            ? FormState::success("Sent again. {$described}")
+            : FormState::failed("Not delivered. {$described} Copy the link above or use WhatsApp to send it yourself.");
+
+        return $this->formResponse($request, 'resend', 'staff.resend-form', $state, ['s' => $shipment]);
+    }
+
     public function show(Request $request, string $tracking)
     {
         $shipment = Shipment::with('client')->where('tracking_number', TrackingNumber::normalize($tracking))->first();
@@ -78,6 +108,7 @@ class ShipmentController extends Controller
             'log' => NotificationLog::where('shipment_id', $shipment->id)->orderByDesc('created_at')->orderByDesc('id')->limit(30)->get(),
             'isNew' => $request->query('new') !== null,
             'state' => form_state('status'),
+            'resendState' => form_state('resend'),
         ]);
     }
 

@@ -67,16 +67,18 @@ class ClientController extends Controller
             return $this->formResponse($request, "tglink{$client->id}", 'staff.telegram-link-form', FormState::failed("Telegram isn't set up yet."), $data);
         }
         $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');   // 43 URL-safe characters
-        // Tidy up: old links are of no use to anyone.
+        // Tidy up: old links are of no use to anyone, and a fresh link replaces this client's earlier unused ones.
         TelegramLinkToken::where('expires_at', '<', now()->subDays(7))->delete();
+        TelegramLinkToken::where('client_id', $client->id)->whereNull('used_at')->delete();
         TelegramLinkToken::create([
             'token_hash' => hash('sha256', $token),
             'client_id' => $client->id,
             'created_by' => $request->user()->id,
             'expires_at' => now()->addHours(config('td.telegram.link_ttl_hours')),
         ]);
-        $state = FormState::success('Link ready. It works once and expires in 48 hours. Send it only to this client.');
-        $state->values = ['link' => Telegram::connectLink($token)];
+        $link = Telegram::connectLink($token);
+        $state = FormState::success('Link ready. It works once and expires in 48 hours. Send it only to this client. Any earlier link for this client no longer works.');
+        $state->values = ['link' => $link, 'wa' => Messages::waLink($client->phone, Messages::whatsappTelegramInvite($client->full_name, $link)) ?? ''];
 
         return $this->formResponse($request, "tglink{$client->id}", 'staff.telegram-link-form', $state, $data);
     }
