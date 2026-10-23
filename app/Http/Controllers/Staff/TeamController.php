@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\FormState;
+use App\Support\Search;
 use App\Support\StaffAccounts;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,9 +13,38 @@ use Illuminate\Support\Facades\DB;
 /** Super admins add staff with a username and temporary password, reset passwords, and switch people off. */
 class TeamController extends Controller
 {
-    public function index()
+    private const PER_PAGE = 10;
+
+    /** The team list: search by name, username or email; filter by role and by active / switched off; ten a page. */
+    public function index(Request $request)
     {
-        return view('staff.team', ['team' => User::orderBy('created_at')->orderBy('id')->get(), 'state' => form_state('team')]);
+        $q = Search::text($request->query('q'));
+        $role = in_array($request->query('role'), ['admin', 'staff'], true) ? $request->query('role') : '';
+        $access = in_array($request->query('access'), ['active', 'off'], true) ? $request->query('access') : '';
+        $like = Search::like(...);
+
+        $team = User::query()
+            ->when($q !== '', function ($query) use ($q, $like) {
+                foreach (Search::words($q) as $term) {   // every word must match somewhere
+                    $query->where(function ($w) use ($term, $like) {
+                        $w->whereRaw("name LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereRaw("username LIKE ? ESCAPE '!'", [$like($term)])
+                            ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
+                    });
+                }
+            })
+            ->when($role !== '', fn ($query) => $query->where('role', $role))
+            ->when($access === 'active', fn ($query) => $query->where('active', true))
+            ->when($access === 'off', fn ($query) => $query->where('active', false))
+            ->orderBy('created_at')->orderBy('id')
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
+
+        if ($team->isEmpty() && $team->currentPage() > 1) {   // e.g. a bookmarked page that no longer exists
+            return redirect()->to($team->url(max(1, $team->lastPage())));
+        }
+
+        return view('staff.team', ['team' => $team, 'total' => User::count(), 'q' => $q, 'role' => $role, 'access' => $access, 'state' => form_state('team')]);
     }
 
     public function store(Request $request)
