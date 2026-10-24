@@ -22,6 +22,27 @@ class ListFilters
         return in_array($raw, ['connected', 'not'], true) ? $raw : '';
     }
 
+    /** The "assigned to" filter from the address: 'me', 'none' (unassigned), a person's id, or '' for anyone. */
+    public static function assignee(mixed $raw): string
+    {
+        if ($raw === 'me' || $raw === 'none') {
+            return $raw;
+        }
+
+        return is_string($raw) && ctype_digit($raw) ? $raw : '';
+    }
+
+    /** Shipments looked after by a person (or by nobody). $meId is the signed-in staff member, for 'me'. */
+    public static function assignedTo(Builder $builder, string $who, ?int $meId): Builder
+    {
+        return match (true) {
+            $who === 'none' => $builder->whereNull('assigned_to'),
+            $who === 'me' => $builder->where('assigned_to', $meId ?? 0),
+            $who !== '' => $builder->where('assigned_to', (int) $who),
+            default => $builder,
+        };
+    }
+
     /** Clients: name, company, email or phone; optionally only with / without Telegram. */
     public static function clients(Builder $builder, string $query, string $telegram = ''): Builder
     {

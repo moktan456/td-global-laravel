@@ -61,6 +61,9 @@
                         </div>
                     @endif
                 </dl>
+                <div class="mt-5 border-t border-line pt-5">
+                    @include('staff.assign-form', ['state' => $assignState, 's' => $s, 'assignees' => $assignees])
+                </div>
             </section>
             @php
                     $trackUrl = absolute_url('/track?n='.$s->tracking_number);

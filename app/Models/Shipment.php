@@ -45,6 +45,12 @@ class Shipment extends Model
         return $this->belongsTo(Client::class);
     }
 
+    /** The staff member looking after this shipment (null = nobody yet). */
+    public function assignee(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(ShipmentEvent::class)->orderBy('created_at')->orderBy('id');

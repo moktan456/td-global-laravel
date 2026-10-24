@@ -22,21 +22,25 @@ class ExportController extends Controller
     public function shipments(Request $request)
     {
         $status = ListFilters::stage($request->query('status'));
-        $query = Shipment::query()->with('client')
-            ->tap(fn ($qb) => ListFilters::shipments($qb, Search::text($request->query('q'))))
+        $query = Shipment::query()->with(['client', 'assignee'])
+            ->tap(fn ($qb) => ListFilters::assignedTo(
+                ListFilters::shipments($qb, Search::text($request->query('q'))),
+                ListFilters::assignee($request->query('assigned')),
+                $request->user()->id,
+            ))
             ->when($status !== '', fn ($qb) => $qb->where('status', $status))
             ->orderByDesc('updated_at')->orderByDesc('id');
         $methods = array_column(content('statuses.modes'), 'label', 'value');
 
         return Csv::download('shipments', [
-            'Tracking number', 'Client', 'Company', 'Email', 'Phone', 'Direction', 'Method', 'Goods', 'Stage', 'Requested by', 'Created', 'Last updated', 'Notes on the request',
+            'Tracking number', 'Client', 'Company', 'Email', 'Phone', 'Direction', 'Method', 'Goods', 'Stage', 'Requested by', 'Created', 'Last updated', 'Notes on the request', 'Assigned to',
         ], function (callable $write) use ($query, $methods) {
             $query->chunk(500, function ($shipments) use ($write, $methods) {
                 foreach ($shipments as $s) {
                     $write([
                         $s->tracking_number, $s->client?->full_name, $s->client?->company, $s->client?->email, $s->client?->phone,
                         ucfirst($s->direction), $methods[$s->mode] ?? $s->mode, $s->goods, Statuses::info($s->status)['label'],
-                        $s->requested_by === 'staff' ? 'Staff' : 'Client', $this->when($s->created_at), $this->when($s->updated_at), $s->details,
+                        $s->requested_by === 'staff' ? 'Staff' : 'Client', $this->when($s->created_at), $this->when($s->updated_at), $s->details, $s->assignee?->name,
                     ]);
                 }
             });

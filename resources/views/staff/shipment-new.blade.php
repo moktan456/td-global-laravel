@@ -2,6 +2,6 @@
 
 @section('content')
         <div class="max-w-3xl">
-            @include('staff.shipment-form', ['state' => $state, 'clients' => $clients, 'chosenClient' => $chosenClient ?? null])
+            @include('staff.shipment-form', ['state' => $state, 'clients' => $clients, 'assignees' => $assignees, 'chosenClient' => $chosenClient ?? null])
         </div>
 @endsection

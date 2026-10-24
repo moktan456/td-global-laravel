@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shipment;
+use App\Support\Assignees;
 use App\Support\ListFilters;
 use App\Support\Search;
 use Illuminate\Http\Request;
@@ -16,9 +17,12 @@ class DashboardController extends Controller
     {
         $status = ListFilters::stage($request->query('status'));
         $query = Search::text($request->query('q'));
-        $matchesSearch = fn ($qb) => ListFilters::shipments($qb, $query);
+        $assigned = ListFilters::assignee($request->query('assigned'));
+        $me = $request->user()->id;
+        // The search and the "assigned to" choice apply to the list and to the stage counts alike.
+        $matchesSearch = fn ($qb) => ListFilters::assignedTo(ListFilters::shipments($qb, $query), $assigned, $me);
 
-        $shipments = Shipment::with('client')
+        $shipments = Shipment::with(['client', 'assignee'])
             ->tap($matchesSearch)
             ->when($status, fn ($qb) => $qb->where('status', $status))
             ->orderByDesc('updated_at')->orderByDesc('id')
@@ -36,6 +40,9 @@ class DashboardController extends Controller
             'shipments' => $shipments,
             'status' => $status,
             'query' => $query,
+            'assigned' => $assigned,
+            'people' => Assignees::options(),
+            'mine' => Shipment::where('assigned_to', $me)->where('status', '!=', 'released')->count(),
             'perStage' => $perStage,
             'hasAny' => Shipment::query()->exists(),
             'inProgress' => Shipment::where('status', '!=', 'released')->count(),

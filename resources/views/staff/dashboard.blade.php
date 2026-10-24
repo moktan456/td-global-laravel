@@ -6,9 +6,9 @@
 
 @php
     // Links for the stage chips keep the search that is typed in.
-    $chipUrl = fn (string $stage) => '/staff'.(($qs = http_build_query(array_filter(['q' => $query, 'status' => $stage]))) ? '?'.$qs : '');
+    $chipUrl = fn (string $stage) => '/staff'.(($qs = http_build_query(array_filter(['q' => $query, 'status' => $stage, 'assigned' => $assigned]))) ? '?'.$qs : '');
     $everything = array_sum($perStage);
-    $exportQs = ($qs = http_build_query(array_filter(['q' => $query, 'status' => $status]))) ? '?'.$qs : '';
+    $exportQs = ($qs = http_build_query(array_filter(['q' => $query, 'status' => $status, 'assigned' => $assigned]))) ? '?'.$qs : '';
 @endphp
 
 @section('content')
@@ -21,13 +21,17 @@
         </div>
     @else
     <div class="grid gap-6">
-        {{-- Two numbers worth a glance. --}}
-        <dl class="grid grid-cols-2 gap-3 sm:gap-4 lg:max-w-xl">
-            <div class="rounded-card border border-line bg-white px-4 py-3 sm:px-5 sm:py-4">
+        {{-- Three numbers worth a glance. --}}
+        <dl class="grid grid-cols-3 gap-2 sm:gap-4 lg:max-w-2xl">
+            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
                 <dt class="text-sm text-muted">In progress</dt>
                 <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $inProgress }}</dd>
             </div>
-            <div class="rounded-card border border-line bg-white px-4 py-3 sm:px-5 sm:py-4">
+            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
+                <dt class="text-sm text-muted"><a href="/staff?assigned=me" class="underline-offset-2 hover:underline"><span class="sm:hidden">Yours</span><span class="hidden sm:inline">Looked after by you</span></a></dt>
+                <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $mine }}</dd>
+            </div>
+            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
                 <dt class="text-sm text-muted">Updated today</dt>
                 <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $updatedToday }}</dd>
             </div>
@@ -41,8 +45,21 @@
                 <label for="q" class="block font-semibold text-navy-900">Search</label>
                 <input id="q" type="search" name="q" value="{{ $query }}" placeholder="Tracking number, client, phone or goods" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
             </div>
+            <div>
+                <label for="assigned" class="block font-semibold text-navy-900">Looked after by</label>
+                <select id="assigned" name="assigned" class="mt-2 min-h-11 rounded-control border border-control bg-white px-3">
+                    <option value="">Anyone</option>
+                    <option value="me" @selected($assigned === 'me')>Me</option>
+                    <option value="none" @selected($assigned === 'none')>Nobody yet</option>
+                    @foreach ($people as $p)
+                        @if ($p['value'] !== (string) auth()->id())
+                            <option value="{{ $p['value'] }}" @selected($assigned === $p['value'])>{{ $p['label'] }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
             <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-5 font-semibold text-white hover:bg-navy-800">Search</button>
-            @if ($query !== '' || $status !== '')
+            @if ($query !== '' || $status !== '' || $assigned !== '')
                 <a href="/staff" class="inline-flex min-h-11 items-center px-2 font-semibold text-brand underline underline-offset-2">Clear</a>
             @endif
         </form>
@@ -67,7 +84,7 @@
             <p role="status" class="text-muted">
                 @if ($shipments->total() === 0)
                     No shipments match{{ $query !== '' ? ' “'.$query.'”' : '' }}.
-                @elseif ($query !== '' || $status !== '')
+                @elseif ($query !== '' || $status !== '' || $assigned !== '')
                     {{ $shipments->total() }} {{ $shipments->total() === 1 ? 'shipment matches' : 'shipments match' }}{{ $query !== '' ? ' “'.$query.'”' : '' }}. Showing {{ $shipments->firstItem() }}–{{ $shipments->lastItem() }}.
                 @else
                     Showing {{ $shipments->firstItem() }}–{{ $shipments->lastItem() }} of {{ $shipments->total() }}, most recently updated first.
@@ -81,16 +98,17 @@
             @if ($shipments->count())
                 {{-- A table on wide screens, a stack of cards on phones (no sideways scrolling). --}}
                 <div class="mt-4 overflow-hidden rounded-card border border-line bg-white">
-                    <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid md:grid-cols-[11rem_minmax(0,1.2fr)_minmax(0,1.3fr)_13rem_6.5rem]">
-                        <span>Tracking number</span><span>Client</span><span>Goods</span><span>Stage</span><span>Updated</span>
+                    <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_12rem_7.5rem_6.5rem]">
+                        <span>Tracking number</span><span>Client</span><span>Goods</span><span>Stage</span><span>Looked after by</span><span>Updated</span>
                     </div>
                     <ul class="divide-y divide-line">
                         @foreach ($shipments as $s)
-                            <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[11rem_minmax(0,1.2fr)_minmax(0,1.3fr)_13rem_6.5rem]">
+                            <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_12rem_7.5rem_6.5rem]">
                                 <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                 <p class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
                                 <p class="min-w-0 break-words text-muted md:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
                                 <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->status" /></p>
+                                <p class="min-w-0 break-words text-sm md:text-base {{ $s->assignee ? 'text-ink' : 'text-muted' }}"><span class="sr-only">Looked after by: </span>{{ $s->assignee?->name ?? 'Nobody yet' }}</p>
                                 <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                             </li>
                         @endforeach

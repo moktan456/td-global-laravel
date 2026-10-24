@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\NotificationLog;
 use App\Models\Shipment;
+use App\Models\User;
 use App\Services\Notify;
+use App\Support\Assignees;
 use App\Support\FormState;
 use App\Support\Messages;
 use App\Support\Statuses;
@@ -27,13 +29,13 @@ class ShipmentController extends Controller
 
         $chosen = $request->query('client');   // /staff/shipments/new?client=12 (from a client's page) starts with them chosen
 
-        return view('staff.shipment-new', ['clients' => $clients, 'state' => form_state('shipment'), 'chosenClient' => is_string($chosen) && ctype_digit($chosen) ? $chosen : null]);
+        return view('staff.shipment-new', ['assignees' => Assignees::options(), 'clients' => $clients, 'state' => form_state('shipment'), 'chosenClient' => is_string($chosen) && ctype_digit($chosen) ? $chosen : null]);
     }
 
     /** Staff create a clearance request on a client's behalf. */
     public function store(Request $request)
     {
-        $values = collect(['client_id', 'direction', 'mode', 'goods', 'details'])->mapWithKeys(fn ($k) => [$k => trim((string) $request->input($k, ''))])->all();
+        $values = collect(['client_id', 'direction', 'mode', 'goods', 'details', 'assigned_to'])->mapWithKeys(fn ($k) => [$k => trim((string) $request->input($k, ''))])->all();
         $errors = [];
         if ($values['client_id'] === '') {
             $errors['client_id'] = 'Choose the client.';
@@ -53,13 +55,15 @@ class ShipmentController extends Controller
         }
         $clients = fn () => Client::orderBy('full_name')->get()->map(fn ($c) => ['value' => (string) $c->id, 'label' => $c->full_name.($c->company ? " ({$c->company})" : '')." · {$c->phone}"])->all();
         if ($errors) {
-            return $this->formResponse($request, 'shipment', 'staff.shipment-form', FormState::invalid($errors, $values), ['clients' => $clients()]);
+            return $this->formResponse($request, 'shipment', 'staff.shipment-form', FormState::invalid($errors, $values), ['clients' => $clients(), 'assignees' => Assignees::options()]);
         }
 
         $shipment = Shipment::create([
             'client_id' => $client->id, 'direction' => $values['direction'], 'mode' => $values['mode'],
             'goods' => $values['goods'], 'details' => $values['details'] ?: null,
             'requested_by' => 'staff', 'created_by' => $request->user()->id,
+            // Anyone who can sign in may look after it; anything else (a stale or made-up id) leaves it unassigned.
+            'assigned_to' => $values['assigned_to'] !== '' ? User::where('active', true)->find($values['assigned_to'])?->id : null,
         ]);
         $this->notify->client(
             $client, 'tracking_number', $shipment->id,
@@ -111,6 +115,29 @@ class ShipmentController extends Controller
             'isNew' => $request->query('new') !== null,
             'state' => form_state('status'),
             'resendState' => form_state('resend'),
+            'assignState' => form_state('assign'),
+            'assignees' => Assignees::options($shipment->assigned_to),
+        ]);
+    }
+
+    /** Change who is looking after a shipment (or clear it). */
+    public function assign(Request $request, string $tracking)
+    {
+        $shipment = Shipment::with('client')->where('tracking_number', TrackingNumber::normalize($tracking))->first();
+        abort_if(! $shipment, 404);
+
+        $chosen = trim((string) $request->input('assigned_to', ''));
+        $person = $chosen !== '' ? User::where('active', true)->find($chosen) : null;
+        if ($chosen !== '' && ! $person) {
+            return $this->formResponse($request, 'assign', 'staff.assign-form', FormState::invalid(['assigned_to' => 'Choose someone from the list.'], ['assigned_to' => $chosen]), [
+                's' => $shipment, 'assignees' => Assignees::options($shipment->assigned_to),
+            ]);
+        }
+
+        $shipment->forceFill(['assigned_to' => $person?->id])->save();   // not a stage change, so nothing is added to the timeline
+
+        return $this->formResponse($request, 'assign', 'staff.assign-form', FormState::success($person ? "Assigned to {$person->name}." : 'Now unassigned.'), [
+            's' => $shipment->fresh(), 'assignees' => Assignees::options($person?->id),
         ]);
     }
 
