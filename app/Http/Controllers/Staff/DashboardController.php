@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shipment;
+use App\Support\ListFilters;
 use App\Support\Search;
-use App\Support\Statuses;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,37 +14,9 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $stage = $request->query('status');
-        $status = is_string($stage) && Statuses::exists($stage) ? $stage : '';
+        $status = ListFilters::stage($request->query('status'));
         $query = Search::text($request->query('q'));
-        $like = Search::like(...);
-
-        // Every word must match the tracking number (with or without dashes), the goods, or the client's name, company, email or phone.
-        $matchesSearch = function ($qb) use ($query, $like) {
-            if ($query === '') {
-                return $qb;
-            }
-            foreach (Search::words($query) as $term) {
-                $qb->where(function ($w) use ($term, $like) {
-                    $w->whereRaw("tracking_number LIKE ? ESCAPE '!'", [$like($term)])
-                        ->orWhereRaw("REPLACE(tracking_number, '-', '') LIKE ? ESCAPE '!'", [$like(str_replace('-', '', $term))])
-                        ->orWhereRaw("goods LIKE ? ESCAPE '!'", [$like($term)])
-                        ->orWhereHas('client', function ($c) use ($term, $like) {
-                            $c->where(function ($x) use ($term, $like) {
-                                $x->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
-                                    ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
-                                    ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
-                                $digits = Search::digits($term);
-                                if ($digits !== '') {
-                                    $x->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
-                                }
-                            });
-                        });
-                });
-            }
-
-            return $qb;
-        };
+        $matchesSearch = fn ($qb) => ListFilters::shipments($qb, $query);
 
         $shipments = Shipment::with('client')
             ->tap($matchesSearch)

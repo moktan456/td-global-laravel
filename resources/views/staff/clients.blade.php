@@ -33,7 +33,9 @@
                     <a href="/staff/clients" class="inline-flex min-h-11 items-center px-2 font-semibold text-brand underline underline-offset-2">Clear</a>
                 @endif
             </form>
-            <p role="status" class="mt-4 text-muted">
+            @php($exportQs = ($qs = http_build_query(array_filter(['q' => $q, 'telegram' => $telegramFilter]))) ? '?'.$qs : '')
+            <div class="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+            <p role="status" class="text-muted">
                 @if ($clients->total() === 0)
                     No clients match{{ $q !== '' ? ' “'.$q.'”' : '' }}.
                 @elseif ($q !== '' || $telegramFilter !== '')
@@ -42,6 +44,10 @@
                     Showing {{ $clients->firstItem() }}–{{ $clients->lastItem() }} of {{ $clients->total() }}, newest first.
                 @endif
             </p>
+            @if ($clients->total() > 0)
+                <a href="/staff/export/clients.csv{{ $exportQs }}" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-900 hover:text-white"><x-lucide name="download" class="size-4" />Export CSV<span class="sr-only"> of these clients</span></a>
+            @endif
+            </div>
 
             @if ($total === 0)
                 <div class="mt-4 rounded-card border border-dashed border-line bg-white px-6 py-10 text-center">

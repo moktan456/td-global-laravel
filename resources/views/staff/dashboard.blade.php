@@ -8,6 +8,7 @@
     // Links for the stage chips keep the search that is typed in.
     $chipUrl = fn (string $stage) => '/staff'.(($qs = http_build_query(array_filter(['q' => $query, 'status' => $stage]))) ? '?'.$qs : '');
     $everything = array_sum($perStage);
+    $exportQs = ($qs = http_build_query(array_filter(['q' => $query, 'status' => $status]))) ? '?'.$qs : '';
 @endphp
 
 @section('content')
@@ -62,6 +63,7 @@
         </nav>
 
         <div>
+            <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
             <p role="status" class="text-muted">
                 @if ($shipments->total() === 0)
                     No shipments match{{ $query !== '' ? ' “'.$query.'”' : '' }}.
@@ -71,6 +73,10 @@
                     Showing {{ $shipments->firstItem() }}–{{ $shipments->lastItem() }} of {{ $shipments->total() }}, most recently updated first.
                 @endif
             </p>
+            @if ($shipments->total() > 0)
+                <a href="/staff/export/shipments.csv{{ $exportQs }}" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-900 hover:text-white"><x-lucide name="download" class="size-4" />Export CSV<span class="sr-only"> of these shipments</span></a>
+            @endif
+            </div>
 
             @if ($shipments->count())
                 {{-- A table on wide screens, a stack of cards on phones (no sideways scrolling). --}}

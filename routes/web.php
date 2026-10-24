@@ -55,6 +55,8 @@ Route::prefix('staff')->group(function () {
         Route::get('shipments/{tracking}', [Staff\ShipmentController::class, 'show'])->name('staff.shipments.show');
         Route::post('shipments/{tracking}/status', [Staff\ShipmentController::class, 'updateStatus'])->name('staff.shipments.status');
         Route::post('shipments/{tracking}/resend', [Staff\ShipmentController::class, 'resendTracking'])->name('staff.shipments.resend');
+        Route::get('export/shipments.csv', [Staff\ExportController::class, 'shipments'])->name('staff.export.shipments');
+        Route::get('export/clients.csv', [Staff\ExportController::class, 'clients'])->name('staff.export.clients');
         Route::get('clients', [Staff\ClientController::class, 'index'])->name('staff.clients');
         Route::post('clients', [Staff\ClientController::class, 'store'])->name('staff.clients.store');
         Route::get('clients/{client}', [Staff\ClientController::class, 'show'])->whereNumber('client')->name('staff.clients.show');

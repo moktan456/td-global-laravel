@@ -9,6 +9,7 @@ use App\Models\TelegramLinkToken;
 use App\Services\Mailer;
 use App\Services\Telegram;
 use App\Support\FormState;
+use App\Support\ListFilters;
 use App\Support\Messages;
 use App\Support\Search;
 use App\Support\TrackingNumber;
@@ -22,25 +23,10 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         $q = Search::text($request->query('q'));
-        $telegramFilter = in_array($request->query('telegram'), ['connected', 'not'], true) ? $request->query('telegram') : '';
-        $like = Search::like(...);
+        $telegramFilter = ListFilters::telegram($request->query('telegram'));
 
         $clients = Client::query()
-            ->when($q !== '', function ($query) use ($q, $like) {
-                foreach (Search::words($q) as $term) {   // every word must match somewhere
-                    $query->where(function ($w) use ($term, $like) {
-                        $w->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
-                            ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
-                            ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
-                        $digits = Search::digits($term);
-                        if ($digits !== '') {                  // phone numbers are stored as +97517975757
-                            $w->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
-                        }
-                    });
-                }
-            })
-            ->when($telegramFilter === 'connected', fn ($query) => $query->whereNotNull('telegram_chat_id'))
-            ->when($telegramFilter === 'not', fn ($query) => $query->whereNull('telegram_chat_id'))
+            ->tap(fn ($qb) => ListFilters::clients($qb, $q, $telegramFilter))
             ->orderByDesc('created_at')->orderByDesc('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString();
