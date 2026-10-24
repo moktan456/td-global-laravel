@@ -33,9 +33,9 @@ class TeamSearchTest extends TestCase
         $this->person('Switched Off', 'off.person', ['active' => false]);
         $this->actingAs($this->admin(['name' => 'Boss Admin', 'username' => 'boss']));
 
-        $this->get('/staff/team?role=admin')->assertSee('Username: boss')->assertDontSee('Zangmo Tester');
-        $this->get('/staff/team?role=staff')->assertSee('Zangmo Tester')->assertDontSee('Username: boss');
-        $this->get('/staff/team?access=off')->assertSee('Switched Off')->assertDontSee('Zangmo Tester')->assertDontSee('Username: boss');
+        $this->get('/staff/team?role=admin')->assertSee('>boss</p>', false)->assertDontSee('Zangmo Tester');
+        $this->get('/staff/team?role=staff')->assertSee('Zangmo Tester')->assertDontSee('>boss</p>', false);
+        $this->get('/staff/team?access=off')->assertSee('Switched Off')->assertDontSee('Zangmo Tester')->assertDontSee('>boss</p>', false);
         $this->get('/staff/team?access=active&role=staff')->assertSee('Zangmo Tester')->assertDontSee('Switched Off');
     }
 

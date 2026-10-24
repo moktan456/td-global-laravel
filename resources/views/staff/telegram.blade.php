@@ -6,14 +6,9 @@
     $botUser = $botOk ? ($bot['result']['username'] ?? '?') : null;
 @endphp
 
-@section('content')
-        <div class="grid max-w-3xl gap-8">
-            <section aria-labelledby="checks" class="rounded-card border border-line bg-white p-6">
-                <h2 id="checks" class="font-display text-2xl font-semibold text-navy-900">Set-up checklist</h2>
-                <ul class="mt-2 divide-y divide-line">
-                    @php
-                        $row = function (string $label, bool $ok, ?string $detail = null) {
-                            return compact('label', 'ok', 'detail');
+@php
+                        $row = function (string $label, bool $ok, ?string $detail = null, bool $optional = false) {
+                            return compact('label', 'ok', 'detail', 'optional');
                         };
                         $items = [
                             $row('Bot token (TELEGRAM_BOT_TOKEN)', $hasToken, $hasToken ? null : 'Add it to .env, then clear the config cache.'),
@@ -31,14 +26,39 @@
                         if ($hookOk && ! empty($hook['result']['last_error_message'])) {
                             $items[] = $row('Last delivery error from Telegram', false, $hook['result']['last_error_message']);
                         }
-                        $items[] = $row('Staff alert group (TELEGRAM_STAFF_CHAT_ID)', $hasStaffChat, $hasStaffChat ? null : 'Optional. Add the bot to your team\'s group, send /chatid there, and put the number it replies with in .env.');
-                    @endphp
+                        $items[] = $row('Staff alert group (TELEGRAM_STAFF_CHAT_ID)', $hasStaffChat, $hasStaffChat ? null : 'Optional. Add the bot to your team\'s group, send /chatid there, and put the number it replies with in .env.', true);
+@endphp
+@php($open = collect($items)->filter(fn ($i) => ! $i['ok'] && ! $i['optional'])->count())
+
+@section('content')
+        <div class="grid max-w-3xl gap-6">
+        @if ($open === 0)
+            <div role="status" class="flex max-w-3xl items-start gap-3 rounded-card border border-success/40 bg-success/10 p-5">
+                <x-lucide name="circle-check" class="mt-0.5 size-6 shrink-0 text-success" />
+                <div><p class="font-semibold text-navy-900">Telegram is ready</p><p class="text-muted">The bot is set up and connected. Clients can connect from their page and receive updates.</p></div>
+            </div>
+        @else
+            <div role="status" class="flex max-w-3xl items-start gap-3 rounded-card border border-error/40 bg-error/10 p-5">
+                <x-lucide name="circle-alert" class="mt-0.5 size-6 shrink-0 text-error" />
+                <div><p class="font-semibold text-navy-900">{{ $open }} {{ $open === 1 ? 'step needs' : 'steps need' }} attention</p><p class="text-muted">Clients can't use Telegram until the steps below are done.</p></div>
+            </div>
+        @endif
+            <section aria-labelledby="checks" class="rounded-card border border-line bg-white p-6">
+                <h2 id="checks" class="font-display text-2xl font-semibold text-navy-900">Set-up checklist</h2>
+                <ul class="mt-2 divide-y divide-line">
                     @foreach ($items as $it)
                         <li class="flex items-start gap-3 py-3">
-                            <span aria-hidden="true" class="mt-0.5 font-bold {{ $it['ok'] ? 'text-success' : 'text-error' }}">{{ $it['ok'] ? '✓' : '✗' }}</span>
-                            <span>
+                            @if ($it['ok'])
+                                <x-lucide name="circle-check" class="mt-0.5 size-5 shrink-0 text-success" />
+                            @elseif ($it['optional'])
+                                <x-lucide name="circle-slash" class="mt-0.5 size-5 shrink-0 text-muted" />
+                            @else
+                                <x-lucide name="circle-alert" class="mt-0.5 size-5 shrink-0 text-error" />
+                            @endif
+                            <span class="min-w-0">
                                 <span class="font-semibold text-navy-900">{{ $it['label'] }}</span>
-                                <span class="sr-only">{{ $it['ok'] ? ' — done' : ' — not done' }}</span>
+                                @if ($it['optional'])<span class="ml-2 rounded-full bg-sand px-2 py-0.5 text-xs font-semibold text-muted">Optional</span>@endif
+                                <span class="sr-only">{{ $it['ok'] ? ' — done' : ($it['optional'] ? ' — not set up (optional)' : ' — not done') }}</span>
                                 @if ($it['detail'])
                                     <span class="block text-muted">{{ $it['detail'] }}</span>
                                 @endif
