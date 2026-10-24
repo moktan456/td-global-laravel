@@ -20,28 +20,35 @@ class DashboardController extends Controller
         $like = Search::like(...);
 
         // Every word must match the tracking number (with or without dashes), the goods, or the client's name, company, email or phone.
-        $shipments = Shipment::with('client')
-            ->when($status, fn ($qb) => $qb->where('status', $status))
-            ->when($query !== '', function ($qb) use ($query, $like) {
-                foreach (Search::words($query) as $term) {
-                    $qb->where(function ($w) use ($term, $like) {
-                        $w->whereRaw("tracking_number LIKE ? ESCAPE '!'", [$like($term)])
-                            ->orWhereRaw("REPLACE(tracking_number, '-', '') LIKE ? ESCAPE '!'", [$like(str_replace('-', '', $term))])
-                            ->orWhereRaw("goods LIKE ? ESCAPE '!'", [$like($term)])
-                            ->orWhereHas('client', function ($c) use ($term, $like) {
-                                $c->where(function ($x) use ($term, $like) {
-                                    $x->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
-                                        ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
-                                        ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
-                                    $digits = Search::digits($term);
-                                    if ($digits !== '') {
-                                        $x->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
-                                    }
-                                });
+        $matchesSearch = function ($qb) use ($query, $like) {
+            if ($query === '') {
+                return $qb;
+            }
+            foreach (Search::words($query) as $term) {
+                $qb->where(function ($w) use ($term, $like) {
+                    $w->whereRaw("tracking_number LIKE ? ESCAPE '!'", [$like($term)])
+                        ->orWhereRaw("REPLACE(tracking_number, '-', '') LIKE ? ESCAPE '!'", [$like(str_replace('-', '', $term))])
+                        ->orWhereRaw("goods LIKE ? ESCAPE '!'", [$like($term)])
+                        ->orWhereHas('client', function ($c) use ($term, $like) {
+                            $c->where(function ($x) use ($term, $like) {
+                                $x->whereRaw("full_name LIKE ? ESCAPE '!'", [$like($term)])
+                                    ->orWhereRaw("company LIKE ? ESCAPE '!'", [$like($term)])
+                                    ->orWhereRaw("email LIKE ? ESCAPE '!'", [$like($term)]);
+                                $digits = Search::digits($term);
+                                if ($digits !== '') {
+                                    $x->orWhereRaw("phone LIKE ? ESCAPE '!'", [$like($digits)]);
+                                }
                             });
-                    });
-                }
-            })
+                        });
+                });
+            }
+
+            return $qb;
+        };
+
+        $shipments = Shipment::with('client')
+            ->tap($matchesSearch)
+            ->when($status, fn ($qb) => $qb->where('status', $status))
             ->orderByDesc('updated_at')->orderByDesc('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString();
@@ -50,6 +57,16 @@ class DashboardController extends Controller
             return redirect()->to($shipments->url(max(1, $shipments->lastPage())));
         }
 
-        return view('staff.dashboard', ['shipments' => $shipments, 'status' => $status, 'query' => $query, 'total' => Shipment::count()]);
+        // How many shipments sit at each stage, within the current search (the stage chips above the list).
+        $perStage = Shipment::query()->tap($matchesSearch)->selectRaw('status, COUNT(*) as n')->groupBy('status')->pluck('n', 'status')->all();
+
+        return view('staff.dashboard', [
+            'shipments' => $shipments,
+            'status' => $status,
+            'query' => $query,
+            'perStage' => $perStage,
+            'inProgress' => Shipment::where('status', '!=', 'released')->count(),
+            'updatedToday' => Shipment::where('updated_at', '>=', now('Asia/Thimphu')->startOfDay()->setTimezone(config('app.timezone')))->count(),
+        ]);
     }
 }

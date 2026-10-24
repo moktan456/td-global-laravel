@@ -25,12 +25,22 @@ class Ui
     private const CARD_LIFT = 'transition-[translate,box-shadow,border-color,background-color] duration-(--duration-enter) ease-out-quart '
         .'hover:-translate-y-1 hover:shadow-lift focus-within:-translate-y-1 focus-within:shadow-lift';
 
+    /** Filter chips (stage filters on the staff Shipments page): on = the chosen one, off = another choice, empty = a choice with nothing in it. */
+    private const CHIP_BASE = 'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.9375rem] font-semibold transition-colors duration-150';
+
+    private const CHIP_VARIANTS = [
+        'on' => 'border-navy-900 bg-navy-900 text-white',
+        'off' => 'border-line bg-white text-navy-900 hover:border-navy-900',
+        'empty' => 'border-line bg-white text-muted hover:border-navy-900 hover:text-navy-900',
+    ];
+
     private const PHOTO_FRAME = 'group relative overflow-hidden rounded-card';
 
     public static function class(string $name, string $variant = 'primary'): string
     {
         return match ($name) {
             'button' => self::BUTTON_BASE.' '.(self::BUTTON_VARIANTS[$variant] ?? self::BUTTON_VARIANTS['primary']),
+            'chip' => self::CHIP_BASE.' '.(self::CHIP_VARIANTS[$variant] ?? self::CHIP_VARIANTS['off']),
             'cardLift' => self::CARD_LIFT,
             'photoFrame' => self::PHOTO_FRAME,
             default => '',
