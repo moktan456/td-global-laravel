@@ -3,7 +3,7 @@
 @section('content')
 
         {{-- Registering is occasional, the list is daily: the form folds away (and opens by itself after a submit, to show the result). --}}
-        <details id="register-client" @if ($state->status !== 'idle') open @endif class="rounded-card border border-line bg-white p-5">
+        <details id="register-client" @if ($state->status !== 'idle' || $total === 0) open @endif class="rounded-card border border-line bg-white p-5">
             <summary class="min-h-11 cursor-pointer py-2 font-display text-xl font-semibold text-navy-900">Register a new client</summary>
             <p class="mt-2 text-muted">For clients who call in. Their tracking numbers are sent to this email.</p>
             <div class="mt-5 max-w-3xl">
@@ -43,7 +43,13 @@
                 @endif
             </p>
 
-            @if ($clients->count())
+            @if ($total === 0)
+                <div class="mt-4 rounded-card border border-dashed border-line bg-white px-6 py-10 text-center">
+                    <x-lucide name="users" class="mx-auto size-10 text-navy-900" />
+                    <p class="mt-3 font-display text-2xl font-semibold text-navy-900">No clients yet</p>
+                    <p class="mt-1 text-muted">Register the first one above. Their tracking numbers are sent to the email you enter.</p>
+                </div>
+            @elseif ($clients->count())
                 {{-- One quiet row per client; the Telegram tools live in a menu on the row. (No overflow clipping here: the menu hangs below its row.) --}}
                 <div class="mt-4 rounded-card border border-line bg-white">
                     <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid {{ $telegram ? 'md:grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)_9rem_8.5rem]' : 'md:grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)]' }} rounded-t-card">
@@ -59,11 +65,12 @@
                                     @endif
                                 </div>
                                 <div class="min-w-0 text-muted">
-                                    <p class="break-all">{{ $c->email }}</p>
-                                    <p>{{ $c->phone }}</p>
+                                    <p class="break-all"><span class="sr-only">Email: </span>{{ $c->email }}</p>
+                                    <p><span class="sr-only">Phone: </span>{{ $c->phone }}</p>
                                 </div>
                                 @if ($telegram)
                                     <div>
+                                        <span class="sr-only">Telegram: </span>
                                         @if ($c->telegram_chat_id && $c->notify_telegram)
                                             <span class="inline-flex items-center rounded-full bg-success/15 px-3 py-1 text-sm font-semibold text-success">Connected</span>
                                         @elseif ($c->telegram_chat_id)

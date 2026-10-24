@@ -65,6 +65,7 @@ class DashboardController extends Controller
             'status' => $status,
             'query' => $query,
             'perStage' => $perStage,
+            'hasAny' => Shipment::query()->exists(),
             'inProgress' => Shipment::where('status', '!=', 'released')->count(),
             'updatedToday' => Shipment::where('updated_at', '>=', now('Asia/Thimphu')->startOfDay()->setTimezone(config('app.timezone')))->count(),
         ]);

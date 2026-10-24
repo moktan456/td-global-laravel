@@ -59,9 +59,9 @@
                             @foreach ($shipments as $s)
                                 <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[11rem_minmax(0,1.4fr)_13rem_6.5rem]">
                                     <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
-                                    <p class="min-w-0 break-words">{{ $s->goods }}<span class="block text-sm capitalize text-muted">{{ $s->direction }} · {{ $s->mode }} freight</span></p>
-                                    <p><x-status-badge :status="$s->status" /></p>
-                                    <p class="text-sm text-muted md:text-base">{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
+                                    <p class="min-w-0 break-words"><span class="sr-only">Goods: </span>{{ $s->goods }}<span class="block text-sm capitalize text-muted">{{ $s->direction }} · {{ $s->mode }} freight</span></p>
+                                    <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->status" /></p>
+                                    <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                                 </li>
                             @endforeach
                         </ul>

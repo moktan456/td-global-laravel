@@ -63,6 +63,7 @@
                                     <p class="break-all text-muted">{{ $m->username ?: $m->email }}</p>
                                 </div>
                                 <div>
+                                    <span class="sr-only">Role: </span>
                                     @if ($m->role === 'admin')
                                         <span class="inline-flex items-center rounded-full bg-navy-900 px-3 py-1 text-sm font-semibold text-white">Super admin</span>
                                     @else
@@ -70,6 +71,7 @@
                                     @endif
                                 </div>
                                 <div>
+                                    <span class="sr-only">Status: </span>
                                     @if ($m->active)
                                         <span class="inline-flex items-center rounded-full bg-success/15 px-3 py-1 text-sm font-semibold text-success">Active</span>
                                     @else
@@ -79,7 +81,7 @@
                                         <p class="mt-1 text-sm text-muted">Temporary password</p>
                                     @endif
                                 </div>
-                                <p class="text-sm text-muted md:text-base">{{ $m->created_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
+                                <p class="text-sm text-muted md:text-base"><span class="sr-only">Added </span>{{ $m->created_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                                 <details data-menu class="relative md:justify-self-end">
                                     <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 hover:bg-sand [&::-webkit-details-marker]:hidden">
                                         Manage<x-lucide name="chevron-down" class="size-4" /><span class="sr-only"> {{ $m->name }}</span>

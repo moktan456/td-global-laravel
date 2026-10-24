@@ -11,6 +11,14 @@
 @endphp
 
 @section('content')
+    @if (! $hasAny)
+        <div class="mx-auto max-w-xl rounded-card border border-dashed border-line bg-white px-6 py-12 text-center">
+            <x-lucide name="package-plus" class="mx-auto size-10 text-navy-900" />
+            <p class="mt-4 font-display text-2xl font-semibold text-navy-900">No shipments yet</p>
+            <p class="mt-2 text-muted">Create the first request. The tracking number goes straight to the client, and the shipment shows up here.</p>
+            <div class="mt-6"><x-button-link href="/staff/shipments/new">New request</x-button-link></div>
+        </div>
+    @else
     <div class="grid gap-6">
         {{-- Two numbers worth a glance. --}}
         <dl class="grid grid-cols-2 gap-3 sm:gap-4 lg:max-w-xl">
@@ -74,10 +82,10 @@
                         @foreach ($shipments as $s)
                             <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[11rem_minmax(0,1.2fr)_minmax(0,1.3fr)_13rem_6.5rem]">
                                 <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
-                                <p class="min-w-0 break-words">{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
-                                <p class="min-w-0 break-words text-muted md:text-ink">{{ $s->goods }}</p>
-                                <p><x-status-badge :status="$s->status" /></p>
-                                <p class="text-sm text-muted md:text-base">{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
+                                <p class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
+                                <p class="min-w-0 break-words text-muted md:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
+                                <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->status" /></p>
+                                <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                             </li>
                         @endforeach
                     </ul>
@@ -86,4 +94,5 @@
             <x-pager :paginator="$shipments" label="shipments" />
         </div>
     </div>
+    @endif
 @endsection

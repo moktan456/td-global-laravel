@@ -61,6 +61,7 @@ class ShipmentChipsTest extends TestCase
 
     public function test_the_search_box_keeps_the_chosen_stage(): void
     {
+        $this->shipment();   // the search box only shows once there is something to search
         $html = $this->actingAs($this->staff())->get('/staff?status=released')->getContent();
         $this->assertStringContainsString('<input type="hidden" name="status" value="released">', $html);
     }

@@ -104,6 +104,7 @@ class ClientPageTest extends TestCase
 
     public function test_registering_a_client_folds_away_until_needed(): void
     {
+        $this->client();   // with no clients at all the form starts open, so there must be one
         $closed = $this->actingAs($this->staff())->get('/staff/clients')->assertOk()->assertSee('Register a new client')->getContent();
         preg_match('/<details id="register-client"[^>]*>/', $closed, $m);
         $this->assertStringNotContainsString(' open', $m[0]);

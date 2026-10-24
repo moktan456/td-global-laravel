@@ -3,10 +3,12 @@
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureStaff;
 use App\Http\Middleware\JsxWhitespace;
+use App\Support\FormState;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,4 +29,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Inside the staff workspace, errors look like the workspace, not the public website.
+        $exceptions->render(function (HttpExceptionInterface $e, Request $request) {
+            if (! $request->is('staff', 'staff/*') || $request->expectsJson()) {
+                return null;
+            }
+            if ($e->getStatusCode() === 404 && auth()->check()) {
+                return response()->view('errors.staff-404', [], 404);
+            }
+            if ($e->getStatusCode() === 419) {   // the page sat open until the session ended
+                session()->flash('forms.login', FormState::failed('Your session ended. Please sign in again.')->toArray());
+
+                return redirect('/staff/login');
+            }
+
+            return null;
+        });
     })->create();
