@@ -59,15 +59,25 @@ class ClientController extends Controller
         ]);
     }
 
-    /** One client with every request made for them (newest first, fifteen a page). */
-    public function show(Client $client)
+    /** One client: their requests (the default tab), their Telegram connection, and their details. */
+    public function show(Request $request, Client $client)
     {
-        $shipments = Shipment::where('client_id', $client->id)
-            ->orderByDesc('updated_at')->orderByDesc('id')
-            ->paginate(15)
-            ->withQueryString();
+        $telegram = Telegram::configured();
+        $tab = $request->query('tab');
+        $tab = in_array($tab, ['requests', 'telegram', 'details'], true) && ($tab !== 'telegram' || $telegram) ? $tab : 'requests';
 
-        return view('staff.client-show', ['client' => $client, 'shipments' => $shipments, 'telegram' => Telegram::configured()]);
+        $shipments = $tab === 'requests'
+            ? Shipment::where('client_id', $client->id)->orderByDesc('updated_at')->orderByDesc('id')->paginate(15)->withQueryString()
+            : null;
+
+        return view('staff.client-show', [
+            'client' => $client,
+            'tab' => $tab,
+            'shipments' => $shipments,
+            'telegram' => $telegram,
+            'requestCount' => $shipments?->total() ?? Shipment::where('client_id', $client->id)->count(),
+            'inProgress' => Shipment::where('client_id', $client->id)->where('status', '!=', 'released')->count(),
+        ]);
     }
 
     /** Staff register a client on their behalf (e.g. after a phone call). */
