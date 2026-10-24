@@ -1,12 +1,9 @@
-@extends('layouts.app', ['title' => 'Clients', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => 'Clients'])
 
 @section('content')
-    <x-page-header title="Clients" :crumbs="[['label' => 'Staff', 'href' => '/staff'], ['label' => 'Clients']]" />
-    <x-container class="py-10">
-        <x-staff-nav current="/staff/clients" :name="auth()->user()->name" :role="auth()->user()->role" />
 
         {{-- Registering is occasional, the list is daily: the form folds away (and opens by itself after a submit, to show the result). --}}
-        <details id="register-client" @if ($state->status !== 'idle') open @endif class="mt-8 rounded-card border border-line bg-white p-5">
+        <details id="register-client" @if ($state->status !== 'idle') open @endif class="rounded-card border border-line bg-white p-5">
             <summary class="min-h-11 cursor-pointer py-2 font-display text-xl font-semibold text-navy-900">Register a new client</summary>
             <p class="mt-2 text-muted">For clients who call in. Their tracking numbers are sent to this email.</p>
             <div class="mt-5 max-w-3xl">
@@ -104,5 +101,4 @@
             @endif
             <x-pager :paginator="$clients" label="clients" />
         </section>
-    </x-container>
 @endsection

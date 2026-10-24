@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Telegram', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => 'Telegram'])
 
 @php
     $rows = [];
@@ -7,10 +7,7 @@
 @endphp
 
 @section('content')
-    <x-page-header title="Telegram" :crumbs="[['label' => 'Staff', 'href' => '/staff'], ['label' => 'Telegram']]" />
-    <x-container class="py-10">
-        <x-staff-nav current="/staff/telegram" :name="auth()->user()->name" :role="auth()->user()->role" />
-        <div class="mt-8 grid max-w-3xl gap-8">
+        <div class="grid max-w-3xl gap-8">
             <section aria-labelledby="checks" class="rounded-card border border-line bg-white p-6">
                 <h2 id="checks" class="font-display text-2xl font-semibold text-navy-900">Set-up checklist</h2>
                 <ul class="mt-2 divide-y divide-line">
@@ -68,5 +65,4 @@
                 </p>
             @endif
         </div>
-    </x-container>
 @endsection

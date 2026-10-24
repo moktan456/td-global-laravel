@@ -1,15 +1,14 @@
-@extends('layouts.app', ['title' => 'Shipment', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => $s->tracking_number, 'subtitle' => $s->goods, 'crumbs' => [['label' => 'Shipments', 'href' => '/staff'], ['label' => $s->tracking_number]]])
+
+@section('actions')
+    <x-status-badge :status="$s->status" />
+@endsection
 
 @section('content')
-    <x-page-header :title="$s->tracking_number" :crumbs="[['label' => 'Staff', 'href' => '/staff'], ['label' => $s->tracking_number]]">
-        <x-slot:intro><p>{{ $s->goods }}</p></x-slot:intro>
-    </x-page-header>
-    <x-container class="py-10">
-        <x-staff-nav current="" :name="auth()->user()->name" :role="auth()->user()->role" />
         @if ($isNew)
-            <p role="status" class="mt-6 rounded-tile bg-sand p-4 font-semibold text-navy-900">Request created. The tracking number has been sent to the client. See Notifications below for what was delivered.</p>
+            <p role="status" class="mb-6 rounded-tile bg-sand p-4 font-semibold text-navy-900">Request created. The tracking number has been sent to the client. See Notifications below for what was delivered.</p>
         @endif
-        <div class="mt-8 grid gap-10 lg:grid-cols-2">
+        <div class="grid gap-8 lg:grid-cols-2">
             <div class="grid gap-8 self-start">
                 <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-card border border-line bg-white p-6">
                     <dt class="text-muted">Stage</dt>
@@ -79,5 +78,4 @@
                 </section>
             </div>
         </div>
-    </x-container>
 @endsection

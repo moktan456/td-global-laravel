@@ -1,11 +1,7 @@
-@extends('layouts.app', ['title' => 'New request', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => 'New request', 'crumbs' => [['label' => 'Shipments', 'href' => '/staff'], ['label' => 'New request']]])
 
 @section('content')
-    <x-page-header title="New request on a client's behalf" :crumbs="[['label' => 'Staff', 'href' => '/staff'], ['label' => 'New request']]" />
-    <x-container class="py-10">
-        <x-staff-nav current="/staff/shipments/new" :name="auth()->user()->name" :role="auth()->user()->role" />
-        <div class="mt-8 max-w-3xl">
+        <div class="max-w-3xl">
             @include('staff.shipment-form', ['state' => $state, 'clients' => $clients, 'chosenClient' => $chosenClient ?? null])
         </div>
-    </x-container>
 @endsection

@@ -1,10 +1,11 @@
-@extends('layouts.app', ['title' => 'Shipments', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => 'Shipments'])
+
+@section('actions')
+    <x-button-link href="/staff/shipments/new"><x-lucide name="plus" class="mr-2 size-5" />New request</x-button-link>
+@endsection
 
 @section('content')
-    <x-page-header title="Shipments" :crumbs="[['label' => 'Staff']]" />
-    <x-container class="py-10">
-        <x-staff-nav current="/staff" :name="auth()->user()->name" :role="auth()->user()->role" />
-        <form class="mt-6 flex flex-wrap items-end gap-4" role="search" aria-label="Search shipments" method="get" action="/staff">
+        <form class="flex flex-wrap items-end gap-4" role="search" aria-label="Search shipments" method="get" action="/staff">
             <div class="min-w-56 flex-1 basis-64">
                 <label for="q" class="block font-semibold text-navy-900">Search</label>
                 <input id="q" type="search" name="q" value="{{ $query }}" placeholder="Tracking number, client, phone or goods" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
@@ -61,5 +62,4 @@
             </table>
         </div>
         <x-pager :paginator="$shipments" label="shipments" />
-    </x-container>
 @endsection

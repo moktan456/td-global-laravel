@@ -1,8 +1,5 @@
-@extends('layouts.app', ['title' => 'Staff sign in', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff-auth', ['title' => 'Staff sign in', 'lead' => 'Sign in with the username and password you were given.'])
 
 @section('content')
-    <x-page-header title="Staff sign in" :crumbs="[['label' => 'Staff sign in']]" />
-    <x-container class="max-w-xl py-16">
-        @include('staff.login-form', ['state' => $state])
-    </x-container>
+    @include('staff.login-form', ['state' => $state])
 @endsection

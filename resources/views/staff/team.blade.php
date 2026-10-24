@@ -1,10 +1,7 @@
-@extends('layouts.app', ['title' => 'Team', 'robots' => 'noindex, nofollow'])
+@extends('layouts.staff', ['title' => 'Team'])
 
 @section('content')
-    <x-page-header title="Team" :crumbs="[['label' => 'Staff', 'href' => '/staff'], ['label' => 'Team']]" />
-    <x-container class="py-10">
-        <x-staff-nav current="/staff/team" :name="auth()->user()->name" :role="auth()->user()->role" />
-        <div class="mt-8 grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+        <div class="grid gap-8 lg:grid-cols-[1fr_1.2fr]">
             <section aria-labelledby="add-heading" class="self-start rounded-card border border-line bg-white p-6">
                 <h2 id="add-heading" class="font-display text-2xl font-semibold text-navy-900">Add a staff member</h2>
                 <p class="mt-2 text-muted">They sign in with this username and password at the staff sign-in page.</p>
@@ -62,5 +59,4 @@
                 <x-pager :paginator="$team" label="people" />
             </section>
         </div>
-    </x-container>
 @endsection

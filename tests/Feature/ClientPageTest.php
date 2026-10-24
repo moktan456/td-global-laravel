@@ -91,7 +91,8 @@ class ClientPageTest extends TestCase
         $html = $this->actingAs($this->staff())->get('/staff/clients')->assertOk()
             ->assertSee('Connected')->assertSee('Not connected')->assertSee('Create Telegram link')->assertSee('Copy bot link')->getContent();
 
-        $this->assertSame(2, substr_count($html, '<details data-menu'), 'one Telegram menu per client');
+        $content = substr($html, strpos($html, '<main id="main"'));
+        $this->assertSame(2, substr_count($content, '<details data-menu'), 'one Telegram menu per client');
         // the tools sit inside the menu panels, not loose in the list
         foreach (['Copy bot link', 'Create Telegram link', 'Create a new connect link'] as $tool) {
             $at = strpos($html, $tool);
@@ -110,5 +111,32 @@ class ClientPageTest extends TestCase
         $opened = $this->withSession(['forms.client' => FormState::success('Client registered.')->toArray()])->get('/staff/clients')->getContent();
         preg_match('/<details id="register-client"[^>]*>/', $opened, $m);
         $this->assertStringContainsString(' open', $m[0], 'open after a submit so the result is seen');
+    }
+
+    public function test_staff_pages_use_the_workspace_frame_not_the_public_site_frame(): void
+    {
+        $this->actingAs($this->staff());
+        foreach (['/staff' => 'Shipments', '/staff/clients' => 'Clients', '/staff/shipments/new' => 'New request'] as $url => $title) {
+            $html = $this->get($url)->assertOk()->getContent();
+            $this->assertMatchesRegularExpression('#<h1[^>]*>'.preg_quote($title, '#').'</h1>#', $html, "{$url} has its own title");
+            $this->assertStringContainsString('Staff workspace', $html);
+            $this->assertStringNotContainsString('Request a quote', $html, 'no public footer');
+            $this->assertStringNotContainsString('Cost calculator', $html, 'no public menu');
+            $this->assertStringNotContainsString('on-dark bg-navy-900 text-white">', $html, 'no big banner');
+        }
+    }
+
+    public function test_the_sign_in_page_is_a_plain_card(): void
+    {
+        $html = $this->get('/staff/login')->assertOk()->assertSee('Staff sign in')->getContent();
+        $this->assertStringNotContainsString('Cost calculator', $html);
+        $this->assertStringNotContainsString('Request a quote', $html);
+        $this->assertStringNotContainsString('Staff workspace', $html, 'no sidebar before sign-in');
+    }
+
+    public function test_admin_links_show_only_to_super_admins(): void
+    {
+        $this->actingAs($this->staff())->get('/staff')->assertDontSee('/staff/team')->assertDontSee('/staff/telegram');
+        $this->actingAs($this->admin())->get('/staff')->assertSee('/staff/team', false)->assertSee('/staff/telegram', false);
     }
 }

@@ -1,0 +1,36 @@
+@php
+    // Sign-in and "choose your password": a plain centred card, no site frame and no banner. Needs $title; optional $lead.
+@endphp
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title }} · Staff · {{ site('shortName') }}</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#14224a">
+    <link rel="icon" href="/icon.png" type="image/png" sizes="512x512">
+    <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="min-h-dvh bg-ivory antialiased">
+    <a href="#main" class="sr-only z-[100] rounded-control bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to main content</a>
+    <main id="main" tabindex="-1" class="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-4 py-10 focus:outline-none sm:px-0">
+        <a href="/" class="mx-auto inline-flex min-h-11 items-center rounded-control">
+            <img src="/brand/logo.png" alt="" width="974" height="466" class="h-16 w-auto">
+            <span class="sr-only">{{ site('name') }} — website</span>
+        </a>
+        <div class="mt-6 rounded-card border border-line bg-white p-6 shadow-sm sm:p-8">
+            <h1 class="font-display text-2xl font-semibold text-navy-900">{{ $title }}</h1>
+            @if (! empty($lead))
+                <p class="mt-2 text-muted">{{ $lead }}</p>
+            @endif
+            <div class="mt-6">
+                @yield('content')
+            </div>
+        </div>
+        <p class="mt-6 text-center text-sm text-muted">TD Global staff area · <a href="/" class="underline underline-offset-4 hover:text-navy-900">Back to the website</a></p>
+    </main>
+</body>
+</html>
