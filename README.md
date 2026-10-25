@@ -23,6 +23,8 @@ A complete rebuild of the Next.js site ([`Edulink-Trading-Website`](https://gith
 
 **Transport tracking (optional per shipment):** besides the customs stages, a shipment can also follow a six-stage transport track (pickup to delivery), with carrier and vehicle details, an expected delivery date and a proof of delivery. Staff switch each track on or off; clients see a progress line per track.
 
+**Staff workspace:** a sidebar workspace (Shipments, New request, Clients, and for super admins Team and Telegram). Find a shipment from anywhere (press `/`, type a tracking number or just its 6-character code), search, sort and filter by stage, change a shipment's stage straight from the list, export CSV, assign shipments to team members, and switch to compact rows. A light or dark theme follows the device and can be changed in the account menu. On phones the filters fold away and shipment pages have a jump bar.
+
 **Notifications:** email (plain text) and Telegram to clients, per client preference; Telegram bot commands `/start`, `/status`, `/stop`, `/chatid`.
 
 ## Run it on your computer
@@ -63,7 +65,7 @@ See **[docs/DEPLOY.md](docs/DEPLOY.md)** (cPanel shared hosting, step by step, i
 
 ## Environment settings
 
-All in `.env` (see `.env.example`): database, mail (`MAIL_*`), `SITE_URL`, `FORM_WEBHOOK_URL` (optional), `TELEGRAM_*`, search-engine verification codes.
+All in `.env` (see `.env.example`): database, mail (`MAIL_*`), `SITE_URL`, `FORM_WEBHOOK_URL` (optional), `TELEGRAM_*`, search-engine verification codes, and `TD_HSTS` (set to `true` once the real domain serves HTTPS). Every page is sent with clickjacking, content-type and referrer protections (`app/Http/Middleware/SecurityHeaders.php`).
 
 ## What is not in this version
 

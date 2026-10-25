@@ -1,6 +1,9 @@
 <?php
 
 return [
+    /* Send the Strict-Transport-Security header (only once the real domain serves HTTPS; browsers then refuse plain HTTP for a year). */
+    'hsts' => (bool) env('TD_HSTS', false),
+
     /*
      * Telegram bot (optional: without it the system sends email only). Create the bot with @BotFather and set these in .env.
      */

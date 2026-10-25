@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\EnsureStaff;
 use App\Http\Middleware\JsxWhitespace;
+use App\Http\Middleware\SecurityHeaders;
 use App\Support\FormState;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->web(append: [JsxWhitespace::class]);
+        $middleware->web(append: [JsxWhitespace::class, SecurityHeaders::class]);
         $middleware->alias(['staff' => EnsureStaff::class, 'admin' => EnsureAdmin::class]);
         // Telegram calls the webhook; it proves itself with a secret header instead of a CSRF token.
         $middleware->validateCsrfTokens(except: ['api/telegram/webhook']);
