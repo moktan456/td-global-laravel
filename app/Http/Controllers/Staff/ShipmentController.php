@@ -13,6 +13,7 @@ use App\Support\FormState;
 use App\Support\Messages;
 use App\Support\Statuses;
 use App\Support\TrackingNumber;
+use App\Support\TransportDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -49,6 +50,17 @@ class ShipmentController extends Controller
         if ($values['goods'] === '') {
             $errors['goods'] = 'Enter a short description of the goods.';
         }
+        // What to track. The form always sends tracks_chosen; a request without it (an old link, a script) means customs only.
+        $chosen = $request->boolean('tracks_chosen');
+        $customs = $chosen ? $request->boolean('track_customs') : true;
+        $transport = $chosen ? $request->boolean('track_transport') : false;
+        $values += ['track_customs' => $customs ? '1' : '', 'track_transport' => $transport ? '1' : ''] + TransportDetails::read($request);
+        if (! $customs && ! $transport) {
+            $errors['tracks'] = 'Choose what to track: customs clearance, transport, or both.';
+        }
+        if ($transport) {
+            $errors += TransportDetails::errors($values);
+        }
         $client = $values['client_id'] !== '' ? Client::find($values['client_id']) : null;
         if (! $errors && ! $client) {
             $errors['client_id'] = 'Choose the client.';
@@ -62,6 +74,8 @@ class ShipmentController extends Controller
             'client_id' => $client->id, 'direction' => $values['direction'], 'mode' => $values['mode'],
             'goods' => $values['goods'], 'details' => $values['details'] ?: null,
             'requested_by' => 'staff', 'created_by' => $request->user()->id,
+            'customs_enabled' => $customs, 'transport_enabled' => $transport,
+        ] + ($transport ? TransportDetails::attributes($values) : []) + [
             // Anyone who can sign in may look after it; anything else (a stale or made-up id) leaves it unassigned.
             'assigned_to' => $values['assigned_to'] !== '' ? User::where('active', true)->find($values['assigned_to'])?->id : null,
         ]);
@@ -108,9 +122,17 @@ class ShipmentController extends Controller
         $shipment = Shipment::with('client')->where('tracking_number', TrackingNumber::normalize($tracking))->first();
         abort_if(! $shipment, 404);
 
+        // The Update card has a tab per track; ?track=transport opens the transport one (otherwise the first track that is on).
+        $asked = $request->query('track');
+        $tab = in_array($asked, Statuses::tracks(), true) ? $asked : ($shipment->customs_enabled ? Statuses::CUSTOMS : Statuses::TRANSPORT);
+
         return view('staff.shipment-show', [
             's' => $shipment,
-            'events' => $shipment->events->map(fn ($e) => ['status' => $e->status, 'at' => $e->created_at->toIso8601String(), 'note' => $e->note])->all(),
+            'tab' => $tab,
+            'events' => $shipment->events->map(fn ($e) => ['status' => $e->status, 'track' => $e->track, 'at' => $e->created_at->toIso8601String(), 'note' => $e->note])->all(),
+            'transportState' => form_state('transport'),
+            'tracksState' => form_state('tracks'),
+            'detailsState' => form_state('tdetails'),
             'log' => NotificationLog::where('shipment_id', $shipment->id)->orderByDesc('created_at')->orderByDesc('id')->limit(30)->get(),
             'isNew' => $request->query('new') !== null,
             'state' => form_state('status'),
@@ -149,6 +171,9 @@ class ShipmentController extends Controller
         $status = (string) $request->input('status', '');
         $note = trim((string) $request->input('note', ''));
         $values = ['status' => $status, 'note' => $note];
+        if (! $shipment->customs_enabled) {
+            return $this->formResponse($request, 'status', 'staff.status-form', FormState::failed('Customs tracking is switched off for this shipment. Switch it on under "What we track" first.'), ['s' => $shipment]);
+        }
         if (! Statuses::exists($status)) {
             return $this->formResponse($request, 'status', 'staff.status-form', FormState::invalid(['status' => 'Choose a stage.'], $values), ['s' => $shipment]);
         }

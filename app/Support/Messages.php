@@ -82,11 +82,11 @@ class Messages
             .self::sign();
     }
 
-    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note, ?string $about = null): string
+    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note, ?string $about = null, ?string $track = null): string
     {
         return '<b>Update on your tracking number '.self::e($tracking)."</b>\n"
             .($about ? 'Shipment: '.self::e($about)."\n" : '')
-            .'Hello '.self::e($name).'. New stage: <b>'.self::e($info['label'])."</b>\n".self::e($info['clientText'])
+            .'Hello '.self::e($name).'. New '.($track === Statuses::TRANSPORT ? 'transport stage' : 'stage').': <b>'.self::e($info['label'])."</b>\n".self::e($info['clientText'])
             .($note ? "\n\nNote from our team: ".self::e(self::clip($note)) : '')
             ."\n\n".self::link(self::origin()."/track?n={$tracking}", 'Open your shipment')
             .self::sign();
@@ -170,13 +170,13 @@ class Messages
         ];
     }
 
-    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note, ?string $about = null): array
+    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note, ?string $about = null, ?string $track = null): array
     {
         $info = Statuses::info($status);
 
         return [
             'subject' => "{$tracking}: {$info['label']}",
-            'text' => "Hello {$name},\n\nUpdate on your tracking number {$tracking}".($about ? " ({$about})" : '').": {$info['clientText']}".($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
+            'text' => "Hello {$name},\n\nUpdate on your tracking number {$tracking}".($about ? " ({$about})" : '').($track === Statuses::TRANSPORT ? ', transport' : '').": {$info['clientText']}".($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
         ];
     }
 
