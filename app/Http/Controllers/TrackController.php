@@ -78,7 +78,7 @@ class TrackController extends Controller
 
         return ['number' => $number, 'result' => [
             'tracking_number' => $shipment->tracking_number,
-            'status' => $shipment->status,
+            'status' => $shipment->primaryStatus(),
             'updated_at' => $shipment->updated_at->toIso8601String(),
             'events' => $shipment->events()->where('visible_to_client', true)->get()->map(fn ($e) => [
                 'status' => $e->status, 'at' => $e->created_at->toIso8601String(), 'note' => $e->note,
@@ -137,7 +137,7 @@ class TrackController extends Controller
         if ($shipments->isEmpty()) {
             return;
         }
-        $items = $shipments->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->status)['label']])->all();
+        $items = $shipments->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->primaryStatus())['label']])->all();
         // The person asked for this just now, so it is sent even if they had switched notifications off.
         $client->notify_email = true;
         $client->notify_telegram = true;

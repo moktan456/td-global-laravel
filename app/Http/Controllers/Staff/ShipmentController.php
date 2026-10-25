@@ -158,7 +158,7 @@ class ShipmentController extends Controller
             $shipment->status = $status;
             $shipment->save();                              // the model logs the new stage on the timeline
             if ($note !== '') {
-                $shipment->events()->reorder('id', 'desc')->first()?->update(['note' => $note]);
+                $shipment->events()->reorder('id', 'desc')->where('track', Statuses::CUSTOMS)->first()?->update(['note' => $note]);
             }
         } elseif ($note !== '') {
             $shipment->logStage($note);                     // same stage, just a note: its own timeline entry

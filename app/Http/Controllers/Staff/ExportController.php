@@ -39,7 +39,7 @@ class ExportController extends Controller
                 foreach ($shipments as $s) {
                     $write([
                         $s->tracking_number, $s->client?->full_name, $s->client?->company, $s->client?->email, $s->client?->phone,
-                        ucfirst($s->direction), $methods[$s->mode] ?? $s->mode, $s->goods, Statuses::info($s->status)['label'],
+                        ucfirst($s->direction), $methods[$s->mode] ?? $s->mode, $s->goods, Statuses::info($s->primaryStatus())['label'],
                         $s->requested_by === 'staff' ? 'Staff' : 'Client', $this->when($s->created_at), $this->when($s->updated_at), $s->details, $s->assignee?->name,
                     ]);
                 }
@@ -51,7 +51,7 @@ class ExportController extends Controller
     {
         $query = Client::query()
             ->tap(fn ($qb) => ListFilters::clients($qb, Search::text($request->query('q')), ListFilters::telegram($request->query('telegram'))))
-            ->withCount(['shipments as requests_count', 'shipments as in_progress_count' => fn ($q) => $q->where('status', '!=', 'released')])
+            ->withCount(['shipments as requests_count', 'shipments as in_progress_count' => fn ($q) => $q->inProgress()])
             ->orderByDesc('created_at')->orderByDesc('id');
 
         return Csv::download('clients', [

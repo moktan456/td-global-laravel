@@ -84,7 +84,7 @@ class TelegramWebhookController extends Controller
                 return;
             }
             $items = Shipment::whereIn('client_id', $ids)->latest()->limit(5)->get()
-                ->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->status)['label']])->all();
+                ->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->primaryStatus())['label']])->all();
             $this->telegram->send($chatId, Messages::telegramShipmentList($items));
 
             return;

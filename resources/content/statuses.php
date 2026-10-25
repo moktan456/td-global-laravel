@@ -13,6 +13,16 @@ return [
         ['key' => 'pending_release', 'label' => 'Pending Release', 'clientText' => "We're waiting for customs to release your goods."],
         ['key' => 'released', 'label' => 'Released', 'clientText' => 'Customs has released your goods.'],
     ],
+    // Transport stages (optional per shipment), in the order of the journey. Keys are stored in shipments.transport_status
+    // and shipment_events.status (with track = 'transport'). They must stay different from the customs keys above.
+    'transport' => [
+        ['key' => 'order_placed', 'label' => 'Order Placed', 'clientText' => 'Your order is registered.'],
+        ['key' => 'processing', 'label' => 'Processing', 'clientText' => "We're preparing your shipment."],
+        ['key' => 'ready_for_pickup', 'label' => 'Ready for Pickup', 'clientText' => 'Your goods are packed and waiting for the carrier.'],
+        ['key' => 'in_transit', 'label' => 'In Transit', 'clientText' => 'Your shipment is on its way.'],
+        ['key' => 'out_for_delivery', 'label' => 'Out for Delivery', 'clientText' => 'Your shipment is out for delivery.'],
+        ['key' => 'delivered', 'label' => 'Delivered', 'clientText' => 'Your shipment has been delivered.'],
+    ],
     'directions' => [
         ['value' => 'import', 'label' => 'Import'],
         ['value' => 'export', 'label' => 'Export'],

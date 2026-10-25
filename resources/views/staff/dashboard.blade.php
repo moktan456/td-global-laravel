@@ -107,7 +107,7 @@
                                 <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                 <p class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
                                 <p class="min-w-0 break-words text-muted md:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
-                                <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->status" /></p>
+                                <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->primaryStatus()" /></p>
                                 <p class="min-w-0 break-words text-sm md:text-base {{ $s->assignee ? 'text-ink' : 'text-muted' }}"><span class="sr-only">Looked after by: </span>{{ $s->assignee?->name ?? 'Nobody yet' }}</p>
                                 <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                             </li>

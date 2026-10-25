@@ -42,10 +42,10 @@ class DashboardController extends Controller
             'query' => $query,
             'assigned' => $assigned,
             'people' => Assignees::options(),
-            'mine' => Shipment::where('assigned_to', $me)->where('status', '!=', 'released')->count(),
+            'mine' => Shipment::where('assigned_to', $me)->inProgress()->count(),
             'perStage' => $perStage,
             'hasAny' => Shipment::query()->exists(),
-            'inProgress' => Shipment::where('status', '!=', 'released')->count(),
+            'inProgress' => Shipment::inProgress()->count(),
             'updatedToday' => Shipment::where('updated_at', '>=', now('Asia/Thimphu')->startOfDay()->setTimezone(config('app.timezone')))->count(),
         ]);
     }

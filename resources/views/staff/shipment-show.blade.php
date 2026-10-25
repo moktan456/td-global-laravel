@@ -1,7 +1,7 @@
 @extends('layouts.staff', ['title' => $s->tracking_number, 'subtitle' => $s->goods, 'crumbs' => [['label' => 'Shipments', 'href' => '/staff'], ['label' => $s->tracking_number]]])
 
 @section('actions')
-    <x-status-badge :status="$s->status" />
+    <x-status-badge :status="$s->primaryStatus()" />
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
             <section aria-labelledby="update-heading" class="rounded-card border border-line bg-white p-6">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <h2 id="update-heading" class="font-display text-2xl font-semibold text-navy-900">Update stage</h2>
-                    <p class="flex items-center gap-2 text-muted">Now <x-status-badge :status="$s->status" /></p>
+                    <p class="flex items-center gap-2 text-muted">Now <x-status-badge :status="$s->primaryStatus()" /></p>
                 </div>
                 <div class="mt-5">
                     @include('staff.status-form', ['state' => $state, 's' => $s])

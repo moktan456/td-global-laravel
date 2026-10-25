@@ -62,7 +62,7 @@ class ClientController extends Controller
             'shipments' => $shipments,
             'telegram' => $telegram,
             'requestCount' => $shipments?->total() ?? Shipment::where('client_id', $client->id)->count(),
-            'inProgress' => Shipment::where('client_id', $client->id)->where('status', '!=', 'released')->count(),
+            'inProgress' => Shipment::where('client_id', $client->id)->inProgress()->count(),
         ]);
     }
 
