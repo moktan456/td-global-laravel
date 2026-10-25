@@ -49,17 +49,8 @@
                 </ul>
             @endforeach
         </nav>
-        <div class="border-t border-white/15 p-4">
-            <p class="font-semibold">{{ $me?->name }}</p>
-            <p class="text-sm text-on-dark-muted">{{ $me?->role === 'admin' ? 'Super admin' : 'Staff' }}</p>
-            <div class="mt-3 grid gap-1">
-                <a href="/staff/password" class="flex min-h-11 items-center gap-3 rounded-control px-3 text-on-dark-muted transition-colors hover:bg-white/8 hover:text-white"><x-lucide name="key-round" class="size-5 shrink-0" />Change password</a>
-                <a href="/" target="_blank" rel="noopener" class="flex min-h-11 items-center gap-3 rounded-control px-3 text-on-dark-muted transition-colors hover:bg-white/8 hover:text-white"><x-lucide name="external-link" class="size-5 shrink-0" />View website<span class="sr-only"> (opens in a new tab)</span></a>
-                <form method="post" action="/staff/logout">
-                    @csrf
-                    <button type="submit" class="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-left text-on-dark-muted transition-colors hover:bg-white/8 hover:text-white"><x-lucide name="log-out" class="size-5 shrink-0" />Sign out</button>
-                </form>
-            </div>
+        <div class="border-t border-white/15 p-3">
+            <x-staff-account />
         </div>
     </aside>
 
@@ -85,12 +76,7 @@
                             @endforeach
                         </nav>
                         <div class="mt-4 border-t border-white/15 pt-3">
-                            <p class="px-3 text-sm text-on-dark-muted">{{ $me?->name }} · {{ $me?->role === 'admin' ? 'Super admin' : 'Staff' }}</p>
-                            <a href="/staff/password" class="mt-1 flex min-h-11 items-center gap-3 rounded-control px-3 text-on-dark-muted hover:bg-white/8 hover:text-white"><x-lucide name="key-round" class="size-5 shrink-0" />Change password</a>
-                            <form method="post" action="/staff/logout">
-                                @csrf
-                                <button type="submit" class="flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-left text-on-dark-muted hover:bg-white/8 hover:text-white"><x-lucide name="log-out" class="size-5 shrink-0" />Sign out</button>
-                            </form>
+                            <x-staff-account variant="menu" />
                         </div>
                     </div>
                 </details>
