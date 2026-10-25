@@ -12,7 +12,7 @@
 
 @section('content')
     @if (! $hasAny)
-        <div class="mx-auto max-w-xl rounded-card border border-dashed border-line bg-white px-6 py-12 text-center">
+        <div class="mx-auto max-w-xl rounded-card border border-dashed border-line bg-surface px-6 py-12 text-center">
             <x-lucide name="package-plus" class="mx-auto size-10 text-navy-900" />
             <p class="mt-4 font-display text-2xl font-semibold text-navy-900">No shipments yet</p>
             <p class="mt-2 text-muted">Create the first request. The tracking number goes straight to the client, and the shipment shows up here.</p>
@@ -25,15 +25,15 @@
         @endif
         {{-- Three numbers worth a glance. --}}
         <dl class="grid grid-cols-3 gap-2 sm:gap-4 lg:max-w-2xl">
-            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
+            <div class="rounded-card border border-line bg-surface px-3 py-3 sm:px-5 sm:py-4">
                 <dt class="text-sm text-muted">In progress</dt>
                 <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $inProgress }}</dd>
             </div>
-            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
+            <div class="rounded-card border border-line bg-surface px-3 py-3 sm:px-5 sm:py-4">
                 <dt class="text-sm text-muted"><a href="/staff?assigned=me" class="underline-offset-2 hover:underline"><span class="sm:hidden">Yours</span><span class="hidden sm:inline">Looked after by you</span></a></dt>
                 <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $mine }}</dd>
             </div>
-            <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
+            <div class="rounded-card border border-line bg-surface px-3 py-3 sm:px-5 sm:py-4">
                 <dt class="text-sm text-muted">Updated today</dt>
                 <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{{ $updatedToday }}</dd>
             </div>
@@ -45,11 +45,11 @@
             @endif
             <div class="min-w-56 flex-1 basis-64">
                 <label for="q" class="block font-semibold text-navy-900">Search</label>
-                <input id="q" type="search" name="q" value="{{ $query }}" placeholder="Tracking number, client, phone or goods" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-white px-3">
+                <input id="q" type="search" name="q" value="{{ $query }}" placeholder="Tracking number, client, phone or goods" autocomplete="off" class="mt-2 min-h-11 w-full rounded-control border border-control bg-surface px-3">
             </div>
             <div>
                 <label for="assigned" class="block font-semibold text-navy-900">Looked after by</label>
-                <select id="assigned" name="assigned" class="mt-2 min-h-11 rounded-control border border-control bg-white px-3">
+                <select id="assigned" name="assigned" class="mt-2 min-h-11 rounded-control border border-control bg-surface px-3">
                     <option value="">Anyone</option>
                     <option value="me" @selected($assigned === 'me')>Me</option>
                     <option value="none" @selected($assigned === 'none')>Nobody yet</option>
@@ -62,15 +62,15 @@
             </div>
             <div>
                 <label for="sort" class="block font-semibold text-navy-900">Sort by</label>
-                <select id="sort" name="sort" class="mt-2 min-h-11 rounded-control border border-control bg-white px-3">
+                <select id="sort" name="sort" class="mt-2 min-h-11 rounded-control border border-control bg-surface px-3">
                     @foreach (\App\Support\ListFilters::SORTS as $value => $label)
                         <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-5 font-semibold text-white hover:bg-navy-800">Search</button>
+            <button type="submit" class="min-h-11 rounded-control bg-action px-5 font-semibold text-white hover:bg-action-hover">Search</button>
             @if ($query !== '' || $status !== '' || $assigned !== '' || $sort !== 'updated')
-                <a href="/staff" class="inline-flex min-h-11 items-center px-2 font-semibold text-brand underline underline-offset-2">Clear</a>
+                <a href="/staff" class="inline-flex min-h-11 items-center px-2 font-semibold text-link underline underline-offset-2">Clear</a>
             @endif
         </form>
 
@@ -84,7 +84,7 @@
             $labelled = count($chipRows) > 1;
         @endphp
         <details data-fold-on-phone @if ($status !== '') data-has-choice @endif class="group/f" open>
-        <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-control border border-control bg-white px-4 font-semibold text-navy-900 md:hidden [&::-webkit-details-marker]:hidden"><x-lucide name="list-filter" class="size-5" />Filter by stage<span class="font-normal text-muted">{{ $status !== '' ? ': '.(\App\Support\Statuses::info($status)['label'] ?? '') : '' }}</span><x-lucide name="chevron-down" class="size-4 transition-transform group-open/f:rotate-180" /></summary>
+        <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-control border border-control bg-surface px-4 font-semibold text-navy-900 md:hidden [&::-webkit-details-marker]:hidden"><x-lucide name="list-filter" class="size-5" />Filter by stage<span class="font-normal text-muted">{{ $status !== '' ? ': '.(\App\Support\Statuses::info($status)['label'] ?? '') : '' }}</span><x-lucide name="chevron-down" class="size-4 transition-transform group-open/f:rotate-180" /></summary>
         <nav aria-label="Filter by stage" class="mt-3 grid gap-3 md:mt-0">
             @foreach ($chipRows as $row)
                 <div class="{{ $labelled ? 'grid gap-2 sm:grid-cols-[9.5rem_1fr] sm:items-start' : '' }}">
@@ -123,14 +123,14 @@
             @if ($shipments->total() > 0)
                 <div class="flex flex-wrap items-center gap-3">
                 <button type="button" data-density-toggle aria-pressed="false" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-control px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-sand aria-pressed:border-navy-900 aria-pressed:bg-sand"><x-lucide name="rows-3" class="size-4" />Compact rows</button>
-                <a href="/staff/export/shipments.csv{{ $exportQs }}" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-900 hover:text-white"><x-lucide name="download" class="size-4" />Export CSV<span class="sr-only"> of these shipments</span></a>
+                <a href="/staff/export/shipments.csv{{ $exportQs }}" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-action hover:text-white"><x-lucide name="download" class="size-4" />Export CSV<span class="sr-only"> of these shipments</span></a>
                 </div>
             @endif
             </div>
 
             @if ($shipments->count())
                 {{-- A table on wide screens, a stack of cards on phones (no sideways scrolling). --}}
-                <div class="mt-4 overflow-hidden rounded-card border border-line bg-white">
+                <div class="mt-4 overflow-hidden rounded-card border border-line bg-surface">
                     <div role="table" aria-label="Shipments" aria-rowcount="{{ $shipments->count() + 1 }}">
                     <div role="rowgroup">
                     <div role="row" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 xl:grid xl:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
@@ -140,24 +140,24 @@
                     <ul role="rowgroup" class="divide-y divide-line">
                         @foreach ($shipments as $s)
                             <li role="row" class="density-row grid items-center gap-x-6 md:grid-cols-2 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 xl:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
-                                <p role="cell"><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
+                                <p role="cell"><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-link underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                 <p role="cell" class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
                                 <p role="cell" class="min-w-0 break-words text-muted xl:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
                                 <div role="cell"><p><span class="sr-only">Stage: </span>@include('staff.stage-badges', ['s' => $s])</p>
                                     @if ($s->customs_enabled)
                                         <details class="mt-2">
-                                            <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-control px-1 text-sm font-semibold text-brand underline underline-offset-2 [&::-webkit-details-marker]:hidden">Change stage<span class="sr-only"> of {{ $s->tracking_number }}</span></summary>
-                                            <form method="post" action="/staff/shipments/{{ $s->tracking_number }}/status" class="mt-1 grid gap-2 rounded-tile border border-line bg-white p-3" @if ($s->client) data-confirm="Change {{ $s->tracking_number }} and tell the client?" @endif>
+                                            <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-control px-1 text-sm font-semibold text-link underline underline-offset-2 [&::-webkit-details-marker]:hidden">Change stage<span class="sr-only"> of {{ $s->tracking_number }}</span></summary>
+                                            <form method="post" action="/staff/shipments/{{ $s->tracking_number }}/status" class="mt-1 grid gap-2 rounded-tile border border-line bg-surface p-3" @if ($s->client) data-confirm="Change {{ $s->tracking_number }} and tell the client?" @endif>
                                                 @csrf
                                                 <input type="hidden" name="from" value="list">
                                                 <label for="qs-{{ $s->id }}" class="text-sm font-semibold text-navy-900">New stage</label>
-                                                <select id="qs-{{ $s->id }}" name="status" class="min-h-11 rounded-control border border-control bg-white px-3">
+                                                <select id="qs-{{ $s->id }}" name="status" class="min-h-11 rounded-control border border-control bg-surface px-3">
                                                     @foreach (\App\Support\Statuses::all() as $stage)
                                                         <option value="{{ $stage['key'] }}" @selected($s->status === $stage['key'])>{{ $stage['label'] }}</option>
                                                     @endforeach
                                                 </select>
-                                                <label class="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="notify" checked class="size-5 accent-brand">Tell the client</label>
-                                                <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-4 font-semibold text-white hover:bg-navy-800">Save stage</button>
+                                                <label class="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="notify" checked class="size-5 accent-link">Tell the client</label>
+                                                <button type="submit" class="min-h-11 rounded-control bg-action px-4 font-semibold text-white hover:bg-action-hover">Save stage</button>
                                             </form>
                                         </details>
                                     @endif

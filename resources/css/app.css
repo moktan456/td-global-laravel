@@ -50,6 +50,14 @@
   --color-success: #1f6f43;
   --color-error: #a4262c;
 
+  /* Role tokens. In the light theme they equal the colours they replaced; the staff area's dark theme (below) swaps them. */
+  --color-surface: #ffffff;      /* cards, inputs, menus */
+  --color-chrome: #14224a;       /* staff sidebar and top bars */
+  --color-action: #14224a;       /* dark buttons and the chosen filter chip */
+  --color-action-hover: #1e3066;
+  --color-link: #3853a4;         /* link and accent text on the page background */
+  --color-on-gold: #14224a;      /* text on solid gold */
+
   --font-display: var(--font-newsreader), ui-serif, Georgia, serif;
   --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
 
@@ -78,6 +86,29 @@
 
 .on-dark {
   --focus: var(--color-gold);
+}
+
+/*
+ * Staff dark theme. Only the staff layouts set data-theme (the public site never does), and the choice is the person's
+ * (account menu), else the device's. Every pair below was checked: text 4.5:1+, control borders 3:1+.
+ */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --focus: var(--color-gold);
+  --color-ivory: #0c1330;
+  --color-surface: #141d42;
+  --color-sand: #1d2958;
+  --color-ink: #e8ecf4;
+  --color-navy-900: #f1f4fb;     /* heading and strong text on dark; solid dark fills use --color-action / --color-chrome */
+  --color-muted: #aab5d6;
+  --color-line: #2c3a6e;
+  --color-control: #8fa0d0;
+  --color-chrome: #0a1026;
+  --color-action: #3853a4;
+  --color-action-hover: #2c4596;
+  --color-link: #a9bcff;
+  --color-success: #6fd19a;
+  --color-error: #ff9ea3;
 }
 
 @layer base {

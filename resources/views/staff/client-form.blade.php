@@ -13,7 +13,7 @@
         <x-text-field :id="$ids['phone']" name="phone" type="tel" label="Phone" hint="For example 17975757" autocomplete="off" :value="$state->value('phone')" :error="$state->error('phone')" />
     </div>
     <label class="flex min-h-11 items-center gap-3">
-        <input type="checkbox" name="notify" checked class="size-5 accent-brand">
+        <input type="checkbox" name="notify" checked class="size-5 accent-link">
         Email the client a welcome message
     </label>
     <div>

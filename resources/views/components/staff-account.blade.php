@@ -12,7 +12,7 @@
 @endphp
 <details @if ($sidebar) data-menu @endif class="group relative">
     <summary class="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-control px-3 py-2 text-left transition-colors duration-150 hover:bg-white/8 [&::-webkit-details-marker]:hidden">
-        <span aria-hidden="true" class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-gold text-sm font-bold text-navy-900">{{ $initials }}</span>
+        <span aria-hidden="true" class="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-gold text-sm font-bold text-on-gold">{{ $initials }}</span>
         <span class="min-w-0 flex-1">
             <span class="block truncate font-semibold">{{ $me?->name }}</span>
             <span class="block text-sm text-on-dark-muted">{{ $role }}</span>
@@ -20,8 +20,9 @@
         <x-lucide name="chevron-down" class="size-4 shrink-0 text-on-dark-muted transition-transform duration-150 group-open:rotate-180" />
         <span class="sr-only">Account menu</span>
     </summary>
-    <div class="{{ $sidebar ? 'absolute inset-x-0 bottom-full z-30 mb-2 rounded-card bg-white p-2 shadow-lg ring-1 ring-black/10' : 'mt-1 grid gap-1 px-1 pb-1' }}">
+    <div class="{{ $sidebar ? 'absolute inset-x-0 bottom-full z-30 mb-2 rounded-card bg-surface p-2 shadow-lg ring-1 ring-black/10' : 'mt-1 grid gap-1 px-1 pb-1' }}">
         <a href="/staff/password" class="{{ $item }} {{ $itemTone }}"><x-lucide name="key-round" class="size-5 shrink-0" />Change password</a>
+        <button type="button" data-theme-toggle class="{{ $item }} {{ $itemTone }}"><x-lucide name="moon" class="size-5 shrink-0" /><span data-theme-label>Dark mode</span></button>
         <a href="/" target="_blank" rel="noopener" class="{{ $item }} {{ $itemTone }}"><x-lucide name="external-link" class="size-5 shrink-0" />View website<span class="sr-only"> (opens in a new tab)</span></a>
         <form method="post" action="/staff/logout" class="{{ $sidebar ? 'mt-1 border-t border-line pt-1' : 'mt-1 border-t border-white/15 pt-1' }}">
             @csrf

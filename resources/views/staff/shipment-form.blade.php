@@ -25,7 +25,7 @@
         {{-- Transport and its details sit together: the details show only while the switch is on (CSS :has, no script). --}}
         <div class="group/transport grid gap-3">
             <x-track-switch id="shipment-track-transport" name="track_transport" label="Transport" description="Optional. Pickup to delivery, in 6 stages, with proof of delivery." :checked="$trackTransport" />
-            <div class="hidden gap-5 rounded-control border border-line bg-white p-4 group-has-checked/transport:grid">
+            <div class="hidden gap-5 rounded-control border border-line bg-surface p-4 group-has-checked/transport:grid">
                 <div>
                     <p class="font-semibold text-navy-900">Transport details</p>
                     <p class="text-sm text-muted">All optional. You can add or change them later.</p>
@@ -38,7 +38,7 @@
         @endif
     </fieldset>
     <x-field-shell :id="$ids['assigned_to']" label="Looked after by" hint="Who in the team handles this request. You can change it later.">
-        <select id="{{ $ids['assigned_to'] }}" name="assigned_to" aria-describedby="{{ $ids['assigned_to'] }}-hint" class="block min-h-11 w-full rounded-control border border-control bg-white px-3 py-2.5 text-base text-ink">
+        <select id="{{ $ids['assigned_to'] }}" name="assigned_to" aria-describedby="{{ $ids['assigned_to'] }}-hint" class="block min-h-11 w-full rounded-control border border-control bg-surface px-3 py-2.5 text-base text-ink">
             <option value="">Nobody yet</option>
             @foreach ($assignees as $a)
                 <option value="{{ $a['value'] }}" @selected($state->value('assigned_to', (string) auth()->id()) === $a['value'])>{{ $a['label'] }}{{ $a['value'] === (string) auth()->id() ? ' (you)' : '' }}</option>

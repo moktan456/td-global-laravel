@@ -10,7 +10,7 @@
     <ul class="grid gap-3">
         @foreach ($rows as $r)
             @php([$label, $icon, $tone] = $statuses[$r->status])
-            <li class="rounded-tile border border-line bg-white p-4">
+            <li class="rounded-tile border border-line bg-surface p-4">
                 <p class="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span class="inline-flex items-center gap-1.5 font-semibold {{ $tone }}">
                         <x-lucide :name="$icon" class="size-4" />

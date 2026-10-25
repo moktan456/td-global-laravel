@@ -12,7 +12,7 @@
 @section('content')
     <div class="grid gap-6">
         {{-- Who this is, at a glance. --}}
-        <div class="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-card border border-line bg-white px-6 py-5">
+        <div class="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-card border border-line bg-surface px-6 py-5">
             <div class="min-w-0">
                 <p class="break-all font-semibold text-navy-900">{{ $client->email }}</p>
                 <p class="text-muted">{{ $client->phone }}</p>
@@ -51,14 +51,14 @@
             <section aria-labelledby="requests-heading">
                 <h2 id="requests-heading" class="sr-only">Requests</h2>
                 @if ($shipments->count())
-                    <div class="overflow-hidden rounded-card border border-line bg-white">
+                    <div class="overflow-hidden rounded-card border border-line bg-surface">
                         <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid md:grid-cols-[11rem_minmax(0,1.4fr)_15rem_6.5rem]">
                             <span>Tracking number</span><span>Goods</span><span>Stage</span><span>Updated</span>
                         </div>
                         <ul class="divide-y divide-line">
                             @foreach ($shipments as $s)
                                 <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[11rem_minmax(0,1.4fr)_15rem_6.5rem]">
-                                    <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
+                                    <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-link underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                     <p class="min-w-0 break-words"><span class="sr-only">Goods: </span>{{ $s->goods }}<span class="block text-sm capitalize text-muted">{{ $s->direction }} · {{ $s->mode }} freight</span></p>
                                     <p><span class="sr-only">Stage: </span>@include('staff.stage-badges', ['s' => $s])</p>
                                     <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
@@ -67,7 +67,7 @@
                         </ul>
                     </div>
                 @else
-                    <div class="rounded-card border border-dashed border-line bg-white px-6 py-10 text-center">
+                    <div class="rounded-card border border-dashed border-line bg-surface px-6 py-10 text-center">
                         <p class="font-semibold text-navy-900">No requests yet for this client.</p>
                         <p class="mt-1 text-muted">Create the first one and the tracking number goes to them.</p>
                         <div class="mt-4"><x-button-link href="/staff/shipments/new?client={{ $client->id }}">New request</x-button-link></div>
@@ -76,7 +76,7 @@
                 <x-pager :paginator="$shipments" label="requests" />
             </section>
         @elseif ($tab === 'telegram')
-            <section aria-labelledby="telegram-heading" class="max-w-2xl rounded-card border border-line bg-white p-6">
+            <section aria-labelledby="telegram-heading" class="max-w-2xl rounded-card border border-line bg-surface p-6">
                 <h2 id="telegram-heading" class="font-display text-2xl font-semibold text-navy-900">Telegram</h2>
                 @if ($connected)
                     <p class="mt-2 text-muted">{{ $client->full_name }} is connected{{ $client->telegram_linked_at ? ' since '.$client->telegram_linked_at->timezone('Asia/Thimphu')->format('j M Y') : '' }}. Updates go to them on Telegram.</p>
@@ -90,7 +90,7 @@
                 @endif
             </section>
         @else
-            <section aria-labelledby="details-heading" class="max-w-2xl rounded-card border border-line bg-white p-6">
+            <section aria-labelledby="details-heading" class="max-w-2xl rounded-card border border-line bg-surface p-6">
                 <h2 id="details-heading" class="font-display text-2xl font-semibold text-navy-900">Details</h2>
                 <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-8 gap-y-3">
                     <dt class="text-muted">Name</dt><dd>{{ $client->full_name }}</dd>

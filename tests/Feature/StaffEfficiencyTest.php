@@ -88,4 +88,13 @@ class StaffEfficiencyTest extends TestCase
         $this->actingAs($this->staff())->get("/staff/shipments/{$s->tracking_number}")->assertOk()->assertSee('aria-label="Jump to a section"', false)->assertSee('#timeline-heading', false);
         $this->actingAs($this->staff())->get('/staff')->assertDontSee('Jump to a section');
     }
+
+    public function test_staff_pages_can_go_dark_and_the_public_site_never_does(): void
+    {
+        $this->actingAs($this->staff())->get('/staff')->assertOk()
+            ->assertSee("localStorage.getItem('staff-theme')", false)->assertSee('data-theme-toggle', false);
+        auth()->logout();
+        $this->get('/staff/login')->assertOk()->assertSee('staff-theme', false);
+        $this->get('/')->assertOk()->assertDontSee('staff-theme', false)->assertDontSee('data-theme', false);
+    }
 }

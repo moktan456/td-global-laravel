@@ -43,7 +43,7 @@
                 <div><p class="font-semibold text-navy-900">{{ $open }} {{ $open === 1 ? 'step needs' : 'steps need' }} attention</p><p class="text-muted">Clients can't use Telegram until the steps below are done.</p></div>
             </div>
         @endif
-            <section aria-labelledby="checks" class="rounded-card border border-line bg-white p-6">
+            <section aria-labelledby="checks" class="rounded-card border border-line bg-surface p-6">
                 <h2 id="checks" class="font-display text-2xl font-semibold text-navy-900">Set-up checklist</h2>
                 <ul class="mt-2 divide-y divide-line">
                     @foreach ($items as $it)
@@ -69,7 +69,7 @@
             </section>
 
             @if ($hasToken && $hasSecret)
-                <section aria-labelledby="connect" class="rounded-card border border-line bg-white p-6">
+                <section aria-labelledby="connect" class="rounded-card border border-line bg-surface p-6">
                     <h2 id="connect" class="font-display text-2xl font-semibold text-navy-900">Connect the bot</h2>
                     <p class="mt-2 text-muted">Tells Telegram to send every message to the bot to this website. Do it once, and again if the website address changes.</p>
                     <div class="mt-5">
@@ -80,7 +80,7 @@
 
             @if ($botOk && ! empty($bot['result']['username']))
                 <p class="text-muted">
-                    Your bot: <a href="https://t.me/{{ $bot['result']['username'] }}" class="font-semibold text-brand underline underline-offset-2">t.me/{{ $bot['result']['username'] }}</a>.
+                    Your bot: <a href="https://t.me/{{ $bot['result']['username'] }}" class="font-semibold text-link underline underline-offset-2">t.me/{{ $bot['result']['username'] }}</a>.
                     To connect a client, open <strong>Clients</strong> and create their connect link.
                 </p>
             @endif

@@ -16,7 +16,7 @@ class Ui
 
     private const BUTTON_VARIANTS = [
         'primary' => 'bg-brand text-white hover:bg-brand-dark hover:shadow-lift focus-visible:shadow-lift',
-        'outline' => 'border border-navy-900 text-navy-900 hover:bg-navy-900 hover:text-white hover:shadow-lift',
+        'outline' => 'border border-navy-900 text-navy-900 hover:bg-action hover:text-white hover:shadow-lift',
         'outline-light' => 'border border-white text-white hover:bg-white hover:text-navy-900',
         'ghost' => 'text-navy-900 underline-offset-4 hover:underline',
     ];
@@ -29,9 +29,9 @@ class Ui
     private const CHIP_BASE = 'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.9375rem] font-semibold transition-colors duration-150';
 
     private const CHIP_VARIANTS = [
-        'on' => 'border-navy-900 bg-navy-900 text-white',
-        'off' => 'border-line bg-white text-navy-900 hover:border-navy-900',
-        'empty' => 'border-line bg-white text-muted hover:border-navy-900 hover:text-navy-900',
+        'on' => 'border-navy-900 bg-action text-white',
+        'off' => 'border-line bg-surface text-navy-900 hover:border-navy-900',
+        'empty' => 'border-line bg-surface text-muted hover:border-navy-900 hover:text-navy-900',
     ];
 
     private const PHOTO_FRAME = 'group relative overflow-hidden rounded-card';

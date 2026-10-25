@@ -14,7 +14,7 @@
     @if ($forced)
         @include('staff.password-form', ['state' => $state])
     @else
-        <div class="max-w-xl rounded-card border border-line bg-white p-6">
+        <div class="max-w-xl rounded-card border border-line bg-surface p-6">
             @include('staff.password-form', ['state' => $state])
         </div>
     @endif

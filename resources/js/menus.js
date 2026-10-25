@@ -7,6 +7,7 @@ export function initMenus() {
     initFoldOnPhone();
     initFindShortcut();
     initDensity();
+    initTheme();
     initPlainConfirms();
     document.addEventListener('click', (event) => {
         document.querySelectorAll('details[data-menu][open]').forEach((menu) => {
@@ -71,5 +72,28 @@ function initPlainConfirms() {
         if (form instanceof HTMLFormElement && form.dataset.confirm && !form.hasAttribute('data-enhance') && !window.confirm(form.dataset.confirm)) {
             event.preventDefault();
         }
+    });
+}
+
+/** Light / dark for the staff area: the head script sets data-theme early; this wires the account-menu buttons and follows the device until someone chooses. */
+function initTheme() {
+    const root = document.documentElement;
+    const buttons = [...document.querySelectorAll('[data-theme-toggle]')];
+    const stored = () => { try { const t = localStorage.getItem('staff-theme'); return t === 'light' || t === 'dark' ? t : null; } catch { return null; } };
+    const show = () => buttons.forEach((b) => {
+        const dark = root.dataset.theme === 'dark';
+        b.querySelector('[data-theme-label]').textContent = dark ? 'Light mode' : 'Dark mode';
+    });
+    show();
+    buttons.forEach((b) => b.addEventListener('click', () => {
+        const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        root.dataset.theme = next;
+        try { localStorage.setItem('staff-theme', next); } catch { /* applies to this page only */ }
+        show();
+    }));
+    window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (stored() || !root.dataset.theme) return;
+        root.dataset.theme = e.matches ? 'dark' : 'light';
+        show();
     });
 }

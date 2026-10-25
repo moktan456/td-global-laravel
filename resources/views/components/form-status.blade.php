@@ -7,8 +7,8 @@
     @php
         $ok = $state->status === 'success';
         $box = $ok
-            ? ($tone === 'dark' ? 'border-success bg-navy-800 text-white' : 'border-success bg-white text-ink')
-            : ($tone === 'dark' ? 'border-gold bg-navy-800 text-white' : 'border-error bg-white text-ink');
+            ? ($tone === 'dark' ? 'border-success bg-navy-800 text-white' : 'border-success bg-surface text-ink')
+            : ($tone === 'dark' ? 'border-gold bg-navy-800 text-white' : 'border-error bg-surface text-ink');
         $errorTone = ['light' => 'text-error', 'dark' => 'text-gold'][$tone];
     @endphp
     <div data-form-status tabindex="-1" role="{{ $ok ? 'status' : 'alert' }}" class="rounded-tile border-2 p-4 focus:outline-none {{ $box }}">
@@ -21,7 +21,7 @@
             {{ $state->message }}
         </p>
         @if ($state->mailto)
-            <a href="{{ $state->mailto }}" class="mt-3 inline-flex min-h-11 items-center font-semibold underline decoration-2 underline-offset-4 {{ $tone === 'dark' ? 'text-gold' : 'text-brand' }}">Open the email in your mail app</a>
+            <a href="{{ $state->mailto }}" class="mt-3 inline-flex min-h-11 items-center font-semibold underline decoration-2 underline-offset-4 {{ $tone === 'dark' ? 'text-gold' : 'text-link' }}">Open the email in your mail app</a>
         @endif
         @if (count($state->errors))
             <ul class="mt-2 list-disc pl-10">

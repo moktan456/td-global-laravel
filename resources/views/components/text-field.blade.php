@@ -1,6 +1,6 @@
 @props(['id', 'name', 'label', 'type' => 'text', 'value' => null, 'hint' => null, 'error' => null, 'tone' => 'light', 'optional' => false, 'autocomplete' => null, 'inputmode' => null, 'placeholder' => null, 'wrapperClass' => ''])
 @php
-    $control = ['light' => 'border-control bg-white text-ink placeholder:text-muted', 'dark' => 'border-control-dark bg-navy-800 text-white placeholder:text-on-dark-muted'][$tone];
+    $control = ['light' => 'border-control bg-surface text-ink placeholder:text-muted', 'dark' => 'border-control-dark bg-navy-800 text-white placeholder:text-on-dark-muted'][$tone];
     $describedBy = trim(($hint ? "{$id}-hint " : '').($error ? "{$id}-error" : ''));
     $isPassword = $type === 'password';
 @endphp

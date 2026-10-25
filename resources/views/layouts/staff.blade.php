@@ -26,13 +26,22 @@
     <meta name="theme-color" content="#14224a">
     <link rel="icon" href="/icon.png" type="image/png" sizes="512x512">
     <link rel="apple-touch-icon" href="/apple-icon.png" sizes="180x180">
+    <script>
+        // Light or dark: the person's choice (account menu), else the device's. Set early so there is no flash.
+        (function () {
+            var t = null;
+            try { t = localStorage.getItem('staff-theme'); } catch (e) {}
+            if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.dataset.theme = t;
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-dvh bg-ivory antialiased lg:flex">
     <a href="#main" class="sr-only z-[100] rounded-control bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to main content</a>
 
     {{-- Desktop: the sidebar. --}}
-    <aside class="on-dark hidden shrink-0 flex-col bg-navy-900 text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-64">
+    <aside class="on-dark hidden shrink-0 flex-col bg-chrome text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-64">
         <div class="px-4 pb-4 pt-5">
             <a href="/staff" class="inline-flex min-h-11 items-center gap-3 rounded-control">
                 <span class="inline-flex rounded-tile bg-white px-2 py-1.5"><img src="/brand/logo.png" alt="" width="974" height="466" class="h-9 w-auto"></span>
@@ -64,7 +73,7 @@
 
     <div class="min-w-0 flex-1">
         {{-- Phone and tablet: a slim top bar with the same menu. --}}
-        <header class="on-dark relative bg-navy-900 text-white lg:hidden">
+        <header class="on-dark relative bg-chrome text-white lg:hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-2">
                 <a href="/staff" class="inline-flex min-h-11 items-center gap-3 rounded-control">
                     <span class="inline-flex rounded-tile bg-white px-2 py-1"><img src="/brand/logo.png" alt="" width="974" height="466" class="h-8 w-auto"></span>
@@ -72,7 +81,7 @@
                 </a>
                 <details data-menu>
                     <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-control border border-white/40 px-4 font-semibold [&::-webkit-details-marker]:hidden"><x-lucide name="menu" class="size-5" />Menu</summary>
-                    <div class="absolute inset-x-0 top-full z-30 bg-navy-900 px-4 pb-4 shadow-lg">
+                    <div class="absolute inset-x-0 top-full z-30 bg-chrome px-4 pb-4 shadow-lg">
 <form method="get" action="/staff/go" role="search" aria-label="Find a shipment" class="pt-1">
                     <label for="find-menu" class="sr-only">Find a shipment by tracking number</label>
                     <div class="relative">
@@ -99,7 +108,7 @@
             </div>
         </header>
 
-        <div class="border-b border-line bg-white">
+        <div class="border-b border-line bg-surface">
             <div class="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-x-6 gap-y-3 px-4 py-5 sm:px-6 lg:px-8">
                 <div class="min-w-0">
                     @if (! empty($crumbs))
@@ -129,7 +138,7 @@
         </main>
     </div>
     @hasSection('mobilebar')
-        <nav aria-label="Jump to a section" class="on-dark fixed inset-x-0 bottom-0 z-20 border-t border-white/15 bg-navy-900 pb-[env(safe-area-inset-bottom)] lg:hidden">
+        <nav aria-label="Jump to a section" class="on-dark fixed inset-x-0 bottom-0 z-20 border-t border-white/15 bg-chrome pb-[env(safe-area-inset-bottom)] lg:hidden">
             <ul class="mx-auto grid max-w-md grid-cols-3">@yield('mobilebar')</ul>
         </nav>
     @endif
