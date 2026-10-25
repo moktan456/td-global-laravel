@@ -10,10 +10,20 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
  */
 class ListFilters
 {
-    /** The chosen stage from the address (?status=...), or '' for all. */
+    /** The chosen stage from the address (?status=...) on either track, or '' for all. A stage key names its own track. */
     public static function stage(mixed $raw): string
     {
-        return is_string($raw) && Statuses::exists($raw) ? $raw : '';
+        return is_string($raw) && Statuses::trackOf($raw) !== null ? $raw : '';
+    }
+
+    /** Shipments whose customs or transport track is at this stage (a track that is switched off never matches). */
+    public static function atStage(Builder $builder, string $stage): Builder
+    {
+        return match (Statuses::trackOf($stage)) {
+            Statuses::CUSTOMS => $builder->where('customs_enabled', true)->where('status', $stage),
+            Statuses::TRANSPORT => $builder->where('transport_enabled', true)->where('transport_status', $stage),
+            default => $builder,
+        };
     }
 
     /** The chosen Telegram filter from the address (?telegram=connected|not), or ''. */

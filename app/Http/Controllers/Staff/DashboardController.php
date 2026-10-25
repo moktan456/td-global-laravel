@@ -24,7 +24,7 @@ class DashboardController extends Controller
 
         $shipments = Shipment::with(['client', 'assignee'])
             ->tap($matchesSearch)
-            ->when($status, fn ($qb) => $qb->where('status', $status))
+            ->tap(fn ($qb) => $status !== '' ? ListFilters::atStage($qb, $status) : $qb)
             ->orderByDesc('updated_at')->orderByDesc('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString();
@@ -33,8 +33,10 @@ class DashboardController extends Controller
             return redirect()->to($shipments->url(max(1, $shipments->lastPage())));
         }
 
-        // How many shipments sit at each stage, within the current search (the stage chips above the list).
-        $perStage = Shipment::query()->tap($matchesSearch)->selectRaw('status, COUNT(*) as n')->groupBy('status')->pluck('n', 'status')->all();
+        // How many shipments sit at each stage of each track, within the current search (the stage chips above the list).
+        // A stage key belongs to one track, so the two lots of counts share one map.
+        $perStage = Shipment::query()->tap($matchesSearch)->where('customs_enabled', true)->selectRaw('status as stage, COUNT(*) as n')->groupBy('status')->pluck('n', 'stage')->all()
+            + Shipment::query()->tap($matchesSearch)->where('transport_enabled', true)->selectRaw('transport_status as stage, COUNT(*) as n')->groupBy('transport_status')->pluck('n', 'stage')->all();
 
         return view('staff.dashboard', [
             'shipments' => $shipments,
@@ -44,6 +46,9 @@ class DashboardController extends Controller
             'people' => Assignees::options(),
             'mine' => Shipment::where('assigned_to', $me)->inProgress()->count(),
             'perStage' => $perStage,
+            'everything' => Shipment::query()->tap($matchesSearch)->count(),
+            // The transport chips only appear once someone actually uses transport tracking.
+            'usesTransport' => Shipment::where('transport_enabled', true)->exists(),
             'hasAny' => Shipment::query()->exists(),
             'inProgress' => Shipment::inProgress()->count(),
             'updatedToday' => Shipment::where('updated_at', '>=', now('Asia/Thimphu')->startOfDay()->setTimezone(config('app.timezone')))->count(),

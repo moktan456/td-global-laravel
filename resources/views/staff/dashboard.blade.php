@@ -7,7 +7,6 @@
 @php
     // Links for the stage chips keep the search that is typed in.
     $chipUrl = fn (string $stage) => '/staff'.(($qs = http_build_query(array_filter(['q' => $query, 'status' => $stage, 'assigned' => $assigned]))) ? '?'.$qs : '');
-    $everything = array_sum($perStage);
     $exportQs = ($qs = http_build_query(array_filter(['q' => $query, 'status' => $status, 'assigned' => $assigned]))) ? '?'.$qs : '';
 @endphp
 
@@ -64,19 +63,36 @@
             @endif
         </form>
 
-        {{-- Filter by stage: each chip shows how many shipments are there (within the search). --}}
-        <nav aria-label="Filter by stage">
-            <ul class="flex flex-wrap gap-2">
-                <li>
-                    <a href="{{ $chipUrl('') }}" @if ($status === '') aria-current="page" @endif class="{{ ui('chip', $status === '' ? 'on' : 'off') }}">All <span class="font-normal opacity-80">{{ $everything }}</span></a>
-                </li>
-                @foreach (\App\Support\Statuses::all() as $stage)
-                    @php($count = $perStage[$stage['key']] ?? 0)
-                    <li>
-                        <a href="{{ $chipUrl($stage['key']) }}" @if ($status === $stage['key']) aria-current="page" @endif class="{{ ui('chip', $status === $stage['key'] ? 'on' : ($count ? 'off' : 'empty')) }}">{{ $stage['label'] }} <span class="font-normal opacity-80">{{ $count }}</span></a>
-                    </li>
-                @endforeach
-            </ul>
+        {{-- Filter by stage: each chip shows how many shipments are there (within the search). With transport in use, the
+             chips are in two labelled rows, one per track; a stage key belongs to one track, so a chip needs no extra setting. --}}
+        @php
+            $chipRows = [['label' => 'Customs clearance', 'stages' => \App\Support\Statuses::all(), 'all' => true]];
+            if ($usesTransport || array_intersect([$status], \App\Support\Statuses::keysFor('transport'))) {
+                $chipRows[] = ['label' => 'Transport', 'stages' => \App\Support\Statuses::transport(), 'all' => false];
+            }
+            $labelled = count($chipRows) > 1;
+        @endphp
+        <nav aria-label="Filter by stage" class="grid gap-3">
+            @foreach ($chipRows as $row)
+                <div class="{{ $labelled ? 'grid gap-2 sm:grid-cols-[9.5rem_1fr] sm:items-start' : '' }}">
+                    @if ($labelled)
+                        <p class="pt-3 text-sm font-semibold text-muted">{{ $row['label'] }}</p>
+                    @endif
+                    <ul class="flex flex-wrap gap-2">
+                        @if ($row['all'])
+                            <li>
+                                <a href="{{ $chipUrl('') }}" @if ($status === '') aria-current="page" @endif class="{{ ui('chip', $status === '' ? 'on' : 'off') }}">All <span class="font-normal opacity-80">{{ $everything }}</span></a>
+                            </li>
+                        @endif
+                        @foreach ($row['stages'] as $stage)
+                            @php($count = $perStage[$stage['key']] ?? 0)
+                            <li>
+                                <a href="{{ $chipUrl($stage['key']) }}" @if ($status === $stage['key']) aria-current="page" @endif class="{{ ui('chip', $status === $stage['key'] ? 'on' : ($count ? 'off' : 'empty')) }}">{{ $stage['label'] }} <span class="font-normal opacity-80">{{ $count }}</span></a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endforeach
         </nav>
 
         <div>
@@ -98,16 +114,16 @@
             @if ($shipments->count())
                 {{-- A table on wide screens, a stack of cards on phones (no sideways scrolling). --}}
                 <div class="mt-4 overflow-hidden rounded-card border border-line bg-white">
-                    <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_12rem_7.5rem_6.5rem]">
+                    <div aria-hidden="true" class="hidden gap-x-6 border-b border-line bg-sand px-5 py-3 text-sm font-semibold text-navy-900 md:grid md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
                         <span>Tracking number</span><span>Client</span><span>Goods</span><span>Stage</span><span>Looked after by</span><span>Updated</span>
                     </div>
                     <ul class="divide-y divide-line">
                         @foreach ($shipments as $s)
-                            <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_12rem_7.5rem_6.5rem]">
+                            <li class="grid items-center gap-x-6 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 md:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
                                 <p><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                 <p class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
                                 <p class="min-w-0 break-words text-muted md:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
-                                <p><span class="sr-only">Stage: </span><x-status-badge :status="$s->primaryStatus()" /></p>
+                                <p><span class="sr-only">Stage: </span>@include('staff.stage-badges', ['s' => $s])</p>
                                 <p class="min-w-0 break-words text-sm md:text-base {{ $s->assignee ? 'text-ink' : 'text-muted' }}"><span class="sr-only">Looked after by: </span>{{ $s->assignee?->name ?? 'Nobody yet' }}</p>
                                 <p class="text-sm text-muted md:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                             </li>

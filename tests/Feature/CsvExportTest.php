@@ -44,7 +44,7 @@ class CsvExportTest extends TestCase
         }
         $rows = $this->rows('/staff/export/shipments.csv');
 
-        $this->assertSame(['Tracking number', 'Client', 'Company', 'Email', 'Phone', 'Direction', 'Method', 'Goods', 'Stage', 'Requested by', 'Created', 'Last updated', 'Notes on the request', 'Assigned to'], $rows[0]);
+        $this->assertSame(['Tracking number', 'Client', 'Company', 'Email', 'Phone', 'Direction', 'Method', 'Goods', 'Stage', 'Requested by', 'Created', 'Last updated', 'Notes on the request', 'Assigned to', 'Customs stage', 'Transport stage', 'Expected delivery', 'Delivered to', 'Delivered at', 'Carrier', 'Vehicle number', 'Pickup place', 'Destination'], $rows[0]);
         $this->assertCount(21, $rows, '20 shipments although the list shows 15 a page');
         $this->assertSame('Load 20', $rows[1][7], 'newest first, like the list');
         $this->assertSame(['Tashi Wangmo', 'Druk Motors', 'tashi@example.com', '+97517975757', 'Import', 'Road freight'], array_slice($rows[1], 1, 6));

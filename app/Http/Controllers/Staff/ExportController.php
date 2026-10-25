@@ -28,12 +28,13 @@ class ExportController extends Controller
                 ListFilters::assignee($request->query('assigned')),
                 $request->user()->id,
             ))
-            ->when($status !== '', fn ($qb) => $qb->where('status', $status))
+            ->tap(fn ($qb) => $status !== '' ? ListFilters::atStage($qb, $status) : $qb)
             ->orderByDesc('updated_at')->orderByDesc('id');
         $methods = array_column(content('statuses.modes'), 'label', 'value');
 
         return Csv::download('shipments', [
             'Tracking number', 'Client', 'Company', 'Email', 'Phone', 'Direction', 'Method', 'Goods', 'Stage', 'Requested by', 'Created', 'Last updated', 'Notes on the request', 'Assigned to',
+            'Customs stage', 'Transport stage', 'Expected delivery', 'Delivered to', 'Delivered at', 'Carrier', 'Vehicle number', 'Pickup place', 'Destination',
         ], function (callable $write) use ($query, $methods) {
             $query->chunk(500, function ($shipments) use ($write, $methods) {
                 foreach ($shipments as $s) {
@@ -41,6 +42,10 @@ class ExportController extends Controller
                         $s->tracking_number, $s->client?->full_name, $s->client?->company, $s->client?->email, $s->client?->phone,
                         ucfirst($s->direction), $methods[$s->mode] ?? $s->mode, $s->goods, Statuses::info($s->primaryStatus())['label'],
                         $s->requested_by === 'staff' ? 'Staff' : 'Client', $this->when($s->created_at), $this->when($s->updated_at), $s->details, $s->assignee?->name,
+                        $s->stageOn(Statuses::CUSTOMS) ? Statuses::info($s->stageOn(Statuses::CUSTOMS))['label'] : '',
+                        $s->stageOn(Statuses::TRANSPORT) ? Statuses::info($s->stageOn(Statuses::TRANSPORT))['label'] : '',
+                        $s->transport_enabled ? $s->expected_delivery?->format('Y-m-d') : '', $s->transport_enabled ? $s->delivered_to : '', $s->transport_enabled ? $this->when($s->delivered_at) : '',
+                        $s->transport_enabled ? $s->carrier : '', $s->transport_enabled ? $s->vehicle_number : '', $s->transport_enabled ? $s->pickup_place : '', $s->transport_enabled ? $s->destination : '',
                     ]);
                 }
             });
