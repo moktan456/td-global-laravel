@@ -84,7 +84,7 @@ class ShipmentChipsTest extends TestCase
     {
         $this->shipment();
         $html = $this->actingAs($this->staff())->get('/staff')->getContent();
-        $this->assertStringContainsString('md:grid-cols-[10rem_', $html, 'a grid on wide screens');
+        $this->assertStringContainsString('xl:grid-cols-[10rem_', $html, 'a grid on wide screens');
         $this->assertStringNotContainsString('min-w-[720px]', $html, 'no table forcing a sideways scroll');
     }
 }

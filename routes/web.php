@@ -50,6 +50,7 @@ Route::prefix('staff')->group(function () {
         Route::post('password', [Staff\PasswordController::class, 'update']);
 
         Route::get('/', [Staff\DashboardController::class, 'index'])->name('staff.dashboard');
+        Route::get('go', [Staff\DashboardController::class, 'go'])->name('staff.go');
         Route::get('shipments/new', [Staff\ShipmentController::class, 'create'])->name('staff.shipments.new');
         Route::post('shipments', [Staff\ShipmentController::class, 'store'])->name('staff.shipments.store');
         Route::get('shipments/{tracking}', [Staff\ShipmentController::class, 'show'])->name('staff.shipments.show');

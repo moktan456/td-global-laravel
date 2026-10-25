@@ -39,6 +39,14 @@
                 <span class="font-display text-lg font-semibold leading-tight">Staff<br>workspace</span>
             </a>
         </div>
+<form method="get" action="/staff/go" role="search" aria-label="Find a shipment" class="px-4 pb-2">
+                <label for="find-side" class="sr-only">Find a shipment by tracking number</label>
+                <div class="relative">
+                    <x-lucide name="search" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-dark-muted" />
+                    <input id="find-side" data-find type="search" name="n" placeholder="Find a shipment" autocomplete="off" class="min-h-11 w-full rounded-control border border-white/30 bg-white/10 pl-9 pr-8 text-white placeholder:text-on-dark-muted focus:bg-white/15">
+                    <kbd aria-hidden="true" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-white/30 px-1.5 text-xs text-on-dark-muted max-lg:hidden">/</kbd>
+                </div>
+            </form>
         <nav aria-label="Staff" class="flex-1 overflow-y-auto px-3 pb-4">
             @foreach ($groups as $groupName => $items)
                 <p class="mt-4 px-3 pb-2 text-xs font-bold uppercase tracking-widest text-on-dark-muted">{{ $groupName }}</p>
@@ -65,6 +73,14 @@
                 <details data-menu>
                     <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-control border border-white/40 px-4 font-semibold [&::-webkit-details-marker]:hidden"><x-lucide name="menu" class="size-5" />Menu</summary>
                     <div class="absolute inset-x-0 top-full z-30 bg-navy-900 px-4 pb-4 shadow-lg">
+<form method="get" action="/staff/go" role="search" aria-label="Find a shipment" class="pt-1">
+                    <label for="find-menu" class="sr-only">Find a shipment by tracking number</label>
+                    <div class="relative">
+                        <x-lucide name="search" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-dark-muted" />
+                        <input id="find-menu" data-find type="search" name="n" placeholder="Find a shipment" autocomplete="off" class="min-h-11 w-full rounded-control border border-white/30 bg-white/10 pl-9 pr-8 text-white placeholder:text-on-dark-muted focus:bg-white/15">
+                        <kbd aria-hidden="true" class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-white/30 px-1.5 text-xs text-on-dark-muted max-lg:hidden">/</kbd>
+                    </div>
+            </form>
                         <nav aria-label="Staff (menu)">
                             @foreach ($groups as $groupName => $items)
                                 <p class="mt-3 px-3 pb-2 text-xs font-bold uppercase tracking-widest text-on-dark-muted">{{ $groupName }}</p>

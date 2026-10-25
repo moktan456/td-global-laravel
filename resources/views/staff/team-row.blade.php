@@ -18,7 +18,7 @@
             </div>
         </form>
     @unless ($isSelf)
-        <form method="post" action="/staff/team/{{ $member->id }}/active" data-enhance class="border-t border-line pt-4">
+        <form method="post" action="/staff/team/{{ $member->id }}/active" data-enhance @if ($member->active) data-confirm="Switch off {{ $member->name }}? They are signed out straight away and cannot sign in until you switch them back on." @endif class="border-t border-line pt-4">
             @csrf
             <input type="hidden" name="active" value="{{ $member->active ? 'false' : 'true' }}">
             <x-button type="submit" variant="outline">{{ $member->active ? 'Switch off '.$member->name : 'Switch '.$member->name.' back on' }}</x-button>

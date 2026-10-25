@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Client;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
@@ -24,6 +25,41 @@ class ListFilters
             Statuses::TRANSPORT => $builder->where('transport_enabled', true)->where('transport_status', $stage),
             default => $builder,
         };
+    }
+
+    /** How the shipment list is ordered (?sort=...). Anything unknown means newest update first. */
+    public const SORTS = [
+        'updated' => 'Recently updated',
+        'oldest' => 'Longest since updated',
+        'client' => 'Client A to Z',
+        'stage' => 'Customs stage, first to last',
+        'tracking' => 'Tracking number',
+    ];
+
+    public static function sort(mixed $raw): string
+    {
+        return is_string($raw) && isset(self::SORTS[$raw]) ? $raw : 'updated';
+    }
+
+    public static function sortShipments(Builder $builder, string $sort): Builder
+    {
+        switch ($sort) {
+            case 'oldest':
+                return $builder->orderBy('updated_at')->orderBy('id');
+            case 'tracking':
+                return $builder->orderBy('tracking_number');
+            case 'client':
+                return $builder->orderBy(
+                    Client::query()->selectRaw('LOWER(COALESCE(NULLIF(company, \'\'), full_name))')->whereColumn('clients.id', 'shipments.client_id')->limit(1)
+                )->orderByDesc('updated_at');
+            case 'stage':   // the position of the customs stage in the list; shipments with customs off go last
+                $keys = array_column(Statuses::all(), 'key');
+                $case = 'CASE status '.implode(' ', array_map(fn ($k, $i) => "WHEN '{$k}' THEN {$i}", $keys, array_keys($keys))).' ELSE 99 END';
+
+                return $builder->orderByRaw('customs_enabled DESC')->orderByRaw($case)->orderByDesc('updated_at');
+            default:
+                return $builder->orderByDesc('updated_at')->orderByDesc('id');
+        }
     }
 
     /** The chosen Telegram filter from the address (?telegram=connected|not), or ''. */

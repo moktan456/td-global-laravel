@@ -13,11 +13,31 @@ class DashboardController extends Controller
 {
     private const PER_PAGE = 15;
 
+    /** The "Find a shipment" box: an exact tracking number opens that shipment, anything else becomes a search. */
+    public function go(Request $request)
+    {
+        $typed = Search::text($request->query('n'), 40);
+        $wanted = strtoupper(str_replace(['-', ' '], '', $typed));
+        if ($wanted !== '') {
+            $match = Shipment::query()->whereRaw("REPLACE(tracking_number, '-', '') = ?", [$wanted])->value('tracking_number');
+            if (! $match && preg_match('/^[A-Z0-9]{5,}$/', $wanted)) {   // just the last characters (the 6-character code): fine if only one shipment ends that way
+                $ends = Shipment::query()->whereRaw("REPLACE(tracking_number, '-', '') LIKE ?", ['%'.$wanted])->limit(2)->pluck('tracking_number');
+                $match = $ends->count() === 1 ? $ends->first() : null;
+            }
+            if ($match) {
+                return redirect("/staff/shipments/{$match}");
+            }
+        }
+
+        return redirect('/staff'.($typed !== '' ? '?'.http_build_query(['q' => $typed]) : ''));
+    }
+
     public function index(Request $request)
     {
         $status = ListFilters::stage($request->query('status'));
         $query = Search::text($request->query('q'));
         $assigned = ListFilters::assignee($request->query('assigned'));
+        $sort = ListFilters::sort($request->query('sort'));
         $me = $request->user()->id;
         // The search and the "assigned to" choice apply to the list and to the stage counts alike.
         $matchesSearch = fn ($qb) => ListFilters::assignedTo(ListFilters::shipments($qb, $query), $assigned, $me);
@@ -25,7 +45,7 @@ class DashboardController extends Controller
         $shipments = Shipment::with(['client', 'assignee'])
             ->tap($matchesSearch)
             ->tap(fn ($qb) => $status !== '' ? ListFilters::atStage($qb, $status) : $qb)
-            ->orderByDesc('updated_at')->orderByDesc('id')
+            ->tap(fn ($qb) => ListFilters::sortShipments($qb, $sort))
             ->paginate(self::PER_PAGE)
             ->withQueryString();
 
@@ -43,6 +63,7 @@ class DashboardController extends Controller
             'status' => $status,
             'query' => $query,
             'assigned' => $assigned,
+            'sort' => $sort,
             'people' => Assignees::options(),
             'mine' => Shipment::where('assigned_to', $me)->inProgress()->count(),
             'perStage' => $perStage,

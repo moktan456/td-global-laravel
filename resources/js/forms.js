@@ -18,6 +18,7 @@ function focusStatus(root) {
 
 async function submit(form, event) {
     event.preventDefault();
+    if (form.dataset.confirm && !window.confirm(form.dataset.confirm)) return;
     pending(form, true);
     try {
         const response = await fetch(form.action, {
