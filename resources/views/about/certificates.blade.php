@@ -22,7 +22,7 @@
 @endphp
 <section aria-labelledby="certificates-heading" class="bg-sand py-20 lg:py-28">
     <x-container>
-        <x-section-heading id="certificates-heading" eyebrow="Registered & incorporated" title="Registered in Gelephu Mindfulness City">
+        <x-section-heading id="certificates-heading" eyebrow="Registered & incorporated" title="Registered in Gelephu Mindfulness City" class="max-w-none!">
             <x-slot:intro><p>{{ $legal['name'] }} is a private company limited by shares, incorporated on {{ $issued }} with the {{ $legal['registry'] }}. UEN {{ $legal['uen'] }}.</p></x-slot:intro>
         </x-section-heading>
         <ul data-reveal-group class="mt-12 grid gap-8 lg:grid-cols-2">
