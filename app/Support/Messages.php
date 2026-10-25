@@ -71,22 +71,36 @@ class Messages
         return "Hello {$name}, this is ".site('name').". Your tracking number is {$tracking}".($about ? " ({$about})" : '').".\nFollow it any time, no sign-in needed:\n{$url}";
     }
 
+    /** "customs clearance and transport": what a shipment follows. '' for the usual customs-only shipment, so those messages stay as they were. */
+    private static function trackedLine(?array $tracks): string
+    {
+        if (! $tracks || $tracks === [Statuses::CUSTOMS]) {
+            return '';
+        }
+
+        return implode(' and ', array_map(fn ($t) => strtolower(Statuses::trackLabel($t)), $tracks));
+    }
+
     /* ---------- Telegram ---------- */
 
-    public static function telegramTrackingNumber(string $name, string $tracking, ?string $about = null): string
+    public static function telegramTrackingNumber(string $name, string $tracking, ?string $about = null, ?array $tracks = null): string
     {
-        return 'Hello '.self::e($name).", we've received your clearance request.\n\n"
+        $tracked = self::trackedLine($tracks);
+
+        return 'Hello '.self::e($name).", we've received your ".($tracks === [Statuses::TRANSPORT] ? 'transport' : 'clearance')." request.\n\n"
             .'Your tracking number: <code>'.self::e($tracking)."</code>\n"
-            .($about ? 'Shipment: '.self::e($about)."\n" : '')."\n"
+            .($about ? 'Shipment: '.self::e($about)."\n" : '')
+            .($tracked !== '' ? 'We will keep you updated on: '.self::e($tracked).".\n" : '')."\n"
             .'Follow it any time: '.self::link(self::origin()."/track?n={$tracking}", 'open your shipment')
             .self::sign();
     }
 
-    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note, ?string $about = null, ?string $track = null): string
+    public static function telegramStatusUpdate(string $name, string $tracking, array $info, ?string $note, ?string $about = null, ?string $track = null, ?string $expected = null): string
     {
         return '<b>Update on your tracking number '.self::e($tracking)."</b>\n"
             .($about ? 'Shipment: '.self::e($about)."\n" : '')
             .'Hello '.self::e($name).'. New '.($track === Statuses::TRANSPORT ? 'transport stage' : 'stage').': <b>'.self::e($info['label'])."</b>\n".self::e($info['clientText'])
+            .($expected ? "\nExpected delivery: ".self::e($expected).'.' : '')
             .($note ? "\n\nNote from our team: ".self::e(self::clip($note)) : '')
             ."\n\n".self::link(self::origin()."/track?n={$tracking}", 'Open your shipment')
             .self::sign();
@@ -162,21 +176,23 @@ class Messages
     }
 
     /** @return array{subject: string, text: string} */
-    public static function trackingNumberEmail(string $name, string $tracking, ?string $about = null): array
+    public static function trackingNumberEmail(string $name, string $tracking, ?string $about = null, ?array $tracks = null): array
     {
+        $tracked = self::trackedLine($tracks);
+
         return [
             'subject' => "Your tracking number: {$tracking}",
-            'text' => "Hello {$name},\n\nWe've received your clearance request. Your tracking number is:\n\n{$tracking}\n".($about ? "\nShipment: {$about}\n" : '')."\nCheck its progress any time, no sign-in needed:\n".self::origin()."/track?n={$tracking}".self::signature(),
+            'text' => "Hello {$name},\n\nWe've received your ".($tracks === [Statuses::TRANSPORT] ? 'transport' : 'clearance')." request. Your tracking number is:\n\n{$tracking}\n".($about ? "\nShipment: {$about}\n" : '').($tracked !== '' ? "\nWe will keep you updated on: {$tracked}.\n" : '')."\nCheck its progress any time, no sign-in needed:\n".self::origin()."/track?n={$tracking}".self::signature(),
         ];
     }
 
-    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note, ?string $about = null, ?string $track = null): array
+    public static function statusUpdateEmail(string $name, string $tracking, string $status, ?string $note, ?string $about = null, ?string $track = null, ?string $expected = null): array
     {
         $info = Statuses::info($status);
 
         return [
             'subject' => "{$tracking}: {$info['label']}",
-            'text' => "Hello {$name},\n\nUpdate on your tracking number {$tracking}".($about ? " ({$about})" : '').($track === Statuses::TRANSPORT ? ', transport' : '').": {$info['clientText']}".($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
+            'text' => "Hello {$name},\n\nUpdate on your tracking number {$tracking}".($about ? " ({$about})" : '').($track === Statuses::TRANSPORT ? ', transport' : '').": {$info['clientText']}".($expected ? "\n\nExpected delivery: {$expected}." : '').($note ? "\n\nNote from our team: {$note}" : '')."\n\nCheck it any time: ".self::origin()."/track?n={$tracking}".self::signature(),
         ];
     }
 

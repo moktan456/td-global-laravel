@@ -81,8 +81,8 @@ class ShipmentController extends Controller
         ]);
         $this->notify->client(
             $client, 'tracking_number', $shipment->id,
-            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, Messages::about($shipment)),
-            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, Messages::about($shipment)),
+            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, Messages::about($shipment), $shipment->tracks()),
+            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, Messages::about($shipment), $shipment->tracks()),
         );
 
         return $this->formRedirect($request, "/staff/shipments/{$shipment->tracking_number}?new=1");
@@ -106,8 +106,8 @@ class ShipmentController extends Controller
         $about = Messages::about($shipment);
         $outcomes = $this->notify->client(
             $client, 'tracking_number', $shipment->id,
-            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, $about),
-            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, $about),
+            Messages::trackingNumberEmail($client->full_name, $shipment->tracking_number, $about, $shipment->tracks()),
+            Messages::telegramTrackingNumber($client->full_name, $shipment->tracking_number, $about, $shipment->tracks()),
         );
         $described = Notify::describe($outcomes);
         $state = collect($outcomes)->contains('status', 'sent')

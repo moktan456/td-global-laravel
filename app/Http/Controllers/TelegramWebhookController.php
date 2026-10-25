@@ -8,7 +8,6 @@ use App\Models\Shipment;
 use App\Models\TelegramLinkToken;
 use App\Services\Telegram;
 use App\Support\Messages;
-use App\Support\Statuses;
 use Illuminate\Http\Request;
 
 /**
@@ -84,7 +83,7 @@ class TelegramWebhookController extends Controller
                 return;
             }
             $items = Shipment::whereIn('client_id', $ids)->latest()->limit(5)->get()
-                ->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->primaryStatus())['label']])->all();
+                ->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => $s->stageSummary()])->all();
             $this->telegram->send($chatId, Messages::telegramShipmentList($items));
 
             return;

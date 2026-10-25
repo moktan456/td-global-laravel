@@ -102,6 +102,17 @@ class Shipment extends Model
         return $this->stageOn(Statuses::CUSTOMS) ?? $this->stageOn(Statuses::TRANSPORT) ?? $this->status ?? $this->transport_status ?? Statuses::first(Statuses::CUSTOMS);
     }
 
+    /** Where the shipment is, in words: "Pending Risk", or with two tracks "Customs: Pending Risk · Transport: In Transit". */
+    public function stageSummary(): string
+    {
+        $tracks = $this->tracks();
+        if (count($tracks) < 2) {
+            return Statuses::info($this->primaryStatus())['label'];
+        }
+
+        return implode(' · ', array_map(fn ($t) => ($t === Statuses::CUSTOMS ? 'Customs' : 'Transport').': '.Statuses::info($this->stageOn($t))['label'], $tracks));
+    }
+
     /** Is every track this shipment follows at its last stage? */
     public function isFinished(): bool
     {

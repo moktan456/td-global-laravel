@@ -104,12 +104,14 @@ class TransportController extends Controller
             $shipment->logStage($eventNote, Statuses::TRANSPORT);                                    // same stage, just a note or an updated proof
         }
 
+        // "Expected delivery: 28 Oct 2026." goes in the message until it has been delivered.
+        $expected = ! $delivered ? $shipment->expected_delivery?->format('j M Y') : null;
         $told = '';
         if ($request->input('notify') === 'on' && $shipment->client) {
             $outcomes = $this->notify->client(
                 $shipment->client, 'status_update', $shipment->id,
-                Messages::statusUpdateEmail($shipment->client->full_name, $shipment->tracking_number, $status, $eventNote ?: null, Messages::about($shipment), Statuses::TRANSPORT),
-                Messages::telegramStatusUpdate($shipment->client->full_name, $shipment->tracking_number, Statuses::info($status), $eventNote ?: null, Messages::about($shipment), Statuses::TRANSPORT),
+                Messages::statusUpdateEmail($shipment->client->full_name, $shipment->tracking_number, $status, $eventNote ?: null, Messages::about($shipment), Statuses::TRANSPORT, $expected),
+                Messages::telegramStatusUpdate($shipment->client->full_name, $shipment->tracking_number, Statuses::info($status), $eventNote ?: null, Messages::about($shipment), Statuses::TRANSPORT, $expected),
             );
             $told = ' '.Notify::describe($outcomes);
         }

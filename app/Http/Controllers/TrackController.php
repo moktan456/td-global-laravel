@@ -76,14 +76,53 @@ class TrackController extends Controller
             return ['number' => $number, 'error' => "We couldn't find a shipment with that tracking number. Check it and try again, or ask us to resend it below."];
         }
 
+        $events = $shipment->events()->where('visible_to_client', true)->get();
+
         return ['number' => $number, 'result' => [
             'tracking_number' => $shipment->tracking_number,
             'status' => $shipment->primaryStatus(),
             'updated_at' => $shipment->updated_at->toIso8601String(),
-            'events' => $shipment->events()->where('visible_to_client', true)->get()->map(fn ($e) => [
-                'status' => $e->status, 'at' => $e->created_at->toIso8601String(), 'note' => $e->note,
-            ])->all(),
+            // One entry per track the shipment follows (customs first): where it is, how far along, and its own timeline.
+            'tracks' => collect($shipment->tracks())->map(function (string $track) use ($shipment, $events) {
+                $stage = $shipment->stageOn($track);
+                [$position, $total] = Statuses::position($stage);
+
+                return [
+                    'track' => $track,
+                    'label' => Statuses::trackLabel($track),
+                    'status' => $stage,
+                    'position' => $position,
+                    'total' => $total,
+                    'finished' => $stage === Statuses::last($track),
+                    'events' => $events->where('track', $track)->map(fn ($e) => [
+                        'status' => $e->status, 'track' => $e->track, 'at' => $e->created_at->toIso8601String(), 'note' => $e->note,
+                    ])->values()->all(),
+                ];
+            })->all(),
+            'delivery' => $this->deliveryDetails($shipment),
         ]];
+    }
+
+    /**
+     * What a client may see about the transport leg: carrier, vehicle, where from and to, and when to expect it.
+     * The driver's name and phone are for staff only and are never added here.
+     *
+     * @return array<string, string>
+     */
+    private function deliveryDetails(Shipment $shipment): array
+    {
+        if (! $shipment->transport_enabled) {
+            return [];
+        }
+        $delivered = $shipment->transport_status === Statuses::last(Statuses::TRANSPORT);
+
+        return array_filter([
+            'Carrier' => $shipment->carrier,
+            'Vehicle' => $shipment->vehicle_number,
+            'From' => $shipment->pickup_place,
+            'To' => $shipment->destination,
+            'Expected delivery' => $delivered ? null : $shipment->expected_delivery?->format('j M Y'),
+        ], fn ($v) => $v !== null && $v !== '');
     }
 
     /**
@@ -137,7 +176,7 @@ class TrackController extends Controller
         if ($shipments->isEmpty()) {
             return;
         }
-        $items = $shipments->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => Statuses::info($s->primaryStatus())['label']])->all();
+        $items = $shipments->map(fn ($s) => ['tracking' => $s->tracking_number, 'stage' => $s->stageSummary()])->all();
         // The person asked for this just now, so it is sent even if they had switched notifications off.
         $client->notify_email = true;
         $client->notify_telegram = true;

@@ -21,6 +21,8 @@ A complete rebuild of the Next.js site ([`Edulink-Trading-Website`](https://gith
 - Clients: register, and create a one-time **Telegram connect link**.
 - **Super admin only:** *Team* (add staff, reset passwords, switch people off; at least one super admin always remains) and *Telegram* (checklist and one-click webhook set-up).
 
+**Transport tracking (optional per shipment):** besides the customs stages, a shipment can also follow a six-stage transport track (pickup to delivery), with carrier and vehicle details, an expected delivery date and a proof of delivery. Staff switch each track on or off; clients see a progress line per track.
+
 **Notifications:** email (plain text) and Telegram to clients, per client preference; Telegram bot commands `/start`, `/status`, `/stop`, `/chatid`.
 
 ## Run it on your computer

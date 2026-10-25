@@ -25,6 +25,7 @@
     <ul class="mt-8 grid gap-3 border-t border-white/15 pt-6 text-sm text-on-dark">
         <li class="flex items-start gap-3"><x-lucide name="shield-check" class="mt-0.5 size-5 shrink-0 text-gold" /><span>No account or sign-in. Your tracking number is all you need.</span></li>
         <li class="flex items-start gap-3"><x-lucide name="mail" class="mt-0.5 size-5 shrink-0 text-gold" /><span>Updates also reach you by email or Telegram when you choose.</span></li>
+        <li class="flex items-start gap-3"><x-lucide name="map-pin" class="mt-0.5 size-5 shrink-0 text-gold" /><span>If your shipment includes transport, you'll also see its journey from pickup to delivery, and when to expect it.</span></li>
         <li class="flex items-start gap-3"><x-lucide name="message-circle" class="mt-0.5 size-5 shrink-0 text-gold" /><span>A note from our team appears here when something needs your attention.</span></li>
     </ul>
 </aside>
