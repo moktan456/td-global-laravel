@@ -41,9 +41,29 @@ async function submit(form, event) {
         root.replaceWith(next);
         bindAll(next);
         focusStatus(next);
+        if (form.hasAttribute('data-refresh')) refreshLive();
     } catch {
         pending(form, false);
         form.submit(); // let the server render the page with the result instead
+    }
+}
+
+/**
+ * After a save, the rest of the page (title-bar stage badges, track tabs, timeline) may be out of date. Re-fetch the
+ * page and swap just the regions marked `data-live`; the forms are left alone so nobody loses typing or focus.
+ */
+async function refreshLive() {
+    try {
+        const response = await fetch(window.location.href, { credentials: 'same-origin', headers: { Accept: 'text/html', 'X-Requested-With': 'XMLHttpRequest' } });
+        if (!response.ok) return;
+        const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+        document.querySelectorAll('[data-live]').forEach((el) => {
+            const fresh = doc.querySelector(`[data-live="${el.dataset.live}"]`);
+            if (fresh) el.replaceWith(fresh);
+            else el.remove();
+        });
+    } catch {
+        // The page stays as it was; the next load shows the latest.
     }
 }
 

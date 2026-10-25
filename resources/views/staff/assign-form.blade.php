@@ -3,7 +3,7 @@
     $state = $state ?? form_state('assign');
     $current = $state->value('assigned_to', (string) ($s->assigned_to ?? ''));
 @endphp
-<form id="assign-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/assign" data-enhance novalidate class="grid gap-3">
+<form id="assign-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/assign" data-enhance data-refresh novalidate class="grid gap-3">
     @csrf
     <x-form-status :state="$state" :ids="['assigned_to' => 'assign-to']" />
     <x-field-shell id="assign-to" label="Looked after by" :error="$state->error('assigned_to')">

@@ -12,7 +12,7 @@
             <div data-slide role="group" aria-roledescription="slide" aria-label="{{ $i + 1 }} of {{ $total }}" @unless ($active) inert @endunless class="col-start-1 row-start-1 transition-opacity duration-500 ease-out-quart {{ $active ? 'opacity-100' : 'pointer-events-none opacity-0' }}">
                 <article class="group on-dark relative flex min-h-[26rem] items-end overflow-hidden rounded-card">
                     <x-photo :name="$a['image']" sizes="(min-width: 1280px) 1150px, 100vw" :decorative="true" :zoom="true" />
-                    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 to-navy-950/10"></div>
+                    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/85 to-navy-950/25"></div>
                     <div class="relative max-w-2xl p-6 sm:p-10">
                         <p class="text-sm font-semibold uppercase tracking-[0.14em] text-gold">{{ $a['category'] }}</p>
                         <h3 class="mt-2 font-display text-2xl font-semibold text-white sm:text-3xl">{{ $a['title'] }}</h3>

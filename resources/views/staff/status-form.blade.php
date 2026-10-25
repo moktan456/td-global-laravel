@@ -2,7 +2,7 @@
     $state = $state ?? form_state('status');
     $ids = ['status' => 'status-stage', 'note' => 'status-note'];
 @endphp
-<form id="status-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/status" data-enhance novalidate class="grid gap-5">
+<form id="status-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/status" data-enhance data-refresh novalidate class="grid gap-5">
     @csrf
     <x-form-status :state="$state" :ids="$ids" />
     <x-select-field :id="$ids['status']" name="status" label="Stage" :value="$state->value('status', $s->status)" :error="$state->error('status')" :options="array_map(fn ($x) => ['value' => $x['key'], 'label' => $x['label']], \App\Support\Statuses::all())" />

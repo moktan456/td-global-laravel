@@ -4,7 +4,7 @@
     $customs = $state->status === 'error' ? (bool) $state->value('track_customs') : $s->customs_enabled;
     $transport = $state->status === 'error' ? (bool) $state->value('track_transport') : $s->transport_enabled;
 @endphp
-<form id="tracks-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/tracks" data-enhance novalidate class="grid gap-3">
+<form id="tracks-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/tracks" data-enhance data-refresh novalidate class="grid gap-3">
     @csrf
     <x-form-status :state="$state" :ids="['tracks' => 'tracks-customs']" />
     <x-track-switch id="tracks-customs" name="track_customs" label="Customs clearance" description="The 7 customs stages." :checked="$customs" />

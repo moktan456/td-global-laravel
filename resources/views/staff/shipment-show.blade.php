@@ -20,7 +20,7 @@
         <div class="grid gap-6 self-start">
             <section aria-labelledby="update-heading" class="rounded-card border border-line bg-white p-6">
                 <h2 id="update-heading" class="font-display text-2xl font-semibold text-navy-900">Update stage</h2>
-                <nav aria-label="Track to update" class="mt-4 border-b border-line">
+                <nav data-live="tabs" aria-label="Track to update" class="mt-4 border-b border-line">
                     <ul class="-mb-px flex flex-wrap gap-1">
                         @foreach (\App\Support\Statuses::tracks() as $t)
                             @php($now = $s->stageOn($t))
@@ -53,7 +53,7 @@
                     @endif
                 </div>
             </section>
-            <section aria-labelledby="timeline-heading" class="rounded-card border border-line bg-white p-6">
+            <section data-live="timeline" aria-labelledby="timeline-heading" class="rounded-card border border-line bg-white p-6">
                 <h2 id="timeline-heading" class="font-display text-2xl font-semibold text-navy-900">Timeline</h2>
                 <div class="mt-6">
                     <x-timeline audience="staff" :events="$events" :show-tracks="count($s->tracks()) > 1" />

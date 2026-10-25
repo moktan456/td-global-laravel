@@ -4,7 +4,7 @@
     $v = fn (string $f) => $state->status === 'error' ? ($state->value($f) ?? '') : ($f === 'expected_delivery' ? ($s->expected_delivery?->format('Y-m-d') ?? '') : ($s->{$f} ?? ''));
     $err = fn (string $f) => $state->error($f);
 @endphp
-<form id="tdetails-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/transport-details" data-enhance novalidate class="grid gap-5">
+<form id="tdetails-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/transport-details" data-enhance data-refresh novalidate class="grid gap-5">
     @csrf
     <x-form-status :state="$state" :ids="['carrier' => 'td-carrier']" />
     @include('staff.transport-fields', ['prefix' => 'td', 'v' => $v, 'err' => $err])

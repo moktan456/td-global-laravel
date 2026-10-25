@@ -11,7 +11,7 @@
                 <li class="flex items-center gap-2">
                     <x-lucide name="phone" class="size-4 text-gold" />
                     @if ($phoneHref)
-                        <a href="tel:{{ $phoneHref }}" class="py-1.5 hover:text-white">{{ $phone }}</a>
+                        <a href="tel:{{ $phoneHref }}" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">{{ $phone }}</a>
                     @else
                         <span>{{ $phone }}</span>
                     @endif
@@ -19,7 +19,7 @@
             @endif
             <li class="flex items-center gap-2">
                 <x-lucide name="mail" class="size-4 text-gold" />
-                <a href="mailto:{{ $email }}" class="py-1.5 hover:text-white">{{ $email }}</a>
+                <a href="mailto:{{ $email }}" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">{{ $email }}</a>
             </li>
             @if (is_filled($address))
                 <li class="hidden items-center gap-2 md:flex">
@@ -29,8 +29,8 @@
             @endif
         </ul>
         <ul class="flex items-center gap-x-6" aria-label="Staff and contact">
-            <li><a href="/staff/login" class="inline-block py-1.5 hover:text-white">Staff login</a></li>
-            <li><a href="/contact" class="inline-block py-1.5 hover:text-white">Contact us</a></li>
+            <li><a href="/staff/login" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">Staff login</a></li>
+            <li><a href="/contact" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">Contact us</a></li>
         </ul>
     </div>
 </aside>

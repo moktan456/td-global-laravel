@@ -103,7 +103,7 @@
                     @endif
                 </div>
                 @hasSection('actions')
-                    <div class="flex flex-wrap items-center gap-3">@yield('actions')</div>
+                    <div data-live="actions" class="flex flex-wrap items-center gap-3">@yield('actions')</div>
                 @endif
             </div>
         </div>

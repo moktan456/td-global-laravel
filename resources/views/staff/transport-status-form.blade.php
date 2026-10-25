@@ -8,7 +8,7 @@
     $whenDefault = $s->delivered_at ?? now();
     $when = $failed ? ($state->value('delivered_at') ?? '') : $whenDefault->copy()->timezone('Asia/Thimphu')->format('Y-m-d\TH:i');
 @endphp
-<form id="transport-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/transport-status" data-enhance novalidate class="group/pod grid gap-5">
+<form id="transport-form" method="post" action="/staff/shipments/{{ $s->tracking_number }}/transport-status" data-enhance data-refresh novalidate class="group/pod grid gap-5">
     @csrf
     <x-form-status :state="$state" :ids="$ids" />
     <x-select-field :id="$ids['status']" name="status" label="Transport stage" :value="$current" :error="$state->error('status')" :options="array_map(fn ($x) => ['value' => $x['key'], 'label' => $x['label']], \App\Support\Statuses::transport())" />
