@@ -41,20 +41,47 @@ function initCompanyMenu() {
         list.inert = !open;
         chevron.classList.toggle('rotate-180', open);
     };
-    button.addEventListener('click', () => set(!open));
+    // With a mouse, the menu opens as soon as the pointer is over "Company" and closes shortly after it leaves (the short
+    // delay lets the pointer cross the gap to the panel). A click pins it open; touch screens just use the click.
+    const hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let pinned = false;
+    let closeTimer;
+    const close = () => {
+        pinned = false;
+        set(false);
+    };
+    button.addEventListener('click', () => {
+        if (hoverCapable.matches && open && !pinned) {
+            pinned = true; // opened by hover: a click keeps it open
+            return;
+        }
+        if (open) close();
+        else {
+            pinned = hoverCapable.matches;
+            set(true);
+        }
+    });
+    wrapper.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimer);
+        if (hoverCapable.matches && !open) set(true);
+    });
+    wrapper.addEventListener('mouseleave', () => {
+        if (!hoverCapable.matches || pinned) return;
+        closeTimer = setTimeout(close, 200);
+    });
     document.addEventListener('pointerdown', (e) => {
-        if (open && !wrapper.contains(e.target)) set(false);
+        if (open && !wrapper.contains(e.target)) close();
     });
     document.addEventListener('keydown', (e) => {
         if (open && e.key === 'Escape') {
-            set(false);
+            close();
             button.focus();
         }
     });
     wrapper.addEventListener('focusout', (e) => {
-        if (open && !wrapper.contains(e.relatedTarget)) set(false);
+        if (open && !wrapper.contains(e.relatedTarget)) close();
     });
-    wrapper.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
+    wrapper.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
 }
 
 function initMobileMenu() {
