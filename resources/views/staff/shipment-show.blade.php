@@ -6,6 +6,12 @@
     @endforeach
 @endsection
 
+@section('mobilebar')
+    @foreach ([['#update-heading', 'Update', 'package'], ['#details-heading', 'Details', 'user-round'], ['#timeline-heading', 'Timeline', 'clock']] as [$href, $label, $icon])
+        <li><a href="{{ $href }}" class="flex min-h-14 flex-col items-center justify-center gap-0.5 text-sm font-semibold text-white"><x-lucide :name="$icon" class="size-5" />{{ $label }}</a></li>
+    @endforeach
+@endsection
+
 @php
     $trackUrl = absolute_url('/track?n='.$s->tracking_number);
     $waUrl = $s->client?->phone ? \App\Support\Messages::waLink($s->client->phone, \App\Support\Messages::whatsappTrackingNumber($s->client->full_name, $s->tracking_number, \App\Support\Messages::about($s), $trackUrl)) : null;

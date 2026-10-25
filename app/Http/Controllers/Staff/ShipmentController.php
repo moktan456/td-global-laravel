@@ -171,6 +171,11 @@ class ShipmentController extends Controller
         $status = (string) $request->input('status', '');
         $note = trim((string) $request->input('note', ''));
         $values = ['status' => $status, 'note' => $note];
+        $quick = $request->input('from') === 'list';   // the "Change stage" mini form on the shipments list: answer with a message on the list
+        $back = fn (bool $ok, string $message) => redirect()->back()->with('quick', ['ok' => $ok, 'message' => $message]);
+        if ($quick && (! $shipment->customs_enabled || ! Statuses::exists($status))) {
+            return $back(false, "Couldn't change {$shipment->tracking_number}: customs tracking is off or the stage isn't valid.");
+        }
         if (! $shipment->customs_enabled) {
             return $this->formResponse($request, 'status', 'staff.status-form', FormState::failed('Customs tracking is switched off for this shipment. Switch it on under "What we track" first.'), ['s' => $shipment]);
         }
@@ -197,6 +202,10 @@ class ShipmentController extends Controller
                 Messages::telegramStatusUpdate($shipment->client->full_name, $shipment->tracking_number, Statuses::info($status), $note ?: null, Messages::about($shipment)),
             );
             $told = ' '.Notify::describe($outcomes);
+        }
+
+        if ($quick) {
+            return $back(true, "{$shipment->tracking_number} is now at ".Statuses::info($status)['label'].".{$told}");
         }
 
         return $this->formResponse($request, 'status', 'staff.status-form', FormState::success("Status updated.{$told}"), ['s' => $shipment->fresh()]);

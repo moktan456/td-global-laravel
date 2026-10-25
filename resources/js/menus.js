@@ -6,6 +6,8 @@
 export function initMenus() {
     initFoldOnPhone();
     initFindShortcut();
+    initDensity();
+    initPlainConfirms();
     document.addEventListener('click', (event) => {
         document.querySelectorAll('details[data-menu][open]').forEach((menu) => {
             if (!menu.contains(event.target)) menu.open = false;
@@ -42,5 +44,32 @@ function initFindShortcut() {
         if (!box) return;
         event.preventDefault();
         box.focus();
+    });
+}
+
+/** "Compact rows" on the shipment list: a toggle button, remembered per browser (storage can be blocked, so every access is guarded). */
+function initDensity() {
+    const button = document.querySelector('[data-density-toggle]');
+    const read = () => { try { return localStorage.getItem('staff-density'); } catch { return null; } };
+    const apply = (compact) => {
+        document.documentElement.toggleAttribute('data-density-compact', compact);
+        document.documentElement.dataset.density = compact ? 'compact' : 'comfortable';
+        button?.setAttribute('aria-pressed', String(compact));
+    };
+    apply(read() === 'compact');
+    button?.addEventListener('click', () => {
+        const compact = button.getAttribute('aria-pressed') !== 'true';
+        apply(compact);
+        try { localStorage.setItem('staff-density', compact ? 'compact' : 'comfortable'); } catch { /* keep the choice for this page only */ }
+    });
+}
+
+/** Ordinary (non-enhanced) forms can ask first too: data-confirm="Are you sure?". Enhanced forms ask in forms.js. */
+function initPlainConfirms() {
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (form instanceof HTMLFormElement && form.dataset.confirm && !form.hasAttribute('data-enhance') && !window.confirm(form.dataset.confirm)) {
+            event.preventDefault();
+        }
     });
 }

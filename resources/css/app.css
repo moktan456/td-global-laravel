@@ -212,3 +212,6 @@
 .sample-done { opacity: var(--on); }
 .sample-label { opacity: calc(0.55 + 0.45 * var(--on)); }
 .sample-text { opacity: var(--cur); max-height: calc(var(--cur) * 3rem); overflow: hidden; }
+
+/* Staff lists: "Compact rows" (chosen with a button, remembered in the browser). */
+[data-density='compact'] .density-row { padding-block: 0.5rem; row-gap: 0.25rem; }

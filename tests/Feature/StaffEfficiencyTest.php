@@ -66,4 +66,26 @@ class StaffEfficiencyTest extends TestCase
         $other->forceFill(['active' => false])->save();
         $this->actingAs($admin)->get('/staff/team')->assertOk()->assertDontSee('data-confirm="Switch off Pema', false);
     }
+
+    public function test_the_list_can_change_a_stage_in_place_and_comes_back_with_a_message(): void
+    {
+        $me = $this->staff();
+        $s = $this->ship('Rice');
+
+        $this->actingAs($me)->get('/staff')->assertOk()->assertSee('Change stage')->assertSee('Compact rows');
+        $this->actingAs($me)->from('/staff?sort=client')->post("/staff/shipments/{$s->tracking_number}/status", ['from' => 'list', 'status' => 'pending_payment'])
+            ->assertRedirect('/staff?sort=client')->assertSessionHas('quick.ok', true);
+        $this->assertSame('pending_payment', $s->fresh()->status);
+
+        $this->actingAs($me)->from('/staff')->post("/staff/shipments/{$s->tracking_number}/status", ['from' => 'list', 'status' => 'nonsense'])
+            ->assertRedirect('/staff')->assertSessionHas('quick.ok', false);
+        $this->assertSame('pending_payment', $s->fresh()->status);
+    }
+
+    public function test_a_shipment_page_has_a_phone_jump_bar_and_the_list_has_none(): void
+    {
+        $s = $this->ship('Rice');
+        $this->actingAs($this->staff())->get("/staff/shipments/{$s->tracking_number}")->assertOk()->assertSee('aria-label="Jump to a section"', false)->assertSee('#timeline-heading', false);
+        $this->actingAs($this->staff())->get('/staff')->assertDontSee('Jump to a section');
+    }
 }

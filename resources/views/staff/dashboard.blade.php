@@ -20,6 +20,9 @@
         </div>
     @else
     <div class="grid gap-6">
+        @if (session('quick'))
+            <p role="status" tabindex="-1" class="rounded-tile border p-4 font-semibold {{ session('quick')['ok'] ? 'border-success bg-success/10 text-navy-900' : 'border-error bg-error/10 text-navy-900' }}">{{ session('quick')['message'] }}</p>
+        @endif
         {{-- Three numbers worth a glance. --}}
         <dl class="grid grid-cols-3 gap-2 sm:gap-4 lg:max-w-2xl">
             <div class="rounded-card border border-line bg-white px-3 py-3 sm:px-5 sm:py-4">
@@ -118,7 +121,10 @@
                 @endif
             </p>
             @if ($shipments->total() > 0)
+                <div class="flex flex-wrap items-center gap-3">
+                <button type="button" data-density-toggle aria-pressed="false" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-control px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-sand aria-pressed:border-navy-900 aria-pressed:bg-sand"><x-lucide name="rows-3" class="size-4" />Compact rows</button>
                 <a href="/staff/export/shipments.csv{{ $exportQs }}" class="inline-flex min-h-11 items-center gap-2 rounded-control border border-navy-900 px-4 font-semibold text-navy-900 transition-colors duration-150 hover:bg-navy-900 hover:text-white"><x-lucide name="download" class="size-4" />Export CSV<span class="sr-only"> of these shipments</span></a>
+                </div>
             @endif
             </div>
 
@@ -133,11 +139,29 @@
                     </div>
                     <ul role="rowgroup" class="divide-y divide-line">
                         @foreach ($shipments as $s)
-                            <li role="row" class="grid items-center gap-x-6 md:grid-cols-2 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 xl:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
+                            <li role="row" class="density-row grid items-center gap-x-6 md:grid-cols-2 gap-y-2 px-5 py-4 transition-colors duration-150 hover:bg-sand/50 xl:grid-cols-[10rem_minmax(0,1.1fr)_minmax(0,1.2fr)_14rem_7.5rem_6.5rem]">
                                 <p role="cell"><a href="/staff/shipments/{{ $s->tracking_number }}" class="font-mono font-semibold text-brand underline underline-offset-2">{{ $s->tracking_number }}</a></p>
                                 <p role="cell" class="min-w-0 break-words"><span class="sr-only">Client: </span>{{ $s->client?->company ?: $s->client?->full_name }}@if ($s->client?->company)<span class="block text-sm text-muted">{{ $s->client->full_name }}</span>@endif</p>
                                 <p role="cell" class="min-w-0 break-words text-muted xl:text-ink"><span class="sr-only">Goods: </span>{{ $s->goods }}</p>
-                                <p role="cell"><span class="sr-only">Stage: </span>@include('staff.stage-badges', ['s' => $s])</p>
+                                <div role="cell"><p><span class="sr-only">Stage: </span>@include('staff.stage-badges', ['s' => $s])</p>
+                                    @if ($s->customs_enabled)
+                                        <details class="mt-2">
+                                            <summary class="inline-flex min-h-11 cursor-pointer list-none items-center gap-1 rounded-control px-1 text-sm font-semibold text-brand underline underline-offset-2 [&::-webkit-details-marker]:hidden">Change stage<span class="sr-only"> of {{ $s->tracking_number }}</span></summary>
+                                            <form method="post" action="/staff/shipments/{{ $s->tracking_number }}/status" class="mt-1 grid gap-2 rounded-tile border border-line bg-white p-3" @if ($s->client) data-confirm="Change {{ $s->tracking_number }} and tell the client?" @endif>
+                                                @csrf
+                                                <input type="hidden" name="from" value="list">
+                                                <label for="qs-{{ $s->id }}" class="text-sm font-semibold text-navy-900">New stage</label>
+                                                <select id="qs-{{ $s->id }}" name="status" class="min-h-11 rounded-control border border-control bg-white px-3">
+                                                    @foreach (\App\Support\Statuses::all() as $stage)
+                                                        <option value="{{ $stage['key'] }}" @selected($s->status === $stage['key'])>{{ $stage['label'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <label class="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="notify" checked class="size-5 accent-brand">Tell the client</label>
+                                                <button type="submit" class="min-h-11 rounded-control bg-navy-900 px-4 font-semibold text-white hover:bg-navy-800">Save stage</button>
+                                            </form>
+                                        </details>
+                                    @endif
+                                </div>
                                 <p role="cell" class="min-w-0 break-words text-sm xl:text-base {{ $s->assignee ? 'text-ink' : 'text-muted' }}"><span class="sr-only">Looked after by: </span>{{ $s->assignee?->name ?? 'Nobody yet' }}</p>
                                 <p role="cell" class="text-sm text-muted xl:text-base"><span class="sr-only">Updated </span>{{ $s->updated_at->timezone('Asia/Thimphu')->format('j M Y') }}</p>
                             </li>

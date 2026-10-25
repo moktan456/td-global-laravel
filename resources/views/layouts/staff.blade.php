@@ -16,7 +16,7 @@
     $linkClass = fn (bool $on) => 'flex min-h-11 items-center gap-3 rounded-control px-3 font-semibold transition-colors duration-150 '.($on ? 'bg-white/12 text-white shadow-[inset_3px_0_0_var(--color-gold)]' : 'text-on-dark-muted hover:bg-white/8 hover:text-white');
 @endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-pb-24">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -124,9 +124,14 @@
             </div>
         </div>
 
-        <main id="main" tabindex="-1" class="mx-auto max-w-7xl px-4 py-6 text-[0.9375rem] focus:outline-none sm:px-6 lg:px-8">
+        <main id="main" tabindex="-1" class="mx-auto max-w-7xl px-4 py-6 @hasSection('mobilebar') pb-24 lg:pb-6 @endif text-[0.9375rem] focus:outline-none sm:px-6 lg:px-8">
             @yield('content')
         </main>
     </div>
+    @hasSection('mobilebar')
+        <nav aria-label="Jump to a section" class="on-dark fixed inset-x-0 bottom-0 z-20 border-t border-white/15 bg-navy-900 pb-[env(safe-area-inset-bottom)] lg:hidden">
+            <ul class="mx-auto grid max-w-md grid-cols-3">@yield('mobilebar')</ul>
+        </nav>
+    @endif
 </body>
 </html>
