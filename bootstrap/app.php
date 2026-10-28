@@ -23,10 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Telegram calls the webhook; it proves itself with a secret header instead of a CSRF token.
         $middleware->validateCsrfTokens(except: ['api/telegram/webhook']);
         $middleware->redirectGuestsTo('/staff/login');
-        // Behind a host's proxy or CDN the visitor's real IP is what the rate limits should count.
-        // Trust the proxy's X-Forwarded-Proto/Port (so https is seen), but never X-Forwarded-For: anyone could forge it to dodge the
-        // sign-in and lookup rate limits. The visitor's address is the connection's own.
-        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_PROTO | Request::HEADER_X_FORWARDED_PORT);
+        // The host's front proxy is the machine that connects to this app, so only that connection is trusted. The visitor's address
+        // is the entry the proxy added to X-Forwarded-For (the last one), never an entry the visitor wrote: a forged header used to
+        // be enough to dodge the sign-in, lookup and form rate limits.
+        $middleware->trustProxies(at: 'REMOTE_ADDR');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

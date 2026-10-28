@@ -102,12 +102,26 @@ class SecurityAuditTest extends TestCase
     public function test_a_forged_forwarded_for_header_cannot_dodge_the_sign_in_limit(): void
     {
         $this->staff(['username' => 'pema']);
+        // The host's proxy (10.0.0.1) appends the real visitor (203.0.113.5) after whatever the visitor wrote.
+        $send = fn (string $forged, string $password) => $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.1'])
+            ->withHeader('X-Forwarded-For', "$forged, 203.0.113.5")
+            ->post('/staff/login', ['username' => 'pema', 'password' => $password], ['X-Enhance' => '1']);
         for ($i = 0; $i < 5; $i++) {
-            $this->withHeader('X-Forwarded-For', "198.51.100.$i")->post('/staff/login', ['username' => 'pema', 'password' => 'wrong-password-'.$i]);
+            $send("198.51.100.$i", 'wrong-password-'.$i);
         }
-        $this->withHeader('X-Forwarded-For', '198.51.100.99')->post('/staff/login', ['username' => 'pema', 'password' => 'a-long-password-1'], ['X-Enhance' => '1'])
-            ->assertSee('Too many tries');
+        $send('198.51.100.99', 'a-long-password-1')->assertSee('Too many tries');
         $this->assertGuest();
+    }
+
+    public function test_visitors_behind_the_hosts_proxy_are_counted_separately(): void
+    {
+        $login = fn (string $real) => $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.1'])->withHeader('X-Forwarded-For', $real)
+            ->post('/staff/login', ['username' => 'someone', 'password' => 'wrong-password'], ['X-Enhance' => '1']);
+        for ($i = 0; $i < 6; $i++) {
+            $login('203.0.113.5');
+        }
+        $login('203.0.113.5')->assertSee('Too many tries');
+        $login('203.0.113.6')->assertDontSee('Too many tries');
     }
 
     public function test_changing_your_password_signs_out_your_other_devices(): void
