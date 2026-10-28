@@ -18,8 +18,8 @@
             </x-section-heading>
             @if ($links)
                 <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2">
-                    <x-button-link href="/about" variant="outline">More about us</x-button-link>
-                    <x-button-link href="/clearing-agent-gelephu" variant="ghost" class="px-0 text-brand underline">Clearing agent in Gelephu &amp; GMC</x-button-link>
+                    <x-button-link href="/about" variant="outline">{{ label('buttons.moreAboutUs') }}</x-button-link>
+                    <x-button-link href="/clearing-agent-gelephu" variant="ghost" class="px-0 text-brand underline">{{ label('buttons.agentLink') }}</x-button-link>
                 </div>
             @endif
         </div>

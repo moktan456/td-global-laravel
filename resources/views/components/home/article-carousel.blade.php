@@ -21,7 +21,7 @@
                             {{ is_filled($a['author']) ? $a['author'].' · ' : '' }}<time datetime="{{ $a['date'] }}">{{ format_date($a['date']) }}</time>
                         </p>
                         <a href="/blog/{{ $a['slug'] }}" class="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-white underline decoration-gold decoration-2 underline-offset-4 hover:decoration-white">
-                            Read more<span class="sr-only">: {{ $a['title'] }}</span>
+                            {{ label('buttons.readMore') }}<span class="sr-only">: {{ $a['title'] }}</span>
                             <x-lucide name="arrow-right" class="arrow-nudge size-4" />
                         </a>
                     </div>

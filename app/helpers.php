@@ -23,14 +23,11 @@ if (! function_exists('content')) {
     }
 }
 
-if (! function_exists('page_text')) {
-    /**
-     * Page wording from resources/content/pages.php (editable in the admin): page_text('about.title'). {curly} words are
-     * filled in: the company details always, and anything in `$tokens` (e.g. ['service' => 'import clearance']).
-     */
-    function page_text(string $key, array $tokens = []): mixed
+if (! function_exists('content_text')) {
+    /** Wording from a content file with its {curly} words filled in: the company details always, plus anything in `$tokens`. */
+    function content_text(string $key, array $tokens = []): mixed
     {
-        $value = content("pages.{$key}");
+        $value = content($key);
         $tokens += [
             'name' => site('name'), 'shortName' => site('shortName'), 'area' => site('seo.area'), 'region' => site('seo.region'),
             'phone' => site('contact.phone'), 'email' => site('contact.email'), 'address' => site('contact.address'),
@@ -40,6 +37,22 @@ if (! function_exists('page_text')) {
         $fill = fn (string $text) => strtr($text, array_combine(array_map(fn ($k) => '{'.$k.'}', array_keys($tokens)), array_map('strval', array_values($tokens))));
 
         return is_array($value) ? array_map(fn ($v) => is_string($v) ? $fill($v) : $v, $value) : (is_string($value) ? $fill($value) : $value);
+    }
+}
+
+if (! function_exists('page_text')) {
+    /** Page wording from resources/content/pages.php (editable in the admin): page_text('about.title'). */
+    function page_text(string $key, array $tokens = []): mixed
+    {
+        return content_text("pages.{$key}", $tokens);
+    }
+}
+
+if (! function_exists('label')) {
+    /** Button text, form labels and form messages from resources/content/labels.php: label('buttons.learnMore'). */
+    function label(string $key, array $tokens = []): mixed
+    {
+        return content_text("labels.{$key}", $tokens);
     }
 }
 

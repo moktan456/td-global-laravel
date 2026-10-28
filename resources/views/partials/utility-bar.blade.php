@@ -29,8 +29,8 @@
             @endif
         </ul>
         <ul class="flex items-center gap-x-6" aria-label="Staff and contact">
-            <li><a href="/staff/login" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">Staff login</a></li>
-            <li><a href="/contact" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">Contact us</a></li>
+            <li><a href="/staff/login" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">{{ label('buttons.staffLogin') }}</a></li>
+            <li><a href="/contact" class="inline-flex items-center py-1.5 hover:text-white pointer-coarse:min-h-11">{{ label('buttons.contactUs') }}</a></li>
         </ul>
     </div>
 </aside>

@@ -38,7 +38,7 @@
                     @endif
                 @endif
                 @if ($whatsapp)
-                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="{{ $linkClass }}">Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="{{ $linkClass }}">{{ label('buttons.whatsapp') }}<span class="sr-only"> (opens in a new tab)</span></a>
                 @endif
                 <a href="mailto:{{ $email }}" class="{{ $linkClass }} break-all">{{ $email }}</a>
                 @if (is_filled($hours))
@@ -64,7 +64,7 @@
                 <p>Designed by <a href="{{ site('designer.url') }}" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-white">{{ site('designer.name') }}<span class="sr-only"> (opens in a new tab)</span></a></p>
             </div>
             <a href="#main" class="inline-flex min-h-11 items-center gap-2 hover:text-white">
-                Back to top
+                {{ label('buttons.backToTop') }}
                 <x-lucide name="arrow-up" class="arrow-nudge-up arrow-nudge size-4" />
             </a>
         </div>

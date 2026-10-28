@@ -44,7 +44,7 @@
                     @if ($whatsapp)
                         <li class="flex items-center gap-3">
                             <x-lucide name="message-circle" class="size-5 shrink-0 text-brand" />
-                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.whatsapp') }}<span class="sr-only"> (opens in a new tab)</span></a>
                         </li>
                     @endif
                     <li class="flex items-center gap-3">
@@ -53,8 +53,8 @@
                     </li>
                 </ul>
                 <div data-reveal class="mt-8 flex flex-wrap gap-3">
-                    <x-button-link href="/quote">Request a free quote</x-button-link>
-                    <x-button-link href="/contact" variant="outline">Contact us</x-button-link>
+                    <x-button-link href="/quote">{{ label('buttons.requestQuote') }}</x-button-link>
+                    <x-button-link href="/contact" variant="outline">{{ label('buttons.contactUs') }}</x-button-link>
                 </div>
             </div>
             <div data-reveal class="{{ ui('photoFrame') }} aspect-[4/3]">
@@ -73,7 +73,7 @@
                     <li class="flex flex-col rounded-card border border-line bg-white p-6 {{ ui('cardLift') }}">
                         <h3 class="font-display text-xl font-semibold text-navy-900">{{ $s['title'] }}</h3>
                         <p class="mt-2 flex-1 text-muted">{{ $s['summary'] }}</p>
-                        <a href="/services/{{ $s['slug'] }}" class="mt-4 inline-flex min-h-11 items-center font-semibold text-brand underline underline-offset-4 hover:text-brand-dark">Read more<span class="sr-only"> about {{ \Illuminate\Support\Str::lower($s['title']) }}</span></a>
+                        <a href="/services/{{ $s['slug'] }}" class="mt-4 inline-flex min-h-11 items-center font-semibold text-brand underline underline-offset-4 hover:text-brand-dark">{{ label('buttons.readMore') }}<span class="sr-only"> about {{ \Illuminate\Support\Str::lower($s['title']) }}</span></a>
                     </li>
                 @endforeach
             </ul>
@@ -115,8 +115,8 @@
             <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">{{ page_text('agent.ctaTitle') }}</h2>
             <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">{{ page_text('agent.ctaText') }}</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
-                <x-button-link href="/quote">Request a free quote</x-button-link>
-                <x-button-link href="/calculator" variant="outline-light">Estimate the cost</x-button-link>
+                <x-button-link href="/quote">{{ label('buttons.requestQuote') }}</x-button-link>
+                <x-button-link href="/calculator" variant="outline-light">{{ label('buttons.estimateCost') }}</x-button-link>
             </div>
         </x-container>
     </section>

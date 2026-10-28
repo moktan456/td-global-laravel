@@ -24,13 +24,13 @@ class FormController extends Controller
     {
         $values = $this->fields($request, ['name', 'email', 'message']);
         $errors = [];
-        $this->required($values, $errors, 'name', 'your name');
+        $this->required($values, $errors, 'name', 'enterName');
         $this->email($values, $errors);
-        $this->required($values, $errors, 'message', 'your message');
+        $this->required($values, $errors, 'message', 'enterMessage');
 
         $state = $errors
             ? FormState::invalid($errors, $values)
-            : $this->send('contact', $values, "Thanks, {$values['name']}. We've received your message and will reply by email.");
+            : $this->send('contact', $values, label('messages.contactSuccess', ['name' => $values['name']]));
 
         return $this->formResponse($request, 'contact', 'forms.contact', $state, ['tone' => $request->input('tone') === 'dark' ? 'dark' : 'light']);
     }
@@ -39,19 +39,19 @@ class FormController extends Controller
     {
         $values = $this->fields($request, ['name', 'email', 'company', 'direction', 'mode', 'goods', 'details', 'plan']);
         $errors = [];
-        $this->required($values, $errors, 'name', 'your name');
+        $this->required($values, $errors, 'name', 'enterName');
         $this->email($values, $errors);
         if ($values['direction'] === '') {
-            $errors['direction'] = 'Choose import or export.';
+            $errors['direction'] = label('messages.chooseDirection');
         }
         if ($values['mode'] === '') {
-            $errors['mode'] = 'Choose how the goods are shipped.';
+            $errors['mode'] = label('messages.chooseMode');
         }
-        $this->required($values, $errors, 'goods', 'a short description of the goods');
+        $this->required($values, $errors, 'goods', 'enterGoods');
 
         $state = $errors
             ? FormState::invalid($errors, $values)
-            : $this->send('quote', $values, "Thanks, {$values['name']}. We'll email your quote to {$values['email']}.");
+            : $this->send('quote', $values, label('messages.quoteSuccess', ['name' => $values['name'], 'email' => $values['email']]));
 
         return $this->formResponse($request, 'quote', 'forms.quote', $state, ['plan' => $values['plan'] ?: null]);
     }
@@ -69,16 +69,16 @@ class FormController extends Controller
     protected function required(array $values, array &$errors, string $name, string $label): void
     {
         if ($values[$name] === '') {
-            $errors[$name] = "Enter {$label}.";
+            $errors[$name] = label("messages.{$label}");
         }
     }
 
     protected function email(array $values, array &$errors, string $name = 'email'): void
     {
         if ($values[$name] === '') {
-            $errors[$name] = 'Enter your email address.';
+            $errors[$name] = label('messages.enterEmail');
         } elseif (! preg_match(self::EMAIL, $values[$name])) {
-            $errors[$name] = 'Enter an email address in the format name@example.com.';
+            $errors[$name] = label('messages.badEmail');
         }
     }
 
@@ -92,14 +92,14 @@ class FormController extends Controller
             Log::warning('[forms] '.$e->getMessage());
 
             return FormState::failed(
-                "Our online form isn't connected yet — please email us at ".site('contact.email')." instead. We've filled in an email with your details.",
+                label('messages.notConnected'),
                 $values,
                 $this->mailto($form, $values),
             );
         } catch (\Throwable $e) {
             Log::error('[forms] delivery failed: '.$e->getMessage());
 
-            return FormState::failed("Sorry — we couldn't send that just now. Please try again, or email us directly.", $values);
+            return FormState::failed(label('messages.sendFailed'), $values);
         }
     }
 

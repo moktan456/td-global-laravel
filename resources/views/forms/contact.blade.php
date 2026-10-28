@@ -10,11 +10,11 @@
     <input type="hidden" name="tone" value="{{ $tone }}">
     <x-form-status :state="$state" :ids="$ids" :tone="$tone" />
     <div class="grid gap-5 sm:grid-cols-2">
-        <x-text-field :id="$ids['name']" name="name" label="Name" autocomplete="name" placeholder="e.g. Karma Wangchuk" :value="$state->value('name')" :error="$state->error('name')" :tone="$tone" />
-        <x-text-field :id="$ids['email']" name="email" type="email" label="Email" autocomplete="email" placeholder="e.g. karma@example.com" :value="$state->value('email')" :error="$state->error('email')" :tone="$tone" />
+        <x-text-field :id="$ids['name']" name="name" :label="label('contactForm.nameLabel')" autocomplete="name" :placeholder="label('contactForm.namePlaceholder')" :value="$state->value('name')" :error="$state->error('name')" :tone="$tone" />
+        <x-text-field :id="$ids['email']" name="email" type="email" :label="label('contactForm.emailLabel')" autocomplete="email" :placeholder="label('contactForm.emailPlaceholder')" :value="$state->value('email')" :error="$state->error('email')" :tone="$tone" />
     </div>
-    <x-text-area :id="$ids['message']" name="message" label="Message" hint="Tell us about your shipment or question." placeholder="e.g. We're importing two pallets of hardware by road through Gelephu next week. Which documents do you need from us?" :rows="5" :value="$state->value('message')" :error="$state->error('message')" :tone="$tone" />
+    <x-text-area :id="$ids['message']" name="message" :label="label('contactForm.messageLabel')" :hint="label('contactForm.messageHint')" :placeholder="label('contactForm.messagePlaceholder')" :rows="5" :value="$state->value('message')" :error="$state->error('message')" :tone="$tone" />
     <div>
-        <x-submit-button class="w-full sm:w-auto">Send message</x-submit-button>
+        <x-submit-button class="w-full sm:w-auto">{{ label('contactForm.submit') }}</x-submit-button>
     </div>
 </form>

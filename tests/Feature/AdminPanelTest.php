@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Pages\ArticlesPage;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\ButtonsAndForms;
 use App\Filament\Pages\FaqPage;
 use App\Filament\Pages\HomePage;
 use App\Filament\Pages\Menus;
@@ -26,7 +27,7 @@ class AdminPanelTest extends TestCase
 {
     use MakesStaff, RefreshDatabase;
 
-    private const PAGES = [SiteSettings::class, Menus::class, HomePage::class, PricingPage::class, ServicesPage::class, ArticlesPage::class, FaqPage::class, ProcessPage::class, PhotosPage::class, PageText::class];
+    private const PAGES = [SiteSettings::class, Menus::class, HomePage::class, PricingPage::class, ServicesPage::class, ArticlesPage::class, FaqPage::class, ProcessPage::class, PhotosPage::class, PageText::class, ButtonsAndForms::class];
 
     private const PUBLIC = ['/', '/about', '/services', '/services/import-clearance', '/blog', '/blog/invoice-and-packing-list-must-match', '/pricing', '/calculator', '/contact', '/quote', '/clearing-agent-gelephu'];
 
@@ -201,5 +202,27 @@ class AdminPanelTest extends TestCase
         $this->get('/about')->assertSee('Who we are')->assertSee('We are TD Global Clearing &amp; Logistics Pte. Ltd., UEN A7649744Y.', false);
         $this->get('/services/import-clearance')->assertSee('Ready for import clearance?');
         $this->get('/')->assertSee('Quick links');
+    }
+
+    public function test_button_form_and_message_text_come_from_the_admin(): void
+    {
+        $this->actingAs($this->admin());
+        $page = Livewire::test(ButtonsAndForms::class);
+        $data = $page->get('data');
+        $data['labels']['quoteForm']['submit'] = 'Send my request';
+        $data['labels']['contactForm']['nameLabel'] = 'Your full name';
+        $data['labels']['buttons']['staffLogin'] = 'Team sign-in';
+        $data['labels']['messages']['enterName'] = 'Please tell us your name.';
+        $data['labels']['messages']['quoteSuccess'] = 'Cheers {name}, quote on its way to {email}.';
+        $page->set('data', $data)->call('save')->assertHasNoFormErrors();
+
+        config(['mail.default' => 'smtp']);
+        \Illuminate\Support\Facades\Mail::fake();
+        $this->get('/quote')->assertSee('Send my request');
+        $this->get('/contact')->assertSee('Your full name');
+        $this->get('/')->assertSee('Team sign-in');
+        $this->post('/contact', ['name' => '', 'email' => 'a@example.com', 'message' => 'hi'], ['X-Enhance' => '1'])->assertSee('Please tell us your name.');
+        $this->post('/quote', ['name' => 'Tashi', 'email' => 'tashi@example.com', 'direction' => 'import', 'mode' => 'road', 'goods' => 'x'], ['X-Enhance' => '1'])
+            ->assertSee('Cheers Tashi, quote on its way to tashi@example.com.');
     }
 }

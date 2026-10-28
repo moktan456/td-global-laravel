@@ -9,7 +9,7 @@
                 @php($highlighted = $plan['highlighted'] ?? false)
                 <li class="grid items-center gap-4 border-b border-line px-6 py-6 last:border-b-0 transition-colors duration-(--duration-enter) sm:grid-cols-[1fr_2fr_auto_auto] sm:gap-8 {{ $highlighted ? 'bg-sand' : 'hover:bg-sand/60 focus-within:bg-sand/60' }}">
                     <{{ $planHeading }} class="font-display text-xl font-semibold text-navy-900">
-                        {{ $plan['name'] }}@if ($highlighted)<span class="ml-2 inline-block rounded-full bg-gold px-2.5 py-0.5 align-middle font-sans text-xs font-semibold uppercase tracking-wider text-ink">Popular</span>@endif
+                        {{ $plan['name'] }}@if ($highlighted)<span class="ml-2 inline-block rounded-full bg-gold px-2.5 py-0.5 align-middle font-sans text-xs font-semibold uppercase tracking-wider text-ink">{{ label('buttons.popular') }}</span>@endif
                     </{{ $planHeading }}>
                     <ul class="flex flex-wrap gap-x-4 gap-y-1 text-muted">
                         @foreach ($plan['features'] as $f)

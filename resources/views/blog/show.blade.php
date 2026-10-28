@@ -42,7 +42,7 @@
         </article>
         <a href="/blog" class="group/back mt-10 inline-flex min-h-11 items-center gap-2 font-semibold text-brand underline decoration-2 underline-offset-4 hover:text-brand-dark">
             <x-lucide name="arrow-left" class="size-4 transition-transform duration-(--duration-hover) group-hover/back:-translate-x-1 group-focus-visible/back:-translate-x-1" />
-            All articles
+            {{ label('buttons.allArticles') }}
         </a>
     </x-container>
 @endsection

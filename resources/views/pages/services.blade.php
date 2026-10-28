@@ -22,7 +22,7 @@
                                 <h2 class="font-display text-2xl font-semibold text-navy-900">{{ $s['title'] }}</h2>
                                 <p class="mt-2 flex-1 text-muted">{{ $s['summary'] }}</p>
                                 <a href="/services/{{ $s['slug'] }}" class="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-brand underline decoration-2 underline-offset-4 hover:text-brand-dark">
-                                    Learn more<span class="sr-only"> about {{ \Illuminate\Support\Str::lower($s['title']) }}</span>
+                                    {{ label('buttons.learnMore') }}<span class="sr-only"> about {{ \Illuminate\Support\Str::lower($s['title']) }}</span>
                                     <x-lucide name="arrow-right" class="arrow-nudge size-4" />
                                 </a>
                             </div>

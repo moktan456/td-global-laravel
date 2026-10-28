@@ -48,7 +48,7 @@
                     @if ($whatsapp)
                         <li class="flex items-center gap-3">
                             <x-lucide name="message-circle" class="size-5 shrink-0 text-gold" />
-                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">Chat on WhatsApp<span class="sr-only"> (opens in a new tab)</span></a>
+                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.whatsapp') }}<span class="sr-only"> (opens in a new tab)</span></a>
                         </li>
                     @endif
                     <li class="flex items-center gap-3">
@@ -58,7 +58,7 @@
                     @if ($mapUrl)
                         <li class="flex items-center gap-3">
                             <x-lucide name="navigation" class="size-5 shrink-0 text-gold" />
-                            <a href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">Get directions<span class="sr-only"> on Google Maps (opens in a new tab)</span></a>
+                            <a href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.directions') }}<span class="sr-only"> on Google Maps (opens in a new tab)</span></a>
                         </li>
                     @endif
                 </ul>

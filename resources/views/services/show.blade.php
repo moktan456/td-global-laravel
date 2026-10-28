@@ -36,9 +36,9 @@
                     @endforeach
                 </ul>
                 <div data-reveal class="mt-8 flex flex-wrap gap-3">
-                    <x-button-link href="/quote">Get a quote<span class="sr-only"> for {{ $name }}</span></x-button-link>
+                    <x-button-link href="/quote">{{ label('buttons.getQuote') }}<span class="sr-only"> for {{ $name }}</span></x-button-link>
                     @if (is_filled($phone) && $phoneHref)
-                        <x-button-link :href="'tel:'.$phoneHref" variant="outline">Call {{ $phone }}</x-button-link>
+                        <x-button-link :href="'tel:'.$phoneHref" variant="outline">{{ label('buttons.call') }}</x-button-link>
                     @endif
                 </div>
             </div>
@@ -84,7 +84,7 @@
                         <a href="/services/{{ $s['slug'] }}" class="group flex h-full min-h-11 flex-col justify-between gap-3 rounded-card border border-line bg-white p-6 {{ ui('cardLift') }}">
                             <span class="font-display text-xl font-semibold text-navy-900">{{ $s['title'] }}</span>
                             <span class="inline-flex items-center gap-2 font-semibold text-brand">
-                                Learn more
+                                {{ label('buttons.learnMore') }}
                                 <x-lucide name="arrow-right" class="arrow-nudge size-4" />
                             </span>
                         </a>
@@ -100,8 +100,8 @@
             <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">{{ page_text('service.ctaTitle', ['service' => $name]) }}</h2>
             <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">{{ page_text('service.ctaText') }}</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
-                <x-button-link href="/quote">Request a free quote</x-button-link>
-                <x-button-link href="/contact" variant="outline-light">Contact us</x-button-link>
+                <x-button-link href="/quote">{{ label('buttons.requestQuote') }}</x-button-link>
+                <x-button-link href="/contact" variant="outline-light">{{ label('buttons.contactUs') }}</x-button-link>
             </div>
         </x-container>
     </section>

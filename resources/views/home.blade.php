@@ -31,7 +31,7 @@
             <div class="mt-12">
                 <x-home.article-carousel />
             </div>
-            <x-button-link href="/blog" variant="outline" class="mt-8">All articles</x-button-link>
+            <x-button-link href="/blog" variant="outline" class="mt-8">{{ label('buttons.allArticles') }}</x-button-link>
         </x-container>
     </section>
 

@@ -8,7 +8,7 @@
     <label for="{{ $id }}" class="block text-base font-semibold {{ $labelTone }}">
         {{ $label }}
         @if ($optional)
-            <span class="font-normal {{ $hintTone }}"> (optional)</span>
+            <span class="font-normal {{ $hintTone }}"> {{ label('common.optional') }}</span>
         @endif
     </label>
     @if ($hint)
