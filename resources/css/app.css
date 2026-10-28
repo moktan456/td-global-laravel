@@ -208,6 +208,28 @@
     opacity: 1 !important;
     translate: none !important;
   }
+  /* Print the content, not the chrome: no bars, menus, buttons, sliders or forms; plain black on white. */
+  body > header,
+  body > footer,
+  [data-site-header],
+  [data-scroll-progress],
+  [data-back-to-top],
+  form,
+  nav[aria-label="Quick contact"],
+  button,
+  details:not([open]) > :not(summary) {
+    display: none !important;
+  }
+  details > summary { list-style: none; }
+  body { background: #fff !important; color: #000 !important; }
+  /* Page-header bands are dark blue on screen; print them as plain headings. */
+  .on-dark, .bg-navy-950, .bg-navy-900, .bg-sand, .bg-ivory { background: #fff !important; color: #000 !important; }
+  .on-dark * { color: #000 !important; }
+  /* Show where links go, except on-page and mail/phone links. */
+  main a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; word-break: break-all; }
+  h1, h2, h3, img, figure, table, blockquote { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+  img { max-width: 100% !important; }
 }
 
 /* Track page: the "What you'll see" sample shipment. Each stage ticks over in turn, holds, then resets (20s loop).

@@ -12,6 +12,8 @@
     <x-page-header :title="$article['title']" :path="'/blog/'.$article['slug']" :crumbs="[['label' => 'Blog', 'href' => '/blog'], ['label' => $article['title']]]">
         <x-slot:intro>
             <p>{{ $article['category'] }} · {{ is_filled($article['author']) ? $article['author'] : site('name') }} · <time datetime="{{ $article['date'] }}">{{ format_date($article['date']) }}</time></p>
+            @php($updated = ! empty($article['updated']) ? $article['updated'] : $article['date'])
+            <p class="mt-1 text-base">{{ label('common.lastUpdated') }}: <time datetime="{{ $updated }}">{{ format_date($updated) }}</time></p>
         </x-slot:intro>
     </x-page-header>
     <x-json-ld :data="\App\Support\Seo::article($article)" />

@@ -63,6 +63,7 @@ class ArticlesPage extends ContentPage
                             ->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/'),
                         Fields::text('category', 'Category', 'For example Documentation, Compliance or Planning.', true),
                         DatePicker::make('date')->label('Date')->native(false)->displayFormat('j F Y')->format('Y-m-d')->required(),
+                        DatePicker::make('updated')->label('Last updated')->native(false)->displayFormat('j F Y')->format('Y-m-d')->helperText('Set this when you change a published article. If empty, the article date is shown.'),
                         Fields::text('author', 'Author', 'A name in [square brackets] is not shown on the site.'),
                         Fields::photo('image', 'Cover photo')->columnSpanFull(),
                         Fields::area('excerpt', 'Short summary', 'Shown on the blog list and in search results.', 2)->required()->columnSpanFull(),

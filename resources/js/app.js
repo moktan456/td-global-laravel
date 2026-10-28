@@ -1,5 +1,6 @@
 import { initReveal } from './reveal';
 import { initSpot } from './spot';
+import { initPageExtras } from './page-extras';
 import { initHeader } from './header';
 import { initForms } from './forms';
 import { initMenus } from './menus';
@@ -17,6 +18,7 @@ function boot() {
     initCertificates();
     initReveal();
     initSpot();
+    initPageExtras();
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

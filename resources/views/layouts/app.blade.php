@@ -50,6 +50,7 @@
 </head>
 <body class="flex min-h-dvh flex-col antialiased">
     <a href="#main" class="sr-only z-[100] rounded-control bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">{{ label('a11y.skip') }}</a>
+    <div data-scroll-progress aria-hidden="true" class="fixed inset-x-0 top-0 z-[90] h-1 origin-left scale-x-0 bg-gold print:hidden"></div>
     @include('partials.utility-bar')
     @include('partials.site-header')
     <main id="main" tabindex="-1" class="flex-1 focus:outline-none">
@@ -58,6 +59,7 @@
     </main>
     @include('partials.site-footer')
     @include('partials.quick-contact')
+    @include('partials.back-to-top')
     <x-json-ld :data="[\App\Support\Seo::organization(), \App\Support\Seo::website()]" />
     @stack('scripts')
 </body>

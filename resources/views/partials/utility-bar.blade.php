@@ -4,7 +4,7 @@
     $email = site('contact.email');
     $address = site('contact.address');
 @endphp
-<aside aria-label="Contact and account" class="on-dark bg-navy-950 text-sm text-on-dark-muted">
+<aside aria-label="Contact and account" class="on-dark bg-navy-950 text-sm text-on-dark-muted print:hidden">
     <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 sm:px-6 lg:px-16">
         <ul class="flex flex-wrap items-center gap-x-6 gap-y-1" aria-label="Contact details">
             @if (is_filled($phone))

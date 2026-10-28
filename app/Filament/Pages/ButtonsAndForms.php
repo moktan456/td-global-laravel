@@ -108,6 +108,7 @@ class ButtonsAndForms extends ContentPage
                 Tab::make('Hidden text')->icon('heroicon-o-eye-slash')->schema([
                     Section::make('Read aloud by screen readers, or shown as a hint')->description('Visitors who use a screen reader hear these. The search box example text is shown on screen.')->columns(2)->schema($this->group('a11y', [
                         'skip' => 'Skip link at the very top',
+                        'backToTop' => 'Back to top button (bottom left)',
                         'newTab' => 'Added to links that open a new tab',
                         'mapNewTab' => 'Map directions link: new tab note',
                         'searchLabel' => 'Search box: label', 'searchPlaceholder' => 'Search box: example text', 'searchButton' => 'Search button',
@@ -130,7 +131,7 @@ class ButtonsAndForms extends ContentPage
                         'chooseMode' => 'Shipping method not chosen', 'enterGoods' => 'Goods not described',
                     ])),
                     Section::make('Small words')->columns(2)->schema($this->group('common', [
-                        'optional' => 'Tag after optional fields', 'choose' => 'First choice in drop-downs',
+                        'optional' => 'Tag after optional fields', 'choose' => 'First choice in drop-downs', 'lastUpdated' => 'Blog article: before the update date',
                     ])),
                 ]),
             ]),

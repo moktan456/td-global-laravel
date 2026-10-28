@@ -26,11 +26,13 @@ return [
     'common' => [
         'optional' => '(optional)',
         'choose' => 'Choose…',
+        'lastUpdated' => 'Last updated',
     ],
     'a11y' => [
         'newTab' => '(opens in a new tab)',
         'mapNewTab' => 'on Google Maps (opens in a new tab)',
         'skip' => 'Skip to main content',
+        'backToTop' => 'Back to top',
         'searchLabel' => 'Search the site',
         'searchPlaceholder' => 'Search…',
         'searchButton' => 'Search',
