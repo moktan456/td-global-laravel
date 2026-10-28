@@ -102,9 +102,9 @@ class SecurityAuditTest extends TestCase
     public function test_a_forged_forwarded_for_header_cannot_dodge_the_sign_in_limit(): void
     {
         $this->staff(['username' => 'pema']);
-        // The host's proxy (10.0.0.1) appends the real visitor (203.0.113.5) after whatever the visitor wrote.
-        $send = fn (string $forged, string $password) => $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.1'])
-            ->withHeader('X-Forwarded-For', "$forged, 203.0.113.5")
+        // The visitor connects from 203.0.113.5 and writes a different X-Forwarded-For each time.
+        $send = fn (string $forged, string $password) => $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.5'])
+            ->withHeader('X-Forwarded-For', $forged)
             ->post('/staff/login', ['username' => 'pema', 'password' => $password], ['X-Enhance' => '1']);
         for ($i = 0; $i < 5; $i++) {
             $send("198.51.100.$i", 'wrong-password-'.$i);
@@ -113,9 +113,9 @@ class SecurityAuditTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_visitors_behind_the_hosts_proxy_are_counted_separately(): void
+    public function test_different_visitors_are_counted_separately(): void
     {
-        $login = fn (string $real) => $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.1'])->withHeader('X-Forwarded-For', $real)
+        $login = fn (string $addr) => $this->withServerVariables(['REMOTE_ADDR' => $addr])
             ->post('/staff/login', ['username' => 'someone', 'password' => 'wrong-password'], ['X-Enhance' => '1']);
         for ($i = 0; $i < 6; $i++) {
             $login('203.0.113.5');
