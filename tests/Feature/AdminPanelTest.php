@@ -14,6 +14,7 @@ use App\Filament\Pages\PricingPage;
 use App\Filament\Pages\ProcessPage;
 use App\Filament\Pages\ServicesPage;
 use App\Filament\Pages\SiteSettings;
+use App\Filament\Pages\UserGuide;
 use App\Models\ContentOverride;
 use App\Models\User;
 use App\Support\Content;
@@ -252,5 +253,13 @@ class AdminPanelTest extends TestCase
         $this->get('/no-such-page')->assertNotFound()->assertSee('Nothing here');
         $this->get('/search?q=clearance')->assertSee('matches for clearance');
         $this->get('/calculator')->assertSee('Starting fee');
+    }
+
+    public function test_the_user_guide_is_in_the_admin_for_admins_only(): void
+    {
+        $this->get('/admin/guide')->assertRedirect('/admin/login');
+        $this->actingAs($this->staff(['role' => 'staff']))->get('/admin/guide')->assertForbidden();
+        $this->actingAs($this->admin())->get('/admin/guide')->assertOk()->assertSee('How to edit your website')->assertSee('Write a new blog article');
+        Livewire::test(UserGuide::class)->assertOk();
     }
 }

@@ -37,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors(['primary' => Color::hex('#3853a4')])
             ->maxContentWidth('6xl')
             ->sidebarCollapsibleOnDesktop()
-            ->navigationGroups(['Pages', 'Services & articles', 'Settings'])
+            ->navigationGroups(['Pages', 'Services & articles', 'Settings', 'Help'])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([Dashboard::class])
             ->widgets([])

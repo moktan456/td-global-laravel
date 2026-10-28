@@ -4,6 +4,7 @@
         <p style="max-width:48rem;line-height:1.6">
             Pick what you want to change. Each page shows the text exactly as it appears on the website. Press <strong>Save changes</strong> and the website updates straight away.
             Changed your mind? <strong>Back to the original text</strong> on each page undoes your edits.
+            New here? Read the <a href="{{ \App\Filament\Pages\UserGuide::getUrl() }}" style="font-weight:600;text-decoration:underline">user guide</a>.
         </p>
     </x-filament::section>
 
