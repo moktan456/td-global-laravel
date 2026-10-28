@@ -3,9 +3,9 @@
         <x-photo name="heroRoad" sizes="50vw" :decorative="true" />
     </div>
     <x-container class="relative">
-        <x-section-heading id="calc-heading" :dark="true" eyebrow="Calculate cost" title="Cost calculator">
-            <x-slot:intro><p>Know the price of your clearance in advance. Get an indicative estimate for standard or complex shipments in under a minute.</p></x-slot:intro>
+        <x-section-heading id="calc-heading" :dark="true" :eyebrow="content('home.sections.calculator.eyebrow')" :title="content('home.sections.calculator.title')">
+            <x-slot:intro><p>{{ content('home.sections.calculator.intro') }}</p></x-slot:intro>
         </x-section-heading>
-        <x-button-link href="/calculator" variant="outline-light" class="mt-8">Calculate clearance cost</x-button-link>
+        <x-button-link href="/calculator" variant="outline-light" class="mt-8">{{ content('home.sections.calculator.button') }}</x-button-link>
     </x-container>
 </section>

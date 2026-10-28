@@ -21,6 +21,9 @@
         <span class="sr-only">Account menu</span>
     </summary>
     <div class="{{ $sidebar ? 'absolute inset-x-0 bottom-full z-30 mb-2 rounded-card bg-surface p-2 shadow-lg ring-1 ring-black/10' : 'mt-1 grid gap-1 px-1 pb-1' }}">
+        @if ($me?->isAdmin())
+            <a href="/admin" class="{{ $item }} {{ $itemTone }}"><x-lucide name="square-pen" class="size-5 shrink-0" />Edit website content</a>
+        @endif
         <a href="/staff/password" class="{{ $item }} {{ $itemTone }}"><x-lucide name="key-round" class="size-5 shrink-0" />Change password</a>
         <button type="button" data-theme-toggle class="{{ $item }} {{ $itemTone }}"><x-lucide name="moon" class="size-5 shrink-0" /><span data-theme-label>Dark mode</span></button>
         <a href="/" target="_blank" rel="noopener" class="{{ $item }} {{ $itemTone }}"><x-lucide name="external-link" class="size-5 shrink-0" />View website<span class="sr-only"> (opens in a new tab)</span></a>

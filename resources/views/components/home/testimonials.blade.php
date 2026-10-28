@@ -2,7 +2,7 @@
 @if (count($testimonials))
     <section aria-labelledby="testimonials-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="testimonials-heading" title="What our clients say" />
+            <x-section-heading id="testimonials-heading" :title="content('home.sections.testimonials.title')" />
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($testimonials as $t)
                     <li class="flex flex-col rounded-card bg-white p-6 {{ ui('cardLift') }}">

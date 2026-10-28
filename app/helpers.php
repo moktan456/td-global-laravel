@@ -55,7 +55,11 @@ if (! function_exists('image_src')) {
     {
         $img = content('images')[$key];
 
-        return isset($img['local']) ? "/photos/{$img['local']}.jpg" : "/images/{$key}-{$img['unsplashId']}.jpg";
+        if (! empty($img['upload'])) {
+            return '/media/'.$img['upload']; // a photo added in the admin panel
+        }
+
+        return ! empty($img['local']) ? "/photos/{$img['local']}.jpg" : "/images/{$key}-{$img['unsplashId']}.jpg";
     }
 }
 
@@ -115,7 +119,7 @@ if (! function_exists('image_srcset')) {
     function image_srcset(string $key): ?string
     {
         $img = content('images')[$key] ?? null;
-        if (! $img || ! isset($img['local'])) {
+        if (! $img || ! empty($img['upload']) || empty($img['local'])) {
             return null;
         }
         static $manifest = null;

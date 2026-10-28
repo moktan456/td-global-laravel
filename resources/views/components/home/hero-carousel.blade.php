@@ -1,9 +1,5 @@
 @php
-    $slides = [
-        ['eyebrow' => 'Efficient, reliable and on-time customs clearance', 'title' => 'Streamlined customs clearance solutions', 'body' => 'We handle declarations, duties and documentation so your cargo keeps moving — at the border, the dry port or the airport.', 'cta' => ['label' => 'Get a free quote', 'href' => '/quote'], 'photos' => ['heroRoad', 'heroAir', 'heroDock']],
-        ['eyebrow' => 'Import & export', 'title' => 'Paperwork checked before your cargo arrives', 'body' => 'We review your documents ahead of arrival, so problems are fixed early — not while your truck waits at the border.', 'cta' => ['label' => 'Explore our services', 'href' => '/services'], 'photos' => ['heroAir', 'heroDock', 'heroRoad']],
-        ['eyebrow' => 'Clear pricing', 'title' => 'Know your clearance cost up front', 'body' => 'Get an indicative estimate in under a minute with our cost calculator, then confirm it with a broker.', 'cta' => ['label' => 'Calculate your cost', 'href' => '/calculator'], 'photos' => ['heroDock', 'heroRoad', 'heroAir']],
-    ];
+    $slides = content('home.slides');
     $controlBtn = 'inline-flex size-11 items-center justify-center rounded-full border border-white/60 text-white transition-[background-color,color,scale] duration-(--duration-hover) ease-out-quart hover:bg-white hover:text-navy-900 active:scale-95';
     $sizes = '(min-width: 1024px) 30vw, 50vw';
 @endphp

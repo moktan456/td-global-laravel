@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Staff;
@@ -38,6 +39,9 @@ Route::redirect('/login', '/staff/login');
 
 /* Telegram bot webhook (CSRF-exempt; proves itself with a secret header). */
 Route::post('/api/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+
+/* Photos added in the admin panel (kept in storage/app/public/uploads, so a deploy never touches them). */
+Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', 'uploads/[A-Za-z0-9._\\-]+')->name('media');
 
 /* Staff. */
 Route::prefix('staff')->group(function () {

@@ -53,6 +53,7 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           php artisan test
+          php artisan filament:assets
 
       - name: Set up SSH (one connection, reused, because some hosts drop rapid reconnects)
         run: |
@@ -100,6 +101,10 @@ jobs:
           rsync -az --delete -e ssh public/photos/ server:~/$WEB_ROOT/photos/
           rsync -az -e ssh public/brand/ server:~/$WEB_ROOT/brand/
           rsync -az -e ssh public/images/ server:~/$WEB_ROOT/images/
+          # The admin panel's own stylesheets, scripts and fonts (built by `filament:assets` above).
+          rsync -az -e ssh public/css/ server:~/$WEB_ROOT/css/
+          rsync -az -e ssh public/js/ server:~/$WEB_ROOT/js/
+          rsync -az -e ssh public/fonts/ server:~/$WEB_ROOT/fonts/
           rsync -az -e ssh public/icon.png public/apple-icon.png public/favicon.ico public/.htaccess server:~/$WEB_ROOT/
 
       - name: Post-deploy commands

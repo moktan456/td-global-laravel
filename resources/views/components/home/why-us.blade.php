@@ -3,9 +3,9 @@
 @endphp
 <section aria-labelledby="why-heading" class="py-20 lg:py-28">
     <x-container class="grid gap-12 lg:grid-cols-[1.9fr_1fr] lg:items-center">
-        <x-section-heading id="why-heading" eyebrow="Why us" title="Step up your shipment’s speed" class="lg:order-2">
+        <x-section-heading id="why-heading" :eyebrow="content('home.sections.why.eyebrow')" :title="content('home.sections.why.title')" class="lg:order-2">
             <x-slot:intro>
-                <p>We embrace innovation in customs clearance. From digital document intake to status tracking, we keep evolving to meet changing regulations and our clients’ needs.</p>
+                <p>{{ content('home.sections.why.intro') }}</p>
             </x-slot:intro>
         </x-section-heading>
         <ul data-reveal-group class="grid gap-5 sm:grid-cols-3 lg:order-1">

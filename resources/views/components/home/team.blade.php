@@ -3,7 +3,7 @@
 @if (count($team))
     <section aria-labelledby="team-heading" class="py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="team-heading" eyebrow="Our team" title="Meet our team" />
+            <x-section-heading id="team-heading" :eyebrow="content('home.sections.team.eyebrow')" :title="content('home.sections.team.title')" />
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($team as $m)
                     <li>

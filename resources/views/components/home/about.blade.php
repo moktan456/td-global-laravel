@@ -11,9 +11,9 @@
             </div>
         </div>
         <div>
-            <x-section-heading id="about-heading" :as="$headingLevel" eyebrow="About us" title="Your trusted customs clearance partner">
+            <x-section-heading id="about-heading" :as="$headingLevel" :eyebrow="content('home.sections.about.eyebrow')" :title="content('home.sections.about.title')">
                 <x-slot:intro>
-                    <p>TD Global Clearing &amp; Logistics Pte. Ltd. is a clearing agent and logistics partner in Gelephu, GMC. We help importers and exporters move goods across borders without delays. We take care of declarations, duties and documentation, and keep you informed at every step, so you can focus on running your business.</p>
+                    <p>{{ content('home.sections.about.intro') }}</p>
                 </x-slot:intro>
             </x-section-heading>
             @if ($links)

@@ -25,6 +25,8 @@ A complete rebuild of the Next.js site ([`Edulink-Trading-Website`](https://gith
 
 **Staff workspace:** a sidebar workspace (Shipments, New request, Clients, and for super admins Team and Telegram). Find a shipment from anywhere (press `/`, type a tracking number or just its 6-character code), search, sort and filter by stage, change a shipment's stage straight from the list, export CSV, assign shipments to team members, and switch to compact rows. A light or dark theme follows the device and can be changed in the account menu. On phones the filters fold away and shipment pages have a jump bar.
 
+**Website admin (`/admin`, super admins only):** a Filament panel for editing the public site without touching code: company and contact details, menus and footer links, the home page (banner, section headings, why-us, team, testimonials, partners, badges), pricing packs and calculator rates, services, blog articles, FAQs, the "how it works" steps, and every photo (upload your own). Sign in with the same username and password as `/staff`; other staff get a 403. Edits are saved in the `content_overrides` table on top of the defaults in `resources/content`, each page has "Back to the original text", and the tracking system is not part of it.
+
 **Notifications:** email (plain text) and Telegram to clients, per client preference; Telegram bot commands `/start`, `/status`, `/stop`, `/chatid`.
 
 ## Run it on your computer
@@ -50,7 +52,7 @@ See **[docs/DEPLOY.md](docs/DEPLOY.md)** (cPanel shared hosting, step by step, i
 
 | To change… | Edit |
 |---|---|
-| Company details, phone, email, services, plans, team, FAQs, articles, calculator rates, photos' alt text | `resources/content/*.php` (plain PHP arrays; `[IN BRACKETS]` values are placeholders and hide themselves) |
+| Company details, phone, email, services, plans, team, FAQs, articles, calculator rates, photos | **`/admin`** (super admins). The shipped defaults are in `resources/content/*.php`; `[IN BRACKETS]` values are placeholders and hide themselves. Admin pages: `app/Filament/Pages`; how edits are layered: `app/Support/Content.php` |
 | Colours, spacing, motion timings | `resources/css/app.css` (`@theme`) |
 | Page layouts | `resources/views` (`components/home/*` are the home sections) |
 | Header menus, carousels, scroll reveal, calculator, forms | `resources/js` |
@@ -59,7 +61,7 @@ See **[docs/DEPLOY.md](docs/DEPLOY.md)** (cPanel shared hosting, step by step, i
 | Telegram bot | `app/Http/Controllers/TelegramWebhookController.php`, `app/Services/Telegram.php` |
 | The 7 clearance stages (labels, the wording clients see, their order) | `resources/content/statuses.php` |
 
-**Photos:** put a new JPG in `public/photos`, add it to `resources/content/images.php`, run `npm run photos` (makes the resized WebP copies), commit the result.
+**Photos:** in the admin, *Photos* → upload your own (stored in `storage/app/public/uploads`, served at `/media/uploads/...`, kept across deploys). To add a library photo instead: put a new JPG in `public/photos`, add it to `resources/content/images.php`, run `npm run photos` (makes the resized WebP copies), commit the result.
 
 **Checking the clone against the original:** `python3 tools/compare.py /pricing` compares a page's markup with the live Next.js site (`--a` and `--b` set the two addresses).
 

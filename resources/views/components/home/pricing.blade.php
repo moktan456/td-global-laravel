@@ -2,8 +2,8 @@
 @php($planHeading = $headingLevel === 'h1' ? 'h2' : 'h3')
 <section aria-labelledby="pricing-heading" class="py-20 lg:py-28">
     <x-container>
-        <x-section-heading id="pricing-heading" :as="$headingLevel" eyebrow="Pricing" title="The right price for you" />
-        <p class="mt-3 text-muted">Indicative prices. Your broker confirms the final price in your quote.</p>
+        <x-section-heading id="pricing-heading" :as="$headingLevel" :eyebrow="content('home.sections.pricing.eyebrow')" :title="content('home.sections.pricing.title')" />
+        <p class="mt-3 text-muted">{{ content('home.sections.pricing.note') }}</p>
         <ul data-reveal-group class="mt-10 overflow-hidden rounded-card border border-line bg-white">
             @foreach (content('site.plans') as $plan)
                 @php($highlighted = $plan['highlighted'] ?? false)

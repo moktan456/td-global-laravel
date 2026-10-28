@@ -1,8 +1,8 @@
 <section aria-labelledby="tips-heading" class="bg-sand py-20 lg:py-28">
     <x-container class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <div>
-            <x-section-heading id="tips-heading" eyebrow="Document prep tips" title="How to get your paperwork right">
-                <x-slot:intro><p>These tips come from our clearance experts. A few minutes of checking saves days of delay.</p></x-slot:intro>
+            <x-section-heading id="tips-heading" :eyebrow="content('home.sections.tips.eyebrow')" :title="content('home.sections.tips.title')">
+                <x-slot:intro><p>{{ content('home.sections.tips.intro') }}</p></x-slot:intro>
             </x-section-heading>
             <ul data-reveal-group class="mt-8 grid gap-4">
                 @foreach (content('site.docTips') as $tip)
