@@ -49,7 +49,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex min-h-dvh flex-col antialiased">
-    <a href="#main" class="sr-only z-[100] rounded-control bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to main content</a>
+    <a href="#main" class="sr-only z-[100] rounded-control bg-brand px-4 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">{{ label('a11y.skip') }}</a>
     @include('partials.utility-bar')
     @include('partials.site-header')
     <main id="main" tabindex="-1" class="flex-1 focus:outline-none">

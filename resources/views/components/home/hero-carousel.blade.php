@@ -9,7 +9,7 @@
     first screen, so a resting mouse stopped it for good. With prefers-reduced-motion the slides swap instantly.
 --}}
 <section data-hero-carousel aria-roledescription="carousel" aria-label="Highlights" class="on-dark relative overflow-hidden bg-navy-900 text-white">
-    <h1 class="sr-only">Clearing agent in Gelephu, GMC: customs clearance and logistics for importers and exporters — TD Global Clearing & Logistics Pte. Ltd.</h1>
+    <h1 class="sr-only">{{ page_text('home.heading') }}</h1>
     <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-16 lg:py-20">
         <div data-live aria-live="off" class="grid">
             @foreach ($slides as $i => $s)
@@ -41,18 +41,18 @@
         </div>
 
         <div class="mt-10 flex flex-wrap items-center gap-3">
-            <button type="button" data-play-toggle class="{{ $controlBtn }}">
+            <button type="button" data-play-toggle data-stop-label="{{ label('a11y.stopSlides') }}" data-start-label="{{ label('a11y.startSlides') }}" class="{{ $controlBtn }}">
                 <span data-icon-pause><x-lucide name="pause" class="size-5" /></span>
                 <span data-icon-play hidden><x-lucide name="play" class="size-5" /></span>
-                <span data-label class="sr-only">Stop automatic slide show</span>
+                <span data-label class="sr-only">{{ label('a11y.stopSlides') }}</span>
             </button>
             <button type="button" data-prev class="{{ $controlBtn }}">
                 <x-lucide name="chevron-left" class="size-5" />
-                <span class="sr-only">Previous slide</span>
+                <span class="sr-only">{{ label('a11y.prevSlide') }}</span>
             </button>
             <button type="button" data-next class="{{ $controlBtn }}">
                 <x-lucide name="chevron-right" class="size-5" />
-                <span class="sr-only">Next slide</span>
+                <span class="sr-only">{{ label('a11y.nextSlide') }}</span>
             </button>
             <ul class="ml-2 flex items-center" aria-label="Choose slide">
                 @foreach ($slides as $i => $s)

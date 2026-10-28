@@ -19,6 +19,7 @@ use App\Models\User;
 use App\Support\Content;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 use Tests\Support\MakesStaff;
 use Tests\TestCase;
@@ -29,7 +30,7 @@ class AdminPanelTest extends TestCase
 
     private const PAGES = [SiteSettings::class, Menus::class, HomePage::class, PricingPage::class, ServicesPage::class, ArticlesPage::class, FaqPage::class, ProcessPage::class, PhotosPage::class, PageText::class, ButtonsAndForms::class];
 
-    private const PUBLIC = ['/', '/about', '/services', '/services/import-clearance', '/blog', '/blog/invoice-and-packing-list-must-match', '/pricing', '/calculator', '/contact', '/quote', '/clearing-agent-gelephu'];
+    private const PUBLIC = ['/', '/about', '/services', '/services/import-clearance', '/blog', '/blog/invoice-and-packing-list-must-match', '/pricing', '/calculator', '/contact', '/quote', '/clearing-agent-gelephu', '/credits', '/search?q=clearance'];
 
     private function admin(): User
     {
@@ -217,12 +218,39 @@ class AdminPanelTest extends TestCase
         $page->set('data', $data)->call('save')->assertHasNoFormErrors();
 
         config(['mail.default' => 'smtp']);
-        \Illuminate\Support\Facades\Mail::fake();
+        Mail::fake();
         $this->get('/quote')->assertSee('Send my request');
         $this->get('/contact')->assertSee('Your full name');
         $this->get('/')->assertSee('Team sign-in');
         $this->post('/contact', ['name' => '', 'email' => 'a@example.com', 'message' => 'hi'], ['X-Enhance' => '1'])->assertSee('Please tell us your name.');
         $this->post('/quote', ['name' => 'Tashi', 'email' => 'tashi@example.com', 'direction' => 'import', 'mode' => 'road', 'goods' => 'x'], ['X-Enhance' => '1'])
             ->assertSee('Cheers Tashi, quote on its way to tashi@example.com.');
+    }
+
+    public function test_credits_hidden_text_and_other_wording_come_from_the_admin(): void
+    {
+        $this->actingAs($this->admin());
+        $page = Livewire::test(PageText::class);
+        $data = $page->get('data');
+        $data['pages']['credits']['title'] = 'Image credits';
+        $data['pages']['footer']['copyright'] = 'Copyright {year} {legalName}.';
+        $data['pages']['notFound']['title'] = 'Nothing here';
+        $data['pages']['search']['manyResults'] = 'Found {count} matches for {query}';
+        $row = array_key_first($data['credits']['list']);
+        $data['credits']['list'][$row]['photographer'] = 'Pema Dorji';
+        $page->set('data', $data)->call('save')->assertHasNoFormErrors();
+
+        $labels = Livewire::test(ButtonsAndForms::class);
+        $l = $labels->get('data');
+        $l['labels']['a11y']['skip'] = 'Jump to the content';
+        $l['labels']['a11y']['searchPlaceholder'] = 'Find…';
+        $l['labels']['calculatorForm']['baseFee'] = 'Starting fee';
+        $labels->set('data', $l)->call('save')->assertHasNoFormErrors();
+
+        $this->get('/credits')->assertSee('Image credits')->assertSee('Pema Dorji');
+        $this->get('/')->assertSee('Copyright '.date('Y').' TD Global Clearing &amp; Logistics Pte. Ltd.', false)->assertSee('Jump to the content')->assertSee('placeholder="Find…"', false);
+        $this->get('/no-such-page')->assertNotFound()->assertSee('Nothing here');
+        $this->get('/search?q=clearance')->assertSee('matches for clearance');
+        $this->get('/calculator')->assertSee('Starting fee');
     }
 }

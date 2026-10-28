@@ -33,7 +33,7 @@
                         <img src="{{ $cert['image'] }}" alt="" width="{{ $cert['w'] }}" height="{{ $cert['h'] }}" sizes="(min-width: 1024px) 40vw, 100vw" loading="lazy" decoding="async" class="h-auto w-full transition-transform duration-700 ease-out-quart group-hover:scale-[1.03] group-focus-within:scale-[1.03]">
                         <span class="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-navy-900/85 px-3 py-1.5 text-sm font-semibold text-white">
                             <x-lucide name="maximize-2" class="size-4" />
-                            View full size<span class="sr-only"> of {{ $cert['title'] }}</span>
+                            {{ label('a11y.viewFullSize') }}<span class="sr-only"> of {{ $cert['title'] }}</span>
                         </span>
                     </button>
                     <div class="flex flex-1 flex-col p-6">
@@ -55,7 +55,7 @@
                             <form method="dialog">
                                 <button type="submit" class="inline-flex size-11 items-center justify-center rounded-control text-navy-900 transition-colors duration-(--duration-hover) hover:bg-sand">
                                     <x-lucide name="x" class="size-5" />
-                                    <span class="sr-only">Close</span>
+                                    <span class="sr-only">{{ label('a11y.close') }}</span>
                                 </button>
                             </form>
                         </div>

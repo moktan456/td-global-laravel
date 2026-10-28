@@ -47,18 +47,18 @@
             <div data-collapsible-search class="flex items-center">
                 <div id="header-search-panel" data-search-panel inert class="overflow-hidden transition-[width,opacity] duration-200 ease-out-quart w-0 opacity-0">
                     <form role="search" aria-label="Site search" action="/search" class="relative w-60 p-1 pr-2">
-                        <label for="header-search-input" class="sr-only">Search the site</label>
-                        <input id="header-search-input" data-search-input type="search" name="q" placeholder="Search…" class="h-11 w-full rounded-control border border-control bg-white pl-3 pr-11 text-base text-ink placeholder:text-muted">
+                        <label for="header-search-input" class="sr-only">{{ label('a11y.searchLabel') }}</label>
+                        <input id="header-search-input" data-search-input type="search" name="q" placeholder="{{ label('a11y.searchPlaceholder') }}" class="h-11 w-full rounded-control border border-control bg-white pl-3 pr-11 text-base text-ink placeholder:text-muted">
                         <button type="submit" class="absolute inset-y-1 right-2 inline-flex w-11 items-center justify-center text-navy-900 hover:text-brand">
                             <x-lucide name="search" class="size-5" />
-                            <span class="sr-only">Search</span>
+                            <span class="sr-only">{{ label('a11y.searchButton') }}</span>
                         </button>
                     </form>
                 </div>
                 <button type="button" data-search-toggle aria-expanded="false" aria-controls="header-search-panel" class="inline-flex size-11 items-center justify-center rounded-control text-navy-900 transition-colors duration-200 hover:bg-sand">
                     <span data-icon-open><x-lucide name="search" class="size-5" /></span>
                     <span data-icon-close hidden><x-lucide name="x" class="size-5" /></span>
-                    <span class="sr-only">Search</span>
+                    <span class="sr-only">{{ label('a11y.searchButton') }}</span>
                 </button>
             </div>
             <x-button-link href="/track">Track shipment</x-button-link>
@@ -67,18 +67,18 @@
         <button type="button" data-mobile-toggle aria-expanded="false" aria-controls="mobile-menu" class="inline-flex size-11 items-center justify-center rounded-control text-navy-900 transition-colors duration-(--duration-hover) hover:bg-sand lg:hidden">
             <span data-icon-open><x-lucide name="menu" class="size-6" /></span>
             <span data-icon-close hidden><x-lucide name="x" class="size-6" /></span>
-            <span class="sr-only">Menu</span>
+            <span class="sr-only">{{ label('a11y.menu') }}</span>
         </button>
     </div>
 
     <div id="mobile-menu" data-mobile-panel inert class="absolute inset-x-0 top-full max-h-[calc(100dvh-5rem)] overflow-y-auto border-y border-line bg-ivory shadow-lift transition-[opacity,translate,visibility] lg:hidden {{ $popoverClosed }}">
         <nav aria-label="Main menu" class="mx-auto max-w-7xl px-4 py-4 sm:px-6">
             <form role="search" aria-label="Menu search" action="/search" class="relative mb-4">
-                <label for="mobile-search" class="sr-only">Search the site</label>
-                <input id="mobile-search" type="search" name="q" placeholder="Search…" class="h-11 w-full rounded-control border border-control bg-white pl-3 pr-11 text-base text-ink placeholder:text-muted">
+                <label for="mobile-search" class="sr-only">{{ label('a11y.searchLabel') }}</label>
+                <input id="mobile-search" type="search" name="q" placeholder="{{ label('a11y.searchPlaceholder') }}" class="h-11 w-full rounded-control border border-control bg-white pl-3 pr-11 text-base text-ink placeholder:text-muted">
                 <button type="submit" class="absolute inset-y-0 right-0 inline-flex w-11 items-center justify-center text-navy-900 hover:text-brand">
                     <x-lucide name="search" class="size-5" />
-                    <span class="sr-only">Search</span>
+                    <span class="sr-only">{{ label('a11y.searchButton') }}</span>
                 </button>
             </form>
             <ul class="grid gap-1">

@@ -45,7 +45,7 @@
         <div>
             <label for="calc-lines" class="font-semibold text-navy-900">{{ label('calculatorForm.linesLabel') }}</label>
             <p id="calc-lines-hint" class="mt-1 text-sm text-muted">{{ label('calculatorForm.linesHint', ['included' => $rates['includedLines']]) }}</p>
-            <p id="calc-lines-error" data-lines-error hidden class="mt-1 text-sm font-semibold text-error">Enter a whole number from 1 to 500.</p>
+            <p id="calc-lines-error" data-lines-error hidden class="mt-1 text-sm font-semibold text-error">{{ label('calculatorForm.linesError') }}</p>
             <input id="calc-lines" name="lines" type="number" inputmode="numeric" min="1" max="500" step="1" value="1" aria-describedby="calc-lines-hint" class="mt-2 block min-h-11 w-40 rounded-control border border-control bg-white px-3 text-base aria-[invalid=true]:border-2 aria-[invalid=true]:border-error">
         </div>
     </form>
@@ -57,16 +57,16 @@
                 <span data-total class="block font-display text-5xl font-semibold">{{ $nu($initial['total']) }}</span>
                 <span class="mt-1 block text-on-dark-muted">{{ label('calculatorForm.estimateCaption') }}</span>
             </span>
-            <span data-result-bad hidden class="block text-gold">Fix the number of tariff lines to see an estimate.</span>
+            <span data-result-bad hidden class="block text-gold">{{ label('calculatorForm.badResult') }}</span>
         </output>
         <dl data-breakdown class="mt-6 grid grid-cols-[1fr_auto] gap-x-4 gap-y-2 border-t border-line-dark pt-6 text-on-dark-muted">
-            <dt>Base fee (<span data-type>standard</span>)</dt>
+            <dt>{{ label('calculatorForm.baseFee') }} (<span data-type>standard</span>)</dt>
             <dd data-base class="text-right text-white">{{ $nu($initial['base']) }}</dd>
-            <dt>Extra tariff lines (<span data-extra-lines>{{ $initial['extraLines'] }}</span>)</dt>
+            <dt>{{ label('calculatorForm.extraLines') }} (<span data-extra-lines>{{ $initial['extraLines'] }}</span>)</dt>
             <dd data-line-fee class="text-right text-white">{{ $nu($initial['lineFee']) }}</dd>
-            <dt>Handling (<span data-mode>road</span>)</dt>
+            <dt>{{ label('calculatorForm.handling') }} (<span data-mode>road</span>)</dt>
             <dd data-handling class="text-right text-white">{{ $nu($initial['handling']) }}</dd>
-            <dt data-discount-label hidden>Export discount</dt>
+            <dt data-discount-label hidden>{{ label('calculatorForm.exportDiscount') }}</dt>
             <dd data-discount hidden class="text-right text-white"></dd>
         </dl>
         <p class="mt-6 text-sm text-on-dark-muted">{{ label('calculatorForm.disclaimer') }}</p>

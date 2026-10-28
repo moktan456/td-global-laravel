@@ -33,6 +33,7 @@ if (! function_exists('content_text')) {
             'phone' => site('contact.phone'), 'email' => site('contact.email'), 'address' => site('contact.address'),
             'uen' => site('legal.uen'), 'jurisdiction' => site('legal.jurisdiction'), 'registry' => site('legal.registry'),
             'date' => Carbon::parse(site('legal.incorporated'), 'UTC')->format('j F Y'),
+            'year' => date('Y'), 'legalName' => site('legal.name'),
         ];
         $fill = fn (string $text) => strtr($text, array_combine(array_map(fn ($k) => '{'.$k.'}', array_keys($tokens)), array_map('strval', array_values($tokens))));
 

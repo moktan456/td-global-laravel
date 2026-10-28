@@ -100,8 +100,21 @@ class ButtonsAndForms extends ContentPage
                         'complexOption' => 'Complex option', 'complexHint' => 'Complex: help text',
                         'modeLabel' => 'Shipping method: label', 'airOption' => 'Air option', 'roadOption' => 'Road option', 'railOption' => 'Rail option',
                         'linesLabel' => 'Tariff lines: label', 'linesHint' => 'Tariff lines: help text',
+                        'baseFee' => 'Breakdown: base fee', 'extraLines' => 'Breakdown: extra tariff lines', 'handling' => 'Breakdown: handling', 'exportDiscount' => 'Breakdown: export discount',
+                        'linesError' => 'Tariff lines: error message', 'badResult' => 'Result box: when the lines are not valid',
                         'estimateTitle' => 'Result box: title', 'estimateCaption' => 'Result box: caption', 'disclaimer' => 'Result box: small print',
                     ], ['linesHint', 'disclaimer'], ['linesHint' => 'Use {included} for the number of lines included in the base fee.'])),
+                ]),
+                Tab::make('Hidden text')->icon('heroicon-o-eye-slash')->schema([
+                    Section::make('Read aloud by screen readers, or shown as a hint')->description('Visitors who use a screen reader hear these. The search box example text is shown on screen.')->columns(2)->schema($this->group('a11y', [
+                        'skip' => 'Skip link at the very top',
+                        'newTab' => 'Added to links that open a new tab',
+                        'mapNewTab' => 'Map directions link: new tab note',
+                        'searchLabel' => 'Search box: label', 'searchPlaceholder' => 'Search box: example text', 'searchButton' => 'Search button',
+                        'menu' => 'Phone menu button', 'close' => 'Close button', 'emailUs' => 'Email button (bottom right)', 'viewFullSize' => 'Certificate: view full size',
+                        'prevSlide' => 'Banner: previous', 'nextSlide' => 'Banner: next', 'stopSlides' => 'Banner: stop the slide show', 'startSlides' => 'Banner: start the slide show',
+                        'prevArticle' => 'Articles: previous', 'nextArticle' => 'Articles: next', 'prevServices' => 'Services: scroll back', 'nextServices' => 'Services: scroll on',
+                    ])),
                 ]),
                 Tab::make('Messages')->icon('heroicon-o-chat-bubble-bottom-center-text')->schema([
                     Section::make('After sending')->description('Use {name} and {email} to include what the visitor typed.')->columns(1)->schema($this->group('messages', [

@@ -16,14 +16,14 @@
         <li>
             <a href="mailto:{{ site('contact.email') }}" class="{{ $button }} bg-navy-900 hover:bg-navy-800">
                 <x-lucide name="mail" class="size-6" />
-                <span class="sr-only">Email us</span>
+                <span class="sr-only">{{ label('a11y.emailUs') }}</span>
             </a>
         </li>
         @if ($whatsapp)
             <li>
                 <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="{{ $button }} bg-whatsapp hover:bg-whatsapp-dark">
                     <x-brand-icon name="whatsapp" class="size-7" />
-                    <span class="sr-only">Chat on WhatsApp (opens in a new tab)</span>
+                    <span class="sr-only">{{ label('buttons.whatsapp') }} {{ label('a11y.newTab') }}</span>
                 </a>
             </li>
         @endif

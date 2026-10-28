@@ -4,7 +4,9 @@ namespace App\Filament\Pages;
 
 use App\Filament\Support\ContentPage;
 use App\Filament\Support\Fields;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -29,7 +31,29 @@ class PageText extends ContentPage
 
     protected static function files(): array
     {
-        return ['pages' => null];
+        return ['pages' => null, 'credits' => null];
+    }
+
+    protected function toForm(array $state): array
+    {
+        $list = [];
+        foreach ($state['credits'] as $key => $c) {
+            $list[] = ['key' => $key, 'unsplashId' => $c['unsplashId'] ?? '', 'photographer' => $c['photographer'] ?? '', 'photographerUrl' => $c['photographerUrl'] ?? '', 'photoUrl' => $c['photoUrl'] ?? '', 'license' => $c['license'] ?? ''];
+        }
+        $state['credits'] = ['list' => $list];
+
+        return $state;
+    }
+
+    protected function fromForm(array $state): array
+    {
+        $out = [];
+        foreach ($state['credits']['list'] ?? [] as $row) {
+            $out[$row['key']] = array_diff_key($row, ['key' => 1]);
+        }
+        $state['credits'] = $out;
+
+        return $state;
     }
 
     /** The heading and intro at the top of a page, and how it appears in Google. */
@@ -136,12 +160,61 @@ class PageText extends ContentPage
                         Fields::area('pages.service.ctaText', 'Closing box: text', null, 2),
                     ]),
                 ]),
+                Tab::make('Photo credits')->icon('heroicon-o-camera')->schema([
+                    Section::make('Top of the page')->columns(1)->schema([
+                        Fields::text('pages.credits.title', 'Heading', null, true),
+                        Fields::area('pages.credits.intro', 'Text under the heading', 'Keep {Unsplash} where the link to Unsplash should appear.', 3),
+                        Fields::text('pages.credits.photoBy', 'Words before the photographer'),
+                        Fields::text('pages.credits.on', 'Word before the photo link'),
+                        Fields::text('pages.credits.placeholder', 'Note for photos still to be replaced'),
+                        Fields::text('pages.credits.metaTitle', 'Search result title', null, true),
+                        Fields::area('pages.credits.metaDescription', 'Search result description', null, 2),
+                    ]),
+                    Section::make('Photographers')->description('One entry per photo that needs a credit. Leave the photographer empty to show it as a placeholder.')->schema([
+                        Repeater::make('credits.list')->hiddenLabel()->addable(false)->deletable(false)->reorderable(false)->collapsible()->collapsed()->columns(2)
+                            ->itemLabel(fn (array $state) => ($state['photographer'] ?? '') !== '' ? $state['photographer'].' — '.($state['key'] ?? '') : ($state['key'] ?? 'Photo'))->schema([
+                                Hidden::make('key'),
+                                Hidden::make('unsplashId'),
+                                Fields::text('photographer', 'Photographer'),
+                                TextInput::make('photographerUrl')->label('Photographer\'s page')->url()->maxLength(500),
+                                TextInput::make('photoUrl')->label('Link to the photo')->url()->maxLength(500),
+                                Fields::text('license', 'Licence'),
+                            ]),
+                    ]),
+                ]),
+                Tab::make('Page not found & search')->icon('heroicon-o-magnifying-glass')->schema([
+                    Section::make('"Page not found" page')->columns(1)->schema([
+                        Fields::text('pages.notFound.eyebrow', 'Small label'),
+                        Fields::text('pages.notFound.title', 'Heading', null, true),
+                        Fields::area('pages.notFound.text', 'Text', null, 2),
+                        Fields::text('pages.notFound.searchLabel', 'Search box name'),
+                        Fields::text('pages.notFound.button', 'Button text', null, true),
+                        Fields::text('pages.notFound.metaTitle', 'Browser tab title', null, true),
+                    ]),
+                    Section::make('Search results page')->description('Use {query} for what was searched and {count} for the number of results.')->columns(1)->schema([
+                        Fields::text('pages.search.title', 'Heading', null, true),
+                        Fields::text('pages.search.searchAgain', 'Search box name'),
+                        Fields::text('pages.search.oneResult', 'When there is one result', null, true),
+                        Fields::text('pages.search.manyResults', 'When there are several', null, true),
+                        Fields::text('pages.search.noResults', 'When there are none', null, true),
+                        Fields::text('pages.search.tryText', 'Hint when there are none'),
+                        Fields::text('pages.search.askLink', 'Link text after the hint'),
+                    ]),
+                ]),
+                Tab::make('Home page (hidden)')->icon('heroicon-o-eye-slash')->schema([
+                    Section::make('Page title read by screen readers and search engines')->description('The home page\'s main heading is not shown on screen. Search engines and screen readers use it.')->columns(1)->schema([
+                        Fields::area('pages.home.heading', 'Hidden main heading', 'You can use {name}.', 2)->required(),
+                    ]),
+                ]),
                 Tab::make('Footer')->icon('heroicon-o-bars-3-bottom-left')->schema([
                     Section::make('Bottom of every page')->description($tokens)->columns(1)->schema([
                         Fields::area('pages.footer.about', 'About text', null, 3)->required(),
                         Fields::text('pages.footer.linksHeading', 'Heading of the first column', null, true),
                         Fields::text('pages.footer.contactHeading', 'Heading of the contact column', null, true),
                         Fields::text('pages.footer.moreHeading', 'Heading of the second column', null, true),
+                        Fields::text('pages.footer.copyright', 'Copyright line', 'You can use {year}, {legalName}, {uen} and {jurisdiction}.', true),
+                        Fields::text('pages.footer.viewCertificates', 'Link to the certificates'),
+                        Fields::text('pages.footer.designedBy', 'Words before the website credit'),
                     ]),
                 ]),
             ]),

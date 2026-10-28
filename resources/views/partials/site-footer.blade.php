@@ -38,7 +38,7 @@
                     @endif
                 @endif
                 @if ($whatsapp)
-                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="{{ $linkClass }}">{{ label('buttons.whatsapp') }}<span class="sr-only"> (opens in a new tab)</span></a>
+                    <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="{{ $linkClass }}">{{ label('buttons.whatsapp') }}<span class="sr-only"> {{ label('a11y.newTab') }}</span></a>
                 @endif
                 <a href="mailto:{{ $email }}" class="{{ $linkClass }} break-all">{{ $email }}</a>
                 @if (is_filled($hours))
@@ -60,8 +60,8 @@
     <div class="border-t border-line-dark">
         <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-sm sm:px-6 lg:px-16">
             <div class="grid gap-1">
-                <p>© {{ date('Y') }} {{ site('legal.name') }} · UEN {{ site('legal.uen') }} · Incorporated in {{ site('legal.jurisdiction') }}. <a href="/about#certificates-heading" class="underline underline-offset-2 hover:text-white">View certificates</a></p>
-                <p>Designed by <a href="{{ site('designer.url') }}" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-white">{{ site('designer.name') }}<span class="sr-only"> (opens in a new tab)</span></a></p>
+                <p>{{ page_text('footer.copyright') }} <a href="/about#certificates-heading" class="underline underline-offset-2 hover:text-white">{{ page_text('footer.viewCertificates') }}</a></p>
+                <p>{{ page_text('footer.designedBy') }} <a href="{{ site('designer.url') }}" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-white">{{ site('designer.name') }}<span class="sr-only"> {{ label('a11y.newTab') }}</span></a></p>
             </div>
             <a href="#main" class="inline-flex min-h-11 items-center gap-2 hover:text-white">
                 {{ label('buttons.backToTop') }}

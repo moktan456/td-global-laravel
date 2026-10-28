@@ -53,7 +53,7 @@ export function initHeroCarousel() {
         playing = !playing;
         playButton.querySelector('[data-icon-pause]').hidden = !playing;
         playButton.querySelector('[data-icon-play]').hidden = playing;
-        playButton.querySelector('[data-label]').textContent = playing ? 'Stop automatic slide show' : 'Start automatic slide show';
+        playButton.querySelector('[data-label]').textContent = playing ? (playButton.dataset.stopLabel || 'Stop automatic slide show') : (playButton.dataset.startLabel || 'Start automatic slide show');
         schedule();
     });
     root.querySelector('[data-prev]').addEventListener('click', () => go(index - 1));

@@ -33,11 +33,11 @@
         <p data-counter class="mr-1 rounded-full bg-navy-950/80 px-3 py-1 text-sm font-semibold text-white" aria-hidden="true">{{ $pad(1) }} / {{ $pad($total) }}</p>
         <button type="button" data-prev class="{{ $btn }}">
             <x-lucide name="chevron-left" class="size-5" />
-            <span class="sr-only">Previous article</span>
+            <span class="sr-only">{{ label('a11y.prevArticle') }}</span>
         </button>
         <button type="button" data-next class="{{ $btn }}">
             <x-lucide name="chevron-right" class="size-5" />
-            <span class="sr-only">Next article</span>
+            <span class="sr-only">{{ label('a11y.nextArticle') }}</span>
         </button>
     </div>
 </section>

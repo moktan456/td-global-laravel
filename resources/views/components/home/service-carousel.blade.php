@@ -25,11 +25,11 @@
     <div class="mt-6 flex justify-end gap-3">
         <button type="button" data-scroll-prev class="{{ $arrow }}" aria-disabled="true">
             <x-lucide name="chevron-left" class="size-5" />
-            <span class="sr-only">Scroll to previous services</span>
+            <span class="sr-only">{{ label('a11y.prevServices') }}</span>
         </button>
         <button type="button" data-scroll-next class="{{ $arrow }}" aria-disabled="false">
             <x-lucide name="chevron-right" class="size-5" />
-            <span class="sr-only">Scroll to more services</span>
+            <span class="sr-only">{{ label('a11y.nextServices') }}</span>
         </button>
     </div>
 </div>

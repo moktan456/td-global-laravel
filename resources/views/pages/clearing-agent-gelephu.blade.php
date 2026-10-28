@@ -44,7 +44,7 @@
                     @if ($whatsapp)
                         <li class="flex items-center gap-3">
                             <x-lucide name="message-circle" class="size-5 shrink-0 text-brand" />
-                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.whatsapp') }}<span class="sr-only"> (opens in a new tab)</span></a>
+                            <a href="{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.whatsapp') }}<span class="sr-only"> {{ label('a11y.newTab') }}</span></a>
                         </li>
                     @endif
                     <li class="flex items-center gap-3">
