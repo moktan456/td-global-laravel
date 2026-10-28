@@ -15,7 +15,7 @@ class LoginController extends Controller
 
     public function show()
     {
-        if (Auth::check() && Auth::user()->active) {
+        if (Auth::check() && Auth::user()->active && ! Auth::user()->must_change_password) {
             return redirect('/staff');
         }
 

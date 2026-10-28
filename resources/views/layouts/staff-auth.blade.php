@@ -39,6 +39,12 @@
                 @yield('content')
             </div>
         </div>
+        @auth
+            <form method="post" action="/staff/logout" class="mt-4 text-center">
+                @csrf
+                <button type="submit" class="min-h-11 rounded-control px-3 text-sm font-semibold text-navy-900 underline underline-offset-4 hover:text-brand">Not you? Sign out</button>
+            </form>
+        @endauth
         <p class="mt-6 text-center text-sm text-muted">TD Global staff area · <a href="/" class="underline underline-offset-4 hover:text-navy-900">Back to the website</a></p>
     </main>
 </body>

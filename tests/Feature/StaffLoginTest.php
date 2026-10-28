@@ -73,6 +73,15 @@ class StaffLoginTest extends TestCase
         $this->assertFalse($user->fresh()->must_change_password);
     }
 
+    public function test_someone_on_a_temporary_password_can_still_reach_the_login_page_and_sign_out(): void
+    {
+        $user = $this->staff(['must_change_password' => true]);
+        $this->actingAs($user)->get('/staff/login')->assertOk();
+        $this->get('/staff/password')->assertOk()->assertSee('Not you? Sign out');
+        $this->post('/staff/logout')->assertRedirect();
+        $this->assertGuest();
+    }
+
     public function test_a_switched_off_account_is_locked_out_immediately(): void
     {
         $user = $this->staff();
