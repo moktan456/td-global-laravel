@@ -81,3 +81,21 @@ Route::prefix('staff')->group(function () {
         });
     });
 });
+
+/* TEMPORARY diagnostic (removed in the next commit): which headers does the host's proxy add? Shows only the caller's own request. */
+Route::get('/_diag-7f3a9c1e5b', function (\Illuminate\Http\Request $r) {
+    $mask = fn ($v) => $v === null ? null : preg_replace('/(\d+\.\d+\.\d+\.)\d+/', '$1x', (string) $v);
+
+    return response()->json([
+        'remote_addr' => $mask($r->server('REMOTE_ADDR')),
+        'xff' => $mask($r->header('X-Forwarded-For')),
+        'x_real_ip' => $mask($r->header('X-Real-IP')),
+        'cf' => $mask($r->header('CF-Connecting-IP')),
+        'true_client' => $mask($r->header('True-Client-IP')),
+        'forwarded' => $mask($r->header('Forwarded')),
+        'proto' => $r->header('X-Forwarded-Proto'),
+        'header_names' => array_keys($r->headers->all()),
+        'server_keys' => array_values(array_filter(array_keys($_SERVER), fn ($k) => preg_match('/^(HTTP_|REMOTE_|X_|SERVER_ADDR)/', $k))),
+        'laravel_ip' => $mask($r->ip()),
+    ]);
+});
