@@ -145,7 +145,7 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->admin());
         $page = Livewire::test(ArticlesPage::class);
         $data = $page->get('data');
-        $data['articles']['list'][] = ['title' => 'A fresh article', 'slug' => 'a-fresh-article', 'category' => 'News', 'excerpt' => 'Short.', 'date' => '2026-10-01', 'author' => 'Tashi', 'image' => 'svcDocs', 'body' => [['heading' => 'Hello', 'paragraphs' => [['text' => 'First paragraph.']], 'list' => []]]];
+        $data['articles']['list'][] = ['title' => 'A fresh article', 'slug' => 'a-fresh-article', 'category' => 'News', 'excerpt' => 'Short.', 'date' => '2026-10-01', 'author' => 'Tashi', 'image' => 'svcDocs', 'published' => true, 'body' => [['heading' => 'Hello', 'paragraphs' => [['text' => 'First paragraph.']], 'list' => []]]];
         $page->set('data', $data)->call('save')->assertHasNoFormErrors();
         $this->get('/blog/a-fresh-article')->assertOk()->assertSee('A fresh article')->assertSee('First paragraph.');
         $this->get('/blog')->assertSee('A fresh article');
@@ -261,5 +261,42 @@ class AdminPanelTest extends TestCase
         $this->actingAs($this->staff(['role' => 'staff']))->get('/admin/guide')->assertForbidden();
         $this->actingAs($this->admin())->get('/admin/guide')->assertOk()->assertSee('Website and tracking guide')->assertSee('Write a new blog article')->assertSee('Create a request and a tracking number');
         Livewire::test(UserGuide::class)->assertOk();
+    }
+
+    public function test_a_draft_article_is_hidden_from_visitors_but_admins_can_preview_it(): void
+    {
+        $this->actingAs($this->admin());
+        $page = Livewire::test(ArticlesPage::class);
+        $data = $page->get('data');
+        $first = array_key_first($data['articles']['list']);
+        $slug = $data['articles']['list'][$first]['slug'];
+        $title = $data['articles']['list'][$first]['title'];
+        $this->assertTrue($data['articles']['list'][$first]['published'], 'existing articles open as published');
+        $data['articles']['list'][$first]['published'] = false;
+        $page->set('data', $data)->call('save')->assertHasNoFormErrors();
+
+        $this->get("/blog/$slug")->assertOk()->assertSee('Draft. Only admins can see this article.')->assertSee('noindex', false);
+
+        auth()->logout();
+        $this->get("/blog/$slug")->assertNotFound();
+        $this->get('/blog')->assertDontSee($title);
+        $this->get('/')->assertDontSee($title);
+        $this->get('/sitemap.xml')->assertDontSee("/blog/$slug");
+        $this->get('/search?q='.urlencode(explode(' ', $title)[0]))->assertDontSee("/blog/$slug", false);
+        $this->actingAs($this->staff(['role' => 'staff']))->get("/blog/$slug")->assertNotFound();
+    }
+
+    public function test_with_no_published_articles_the_blog_says_so_and_the_home_hides_the_section(): void
+    {
+        $this->actingAs($this->admin());
+        $page = Livewire::test(ArticlesPage::class);
+        $data = $page->get('data');
+        foreach ($data['articles']['list'] as $k => $a) {
+            $data['articles']['list'][$k]['published'] = false;
+        }
+        $page->set('data', $data)->call('save')->assertHasNoFormErrors();
+        auth()->logout();
+        $this->get('/blog')->assertOk()->assertSee('New articles are on the way');
+        $this->get('/')->assertOk()->assertDontSee('Top latest articles');
     }
 }

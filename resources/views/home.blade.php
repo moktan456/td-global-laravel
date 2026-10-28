@@ -25,6 +25,7 @@
     <x-home.testimonials />
     <x-home.trust />
 
+    @if (count(\App\Support\Content::articles()))
     <section aria-labelledby="blog-heading" class="py-20 lg:py-28">
         <x-container>
             <x-section-heading id="blog-heading" :eyebrow="content('home.sections.blog.eyebrow')" :title="content('home.sections.blog.title')" />
@@ -34,6 +35,7 @@
             <x-button-link href="/blog" variant="outline" class="mt-8">{{ label('buttons.allArticles') }}</x-button-link>
         </x-container>
     </section>
+    @endif
 
     <x-home.contact />
 @endsection

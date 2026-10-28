@@ -19,7 +19,7 @@ class PageController extends Controller
 
     public function article(string $slug)
     {
-        $article = Content::article($slug);
+        $article = Content::article($slug) ?? (auth()->user()?->isAdmin() ? Content::draft($slug) : null);
         abort_if($article === null, 404);
 
         return view('blog.show', ['article' => $article]);

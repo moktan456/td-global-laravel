@@ -2,9 +2,13 @@
     'title' => $article['title'],
     'description' => $article['excerpt'],
     'canonical' => '/blog/'.$article['slug'],
+    'noindex' => ! ($article['published'] ?? true),
 ])
 
 @section('content')
+    @unless ($article['published'] ?? true)
+        <p role="status" class="bg-gold px-4 py-3 text-center font-semibold text-on-gold">Draft. Only admins can see this article. Switch it to Published in the admin to show it to visitors.</p>
+    @endunless
     <x-page-header :title="$article['title']" :path="'/blog/'.$article['slug']" :crumbs="[['label' => 'Blog', 'href' => '/blog'], ['label' => $article['title']]]">
         <x-slot:intro>
             <p>{{ $article['category'] }} · {{ is_filled($article['author']) ? $article['author'] : site('name') }} · <time datetime="{{ $article['date'] }}">{{ format_date($article['date']) }}</time></p>

@@ -7,6 +7,7 @@ use App\Filament\Support\Fields;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 
 class ArticlesPage extends ContentPage
@@ -34,7 +35,10 @@ class ArticlesPage extends ContentPage
 
     protected function toForm(array $state): array
     {
-        return ['articles' => ['list' => $state['articles']]];
+        // Articles written before the switch existed are live, so they open as Published.
+        $list = array_map(fn ($a) => $a + ['published' => true], $state['articles']);
+
+        return ['articles' => ['list' => $list]];
     }
 
     protected function fromForm(array $state): array
@@ -47,8 +51,12 @@ class ArticlesPage extends ContentPage
         return [
             Repeater::make('articles.list')->label('Articles')->hiddenLabel()->collapsible()->collapsed()->reorderable()
                 ->addActionLabel('Write a new article')
-                ->itemLabel(fn (array $state) => $state['title'] ?? 'New article')
+                ->itemLabel(fn (array $state) => ($state['title'] ?? 'New article').(($state['published'] ?? false) ? '' : '  ·  DRAFT'))
                 ->schema([
+                    Section::make('Visibility')->schema([
+                        Toggle::make('published')->label('Published')->default(false)->live()
+                            ->helperText('On: visitors can read it, and it appears on the blog, the home page, search and the sitemap. Off: it is a draft that only you and other admins can open. New articles start as drafts.'),
+                    ]),
                     Section::make('About the article')->columns(2)->schema([
                         Fields::text('title', 'Title', null, true)->columnSpanFull(),
                         Fields::text('slug', 'Web address ending', 'Letters, numbers and dashes. The article lives at /blog/this-ending. Leave it alone on published articles.', true)

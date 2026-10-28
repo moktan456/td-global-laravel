@@ -96,9 +96,22 @@ class Content
         return null;
     }
 
+    /** The articles visitors can read: drafts (`published` switched off in the admin) are left out. */
     public static function articles(): array
     {
-        return self::load('articles');
+        return array_values(array_filter(self::load('articles'), fn ($a) => $a['published'] ?? true));
+    }
+
+    /** A draft article by its address, for admins previewing it. */
+    public static function draft(string $slug): ?array
+    {
+        foreach (self::load('articles') as $article) {
+            if ($article['slug'] === $slug && ! ($article['published'] ?? true)) {
+                return $article;
+            }
+        }
+
+        return null;
     }
 
     public static function article(string $slug): ?array

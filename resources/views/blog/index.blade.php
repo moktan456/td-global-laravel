@@ -9,8 +9,11 @@
         <x-slot:intro><p>{{ page_text('blog.intro') }}</p></x-slot:intro>
     </x-page-header>
     <x-container class="py-16 lg:py-24">
+        @if (! count(\App\Support\Content::articles()))
+            <p class="text-lg text-muted">{{ page_text('blog.empty') }}</p>
+        @endif
         <ul data-reveal-group class="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-            @foreach (content('articles') as $a)
+            @foreach (\App\Support\Content::articles() as $a)
                 <li>
                     <article class="group relative flex h-full flex-col">
                         <div class="relative aspect-[3/2] overflow-hidden rounded-card">

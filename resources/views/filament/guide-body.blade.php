@@ -115,9 +115,10 @@
             <li>Fill in the <em>Title</em>, <em>Category</em>, <em>Date</em>, <em>Author</em> and a <em>Cover photo</em>. Write a short <em>summary</em>: it appears on the blog list and in search results.</li>
             <li>Choose the <em>Web address ending</em>, such as <code>how-to-read-an-hs-code</code>. Use lower-case letters, numbers and dashes. The article will live at <code>/blog/how-to-read-an-hs-code</code>.</li>
             <li>Build the article from <strong>sections</strong>. A section can have a heading, one or more paragraphs and a bullet list. Press <em>Add a section</em> for each new heading.</li>
-            <li>Press <strong>Save changes</strong>, then <strong>View page</strong> and open the article from the blog list.</li>
+            <li>New articles start as <strong>drafts</strong>. A draft is not on the blog, the home page, search or the sitemap, and visitors who open its link see "page not found". Admins who are signed in can still open it, with a yellow "Draft" bar on top, to check it before it goes live.</li>
+            <li>When it is ready, open the article, switch <strong>Published</strong> on under <em>Visibility</em> and press <strong>Save changes</strong>. Switch it off again to take an article down without deleting it. Drafts are marked <strong>DRAFT</strong> in the list.</li>
         </ol>
-        <p class="note">The newest date shows first on the blog. To hide an article without deleting it, there is no switch yet: delete the row, or move its date far into the past.</p>
+        <p class="note">The newest date shows first on the blog.</p>
     </article>
 
     <article>

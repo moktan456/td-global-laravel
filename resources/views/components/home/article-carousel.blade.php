@@ -1,6 +1,6 @@
 {{-- Manual (never auto-rotating) featured-article slider. --}}
 @php
-    $articles = content('articles');
+    $articles = \App\Support\Content::articles();
     $total = count($articles);
     $btn = 'inline-flex size-11 items-center justify-center rounded-full bg-white/90 text-navy-900 transition-[background-color,scale] duration-(--duration-hover) ease-out-quart hover:bg-white active:scale-95';
     $pad = fn ($n) => str_pad((string) $n, 2, '0', STR_PAD_LEFT);

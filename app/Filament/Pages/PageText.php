@@ -119,6 +119,9 @@ class PageText extends ContentPage
                 ]),
                 Tab::make('Blog')->icon('heroicon-o-newspaper')->schema([
                     ...$this->top('blog'),
+                    Section::make('When there are no published articles')->schema([
+                        Fields::text('pages.blog.empty', 'Message on the blog page'),
+                    ]),
                     Section::make('Box at the end of every article')->columns(1)->schema([
                         Fields::text('pages.blog.ctaTitle', 'Heading', null, true),
                         Fields::area('pages.blog.ctaText', 'Text', null, 2),

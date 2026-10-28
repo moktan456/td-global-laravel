@@ -60,6 +60,7 @@ return [
         'metaDescription' => 'Practical guides on customs documentation, HS codes and avoiding storage charges, from a clearing agent in Gelephu, GMC.',
         'title' => 'Blog & articles',
         'intro' => 'Practical guidance on documentation, classification and keeping your cargo moving.',
+        'empty' => 'New articles are on the way. Please check back soon.',
         'ctaTitle' => 'Need a hand with your shipment?',
         'ctaText' => 'This article is general guidance. For advice on your goods, talk to a broker.',
         'ctaButton' => 'Get a free quote',
