@@ -24,7 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: ['api/telegram/webhook']);
         $middleware->redirectGuestsTo('/staff/login');
         // Behind a host's proxy or CDN the visitor's real IP is what the rate limits should count.
-        $middleware->trustProxies(at: '*');
+        // Trust the proxy's X-Forwarded-Proto/Port (so https is seen), but never X-Forwarded-For: anyone could forge it to dodge the
+        // sign-in and lookup rate limits. The visitor's address is the connection's own.
+        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_PROTO | Request::HEADER_X_FORWARDED_PORT);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

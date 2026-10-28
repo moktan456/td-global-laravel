@@ -24,7 +24,12 @@ class Fields
     public static function link(string $name = 'href', string $label = 'Links to'): TextInput
     {
         return TextInput::make($name)->label($label)->required()->maxLength(500)
-            ->helperText('A page on this site, like /services, or a full web address.');
+            ->helperText('A page on this site, like /services, or a full web address.')
+            ->rule(fn () => function (string $attribute, mixed $value, \Closure $fail) {
+                if (is_string($value) && trim($value) !== '' && safe_url($value) === '#' && trim($value) !== '#') {
+                    $fail('Use a page on this site like /services, a web address starting with https://, or a mailto: or tel: link.');
+                }
+            });
     }
 
     /** A photo from the Photos page. */

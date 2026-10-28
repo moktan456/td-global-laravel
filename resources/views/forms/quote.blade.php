@@ -6,6 +6,9 @@
 @endphp
 <form id="quote-form" method="post" action="/quote" data-enhance novalidate class="grid gap-6">
     @csrf
+    <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
+        <label>Leave this field empty<input type="text" name="homepage_url" tabindex="-1" autocomplete="off"></label>
+    </div>
     <x-form-status :state="$state" :ids="$ids" />
     @if ($plan)
         <p class="rounded-tile bg-sand px-4 py-3">

@@ -57,6 +57,26 @@ if (! function_exists('label')) {
     }
 }
 
+if (! function_exists('safe_url')) {
+    /**
+     * A link from the admin-edited content, made safe to put in an href: web addresses, mail and phone links, and paths on
+     * this site pass; anything else (javascript:, data:...) becomes '#'. Control characters are removed first, because
+     * browsers ignore them inside a scheme ("java\tscript:").
+     */
+    function safe_url(?string $url): string
+    {
+        $url = preg_replace('/[\x00-\x20\x7F]+/u', '', (string) $url) ?? '';
+        if ($url === '') {
+            return '#';
+        }
+        if (preg_match('/^([a-z][a-z0-9+.\-]*):/i', $url, $m) && ! in_array(strtolower($m[1]), ['http', 'https', 'mailto', 'tel'], true)) {
+            return '#';
+        }
+
+        return $url;
+    }
+}
+
 if (! function_exists('is_filled')) {
     /** True when a content value is set and is not a "[PLACEHOLDER]". */
     function is_filled(?string $value): bool

@@ -7,6 +7,9 @@
 @endphp
 <form id="contact-form" method="post" action="/contact" data-enhance novalidate class="grid gap-5">
     @csrf
+    <div aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden">
+        <label>Leave this field empty<input type="text" name="homepage_url" tabindex="-1" autocomplete="off"></label>
+    </div>
     <input type="hidden" name="tone" value="{{ $tone }}">
     <x-form-status :state="$state" :ids="$ids" :tone="$tone" />
     <div class="grid gap-5 sm:grid-cols-2">

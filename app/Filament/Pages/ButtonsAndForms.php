@@ -122,7 +122,8 @@ class ButtonsAndForms extends ContentPage
                         'quoteSuccess' => 'Quote form: sent',
                         'notConnected' => 'When the form is not connected',
                         'sendFailed' => 'When sending fails',
-                    ], ['contactSuccess', 'quoteSuccess', 'notConnected', 'sendFailed'], ['notConnected' => 'Use {email} for the company email.'])),
+                        'tooMany' => 'When someone sends too many messages',
+                    ], ['contactSuccess', 'quoteSuccess', 'notConnected', 'sendFailed', 'tooMany'], ['notConnected' => 'Use {email} for the company email.'])),
                     Section::make('Problems with what was typed')->columns(2)->schema($this->group('messages', [
                         'enterName' => 'Name missing', 'enterEmail' => 'Email missing', 'badEmail' => 'Email not valid',
                         'enterMessage' => 'Message missing', 'chooseDirection' => 'Import or export not chosen',

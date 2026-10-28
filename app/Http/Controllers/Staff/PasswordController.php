@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Support\FormState;
 use App\Support\StaffAccounts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /** A signed-in staff member chooses their own password. Used on first sign-in and any time after. */
@@ -35,6 +36,7 @@ class PasswordController extends Controller
             return $this->formResponse($request, 'password', 'staff.password-form', new FormState('error', isset($errors['password']) && str_contains($errors['password'], "haven't used") ? "Choose a password you haven't used before." : $msg, $errors));
         }
         $user->forceFill(['password' => $password, 'must_change_password' => false])->save();
+        DB::table('sessions')->where('user_id', $user->id)->where('id', '!=', $request->session()->getId())->delete();   // other devices stop working: a changed password should end a stolen session
 
         return $this->formRedirect($request, '/staff');
     }

@@ -17,7 +17,7 @@
             <ul class="flex items-center gap-4 xl:gap-7">
                 @foreach ($primaryNav as $item)
                     <li>
-                        <a href="{{ $item['href'] }}" @if (nav_active($item['href'])) aria-current="page" @endif class="{{ $linkBase }} {{ nav_active($item['href']) ? $activeMark : '' }}">{{ $item['label'] }}</a>
+                        <a href="{{ safe_url($item['href']) }}" @if (nav_active($item['href'])) aria-current="page" @endif class="{{ $linkBase }} {{ nav_active($item['href']) ? $activeMark : '' }}">{{ $item['label'] }}</a>
                     </li>
                 @endforeach
                 <li>
@@ -32,7 +32,7 @@
                                 @foreach ($companyNav as $item)
                                     @php($active = nav_active($item['href']))
                                     <li>
-                                        <a href="{{ $item['href'] }}" @if ($active) aria-current="page" @endif class="block rounded-control px-4 py-2.5 text-base transition-[background-color,color,padding] duration-(--duration-hover) ease-out-quart hover:bg-sand hover:pl-5 hover:text-brand focus-visible:bg-sand {{ $active ? 'font-semibold text-brand' : 'text-navy-900' }}">{{ $item['label'] }}</a>
+                                        <a href="{{ safe_url($item['href']) }}" @if ($active) aria-current="page" @endif class="block rounded-control px-4 py-2.5 text-base transition-[background-color,color,padding] duration-(--duration-hover) ease-out-quart hover:bg-sand hover:pl-5 hover:text-brand focus-visible:bg-sand {{ $active ? 'font-semibold text-brand' : 'text-navy-900' }}">{{ $item['label'] }}</a>
                                     </li>
                                 @endforeach
                             </ul>
@@ -85,7 +85,7 @@
                 @foreach (array_merge($primaryNav, $companyNav) as $item)
                     @php($active = nav_active($item['href']))
                     <li>
-                        <a href="{{ $item['href'] }}" @if ($active) aria-current="page" @endif class="flex min-h-12 items-center rounded-control px-3 text-lg transition-colors duration-(--duration-hover) hover:bg-sand {{ $active ? 'bg-sand font-semibold text-brand' : 'text-navy-900' }}">{{ $item['label'] }}</a>
+                        <a href="{{ safe_url($item['href']) }}" @if ($active) aria-current="page" @endif class="flex min-h-12 items-center rounded-control px-3 text-lg transition-colors duration-(--duration-hover) hover:bg-sand {{ $active ? 'bg-sand font-semibold text-brand' : 'text-navy-900' }}">{{ $item['label'] }}</a>
                     </li>
                 @endforeach
             </ul>

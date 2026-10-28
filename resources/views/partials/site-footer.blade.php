@@ -19,7 +19,7 @@
             <h2 id="footer-links" class="font-sans text-base font-semibold text-white">{{ page_text('footer.linksHeading') }}</h2>
             <ul class="mt-3">
                 @foreach (content('site.footerLinks') as $l)
-                    <li><a href="{{ $l['href'] }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>
+                    <li><a href="{{ safe_url($l['href']) }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>
                 @endforeach
             </ul>
         </nav>
@@ -51,7 +51,7 @@
             <h2 id="footer-more" class="font-sans text-base font-semibold text-white">{{ page_text('footer.moreHeading') }}</h2>
             <ul class="mt-3">
                 @foreach (content('site.footerSecondary') as $l)
-                    <li><a href="{{ $l['href'] }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>
+                    <li><a href="{{ safe_url($l['href']) }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>
                 @endforeach
             </ul>
         </nav>
@@ -61,7 +61,7 @@
         <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-sm sm:px-6 lg:px-16">
             <div class="grid gap-1">
                 <p>{{ page_text('footer.copyright') }} <a href="/about#certificates-heading" class="underline underline-offset-2 hover:text-white">{{ page_text('footer.viewCertificates') }}</a></p>
-                <p>{{ page_text('footer.designedBy') }} <a href="{{ site('designer.url') }}" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-white">{{ site('designer.name') }}<span class="sr-only"> {{ label('a11y.newTab') }}</span></a></p>
+                <p>{{ page_text('footer.designedBy') }} <a href="{{ safe_url(site('designer.url')) }}" target="_blank" rel="noopener" class="underline underline-offset-2 hover:text-white">{{ site('designer.name') }}<span class="sr-only"> {{ label('a11y.newTab') }}</span></a></p>
             </div>
             <a href="#main" class="inline-flex min-h-11 items-center gap-2 hover:text-white">
                 {{ label('buttons.backToTop') }}

@@ -8,7 +8,7 @@
     <ul {{ $attributes }} aria-label="Social media">
         @foreach ($links as [$key, $label])
             <li>
-                <a href="{{ site('social.'.$key) }}" class="inline-flex size-11 items-center justify-center rounded-full transition-colors duration-200 {{ $linkClass }}" target="_blank" rel="noopener noreferrer">
+                <a href="{{ safe_url(site('social.'.$key)) }}" class="inline-flex size-11 items-center justify-center rounded-full transition-colors duration-200 {{ $linkClass }}" target="_blank" rel="noopener noreferrer">
                     <x-brand-icon :name="$key" class="size-5" />
                     <span class="sr-only">{{ site('name') }} on {{ $label }} {{ label('a11y.newTab') }}</span>
                 </a>

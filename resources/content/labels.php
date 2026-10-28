@@ -108,6 +108,7 @@ return [
         'contactSuccess' => 'Thanks, {name}. We\'ve received your message and will reply by email.',
         'quoteSuccess' => 'Thanks, {name}. We\'ll email your quote to {email}.',
         'notConnected' => 'Our online form isn\'t connected yet — please email us at {email} instead. We\'ve filled in an email with your details.',
+        'tooMany' => 'Too many messages from this connection. Please wait a few minutes and try again, or call us.',
         'sendFailed' => 'Sorry — we couldn\'t send that just now. Please try again, or email us directly.',
         'enterName' => 'Enter your name.',
         'enterEmail' => 'Enter your email address.',

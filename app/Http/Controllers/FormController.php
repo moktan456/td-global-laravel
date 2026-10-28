@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Contact and quote forms (ported from app/actions.ts). A submission goes to FORM_WEBHOOK_URL (Formspree, Make,
@@ -22,6 +23,9 @@ class FormController extends Controller
 
     public function contact(Request $request)
     {
+        if ($blocked = $this->guard($request)) {
+            return $this->formResponse($request, 'contact', 'forms.contact', $blocked, ['tone' => $request->input('tone') === 'dark' ? 'dark' : 'light']);
+        }
         $values = $this->fields($request, ['name', 'email', 'message']);
         $errors = [];
         $this->required($values, $errors, 'name', 'enterName');
@@ -37,6 +41,9 @@ class FormController extends Controller
 
     public function quote(Request $request)
     {
+        if ($blocked = $this->guard($request)) {
+            return $this->formResponse($request, 'quote', 'forms.quote', $blocked, ['plan' => $request->input('plan') ?: null]);
+        }
         $values = $this->fields($request, ['name', 'email', 'company', 'direction', 'mode', 'goods', 'details', 'plan']);
         $errors = [];
         $this->required($values, $errors, 'name', 'enterName');
@@ -56,11 +63,34 @@ class FormController extends Controller
         return $this->formResponse($request, 'quote', 'forms.quote', $state, ['plan' => $values['plan'] ?: null]);
     }
 
+    /**
+     * Keeps bots and floods away from the company inbox: a hidden field that people never fill but bots do (answered with
+     * a normal "thanks", so the bot learns nothing), and a limit on how many messages one connection can send.
+     */
+    protected function guard(Request $request): ?FormState
+    {
+        if (trim((string) $request->input('homepage_url', '')) !== '') {
+            return FormState::success(label('messages.contactSuccess', ['name' => 'friend']));
+        }
+        $limit = config('td.limits.forms');
+        $key = 'form:'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, $limit['max'])) {
+            return FormState::failed(label('messages.tooMany'));
+        }
+        RateLimiter::hit($key, $limit['seconds']);
+
+        return null;
+    }
+
+    /** How much of each field is kept: longer text is cut, so one message cannot be a megabyte long. */
+    private const MAX = ['name' => 120, 'email' => 254, 'company' => 120, 'goods' => 300, 'details' => 3000, 'message' => 5000, 'plan' => 100, 'direction' => 20, 'mode' => 20];
+
     protected function fields(Request $request, array $names): array
     {
         $values = [];
         foreach ($names as $n) {
-            $values[$n] = trim((string) $request->input($n, ''));
+            $raw = $request->input($n, '');
+            $values[$n] = mb_substr(trim(is_scalar($raw) ? (string) $raw : ''), 0, self::MAX[$n] ?? 200);
         }
 
         return $values;

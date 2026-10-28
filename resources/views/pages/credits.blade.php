@@ -21,12 +21,12 @@
                         @else
                             {{ page_text('credits.photoBy') }}
                             @if (! empty($c['photographerUrl']))
-                                <a href="{{ $c['photographerUrl'] }}" class="font-semibold text-brand underline underline-offset-2">{{ $c['photographer'] }}</a>
+                                <a href="{{ safe_url($c['photographerUrl']) }}" class="font-semibold text-brand underline underline-offset-2">{{ $c['photographer'] }}</a>
                             @else
                                 {{ $c['photographer'] }}
                             @endif
                             {{ page_text('credits.on') }}
-                            <a href="{{ $c['photoUrl'] }}" class="font-semibold text-brand underline underline-offset-2">Unsplash</a>
+                            <a href="{{ safe_url($c['photoUrl']) }}" class="font-semibold text-brand underline underline-offset-2">Unsplash</a>
                         @endif
                     </p>
                 </li>

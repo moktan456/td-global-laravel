@@ -58,7 +58,7 @@
                     @if ($mapUrl)
                         <li class="flex items-center gap-3">
                             <x-lucide name="navigation" class="size-5 shrink-0 text-gold" />
-                            <a href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.directions') }}<span class="sr-only"> {{ label('a11y.mapNewTab') }}</span></a>
+                            <a href="{{ safe_url($mapUrl) }}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4">{{ label('buttons.directions') }}<span class="sr-only"> {{ label('a11y.mapNewTab') }}</span></a>
                         </li>
                     @endif
                 </ul>

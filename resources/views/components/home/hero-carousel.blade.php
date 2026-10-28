@@ -20,7 +20,7 @@
                         <h2 class="mt-3 font-display text-4xl font-semibold leading-[1.1] sm:text-5xl lg:text-6xl">{{ $s['title'] }}</h2>
                         <p class="mt-5 text-lg text-on-dark-muted">{{ $s['body'] }}</p>
                         <div class="mt-8">
-                            <x-button-link :href="$s['cta']['href']" variant="primary">{{ $s['cta']['label'] }}</x-button-link>
+                            <x-button-link :href="safe_url($s['cta']['href'])" variant="primary">{{ $s['cta']['label'] }}</x-button-link>
                         </div>
                     </div>
                     <div class="grid h-72 grid-cols-2 gap-3 sm:h-96 lg:h-[28rem]">

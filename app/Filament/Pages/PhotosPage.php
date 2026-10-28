@@ -82,7 +82,7 @@ class PhotosPage extends ContentPage
                     Section::make()->columns(2)->schema([
                         Select::make('local')->label('Photo from the website library')->options($this->library())->searchable()->placeholder('None')
                             ->helperText('Used when you have not uploaded your own.'),
-                        FileUpload::make('upload')->label('Your own photo')->image()->disk('public')->directory('uploads')->visibility('public')
+                        FileUpload::make('upload')->label('Your own photo')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])->disk('public')->directory('uploads')->visibility('public')
                             ->maxSize(8192)->imageResizeMode('contain')->imageResizeTargetWidth(2000)->imageResizeTargetHeight(2000)
                             ->helperText('JPG, PNG or WebP, up to 8 MB. It replaces the library photo. Remove it to go back.'),
                         Fields::area('alt', 'Describe the photo', 'Read aloud to people using a screen reader, and shown if the photo cannot load. Say what is in the picture.', 2)->required()->columnSpanFull(),

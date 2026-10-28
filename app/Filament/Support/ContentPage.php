@@ -91,6 +91,11 @@ abstract class ContentPage extends Page
     public function save(): void
     {
         $state = $this->fromForm($this->form->getState());
+        if ($bad = self::unsafeLink($state)) {
+            Notification::make()->title('Not saved: unsafe link')->body("The link \"{$bad}\" is not allowed. Use a page on this site like /services, or a web address starting with https://.")->danger()->send();
+
+            return;
+        }
 
         foreach (static::files() as $file => $keys) {
             $value = self::blank($state[$file] ?? []);
@@ -127,6 +132,26 @@ abstract class ContentPage extends Page
         Content::flush();
         $this->form->fill($this->loadState());
         Notification::make()->title('Back to the original text.')->success()->send();
+    }
+
+    /** The first link in the data that browsers would run as code (javascript:, data:...), or null. A safety net behind the field rules. */
+    private static function unsafeLink(mixed $value, string $key = ''): ?string
+    {
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                if ($bad = self::unsafeLink($v, (string) $k)) {
+                    return $bad;
+                }
+            }
+
+            return null;
+        }
+        if (is_string($value) && trim($value) !== '' && in_array($key, ['href', 'url', 'mapUrl', 'photoUrl', 'photographerUrl', 'facebook', 'x', 'linkedin'], true)
+            && safe_url($value) === '#' && trim($value) !== '#') {
+            return $value;
+        }
+
+        return null;
     }
 
     /** Empty inputs arrive as null; the site expects empty text. */

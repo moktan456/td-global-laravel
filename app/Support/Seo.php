@@ -44,7 +44,7 @@ class Seo
         $contact = site('contact');
         $seo = site('seo');
         $legal = site('legal');
-        $sameAs = array_values(array_filter(site('social'), fn ($u) => is_filled($u)));
+        $sameAs = array_values(array_filter(site('social'), fn ($u) => is_filled($u) && preg_match('#^https?://#i', trim($u))));
 
         $data = [
             '@context' => 'https://schema.org',

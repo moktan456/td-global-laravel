@@ -20,6 +20,7 @@ return [
     // Public lookups and reminders are rate limited per visitor (see App\Http\Controllers\TrackController).
     'limits' => [
         'track' => ['max' => 30, 'seconds' => 600],
+        'forms' => ['max' => 5, 'seconds' => 600],
         'remind_visitor' => ['max' => 5, 'seconds' => 3600],
         'remind_contact' => ['max' => 3, 'seconds' => 3600],
     ],

@@ -21,6 +21,9 @@ class SecurityHeaders
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+        // Not a full script policy (the pages use inline scripts): it blocks plug-ins, base-tag tricks, framing and
+        // form posts to other sites.
+        $response->headers->set('Content-Security-Policy', "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'");
         if (config('td.hsts') && $request->isSecure()) {
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000');
         }
