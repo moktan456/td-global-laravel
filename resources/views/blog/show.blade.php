@@ -35,9 +35,9 @@
                 </section>
             @endforeach
             <div class="mt-12 rounded-card bg-sand p-6">
-                <p class="font-display text-xl font-semibold text-navy-900">Need a hand with your shipment?</p>
-                <p class="mt-2 text-muted">This article is general guidance. For advice on your goods, talk to a broker.</p>
-                <x-button-link href="/quote" class="mt-4">Get a free quote</x-button-link>
+                <p class="font-display text-xl font-semibold text-navy-900">{{ page_text('blog.ctaTitle') }}</p>
+                <p class="mt-2 text-muted">{{ page_text('blog.ctaText') }}</p>
+                <x-button-link href="/quote" class="mt-4">{{ page_text('blog.ctaButton') }}</x-button-link>
             </div>
         </article>
         <a href="/blog" class="group/back mt-10 inline-flex min-h-11 items-center gap-2 font-semibold text-brand underline decoration-2 underline-offset-4 hover:text-brand-dark">

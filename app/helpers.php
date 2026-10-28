@@ -23,6 +23,26 @@ if (! function_exists('content')) {
     }
 }
 
+if (! function_exists('page_text')) {
+    /**
+     * Page wording from resources/content/pages.php (editable in the admin): page_text('about.title'). {curly} words are
+     * filled in: the company details always, and anything in `$tokens` (e.g. ['service' => 'import clearance']).
+     */
+    function page_text(string $key, array $tokens = []): mixed
+    {
+        $value = content("pages.{$key}");
+        $tokens += [
+            'name' => site('name'), 'shortName' => site('shortName'), 'area' => site('seo.area'), 'region' => site('seo.region'),
+            'phone' => site('contact.phone'), 'email' => site('contact.email'), 'address' => site('contact.address'),
+            'uen' => site('legal.uen'), 'jurisdiction' => site('legal.jurisdiction'), 'registry' => site('legal.registry'),
+            'date' => Carbon::parse(site('legal.incorporated'), 'UTC')->format('j F Y'),
+        ];
+        $fill = fn (string $text) => strtr($text, array_combine(array_map(fn ($k) => '{'.$k.'}', array_keys($tokens)), array_map('strval', array_values($tokens))));
+
+        return is_array($value) ? array_map(fn ($v) => is_string($v) ? $fill($v) : $v, $value) : (is_string($value) ? $fill($value) : $value);
+    }
+}
+
 if (! function_exists('is_filled')) {
     /** True when a content value is set and is not a "[PLACEHOLDER]". */
     function is_filled(?string $value): bool

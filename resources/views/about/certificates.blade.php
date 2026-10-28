@@ -22,8 +22,8 @@
 @endphp
 <section aria-labelledby="certificates-heading" class="bg-sand py-20 lg:py-28">
     <x-container>
-        <x-section-heading id="certificates-heading" eyebrow="Registered & incorporated" title="Registered in Gelephu Mindfulness City" class="max-w-none!">
-            <x-slot:intro><p>{{ $legal['name'] }} is a private company limited by shares, incorporated on {{ $issued }} with the {{ $legal['registry'] }}. UEN {{ $legal['uen'] }}.</p></x-slot:intro>
+        <x-section-heading id="certificates-heading" :eyebrow="page_text('certificates.eyebrow')" :title="page_text('certificates.title')" class="max-w-none!">
+            <x-slot:intro><p>{{ page_text('certificates.intro') }}</p></x-slot:intro>
         </x-section-heading>
         <ul data-reveal-group class="mt-12 grid gap-8 lg:grid-cols-2">
             @foreach ($certificates as $cert)
@@ -66,7 +66,7 @@
         </ul>
         <p class="mt-8 flex items-center gap-2 text-muted">
             <x-lucide name="badge-check" class="size-5 shrink-0 text-green-dark" />
-            Issued by the Gelephu Corporate Registration Office on {{ $issued }}.
+            {{ page_text('certificates.footnote') }}
         </p>
     </x-container>
 </section>

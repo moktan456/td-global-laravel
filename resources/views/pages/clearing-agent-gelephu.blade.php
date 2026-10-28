@@ -1,6 +1,6 @@
 @extends('layouts.app', [
-    'title' => 'Clearing Agent in Gelephu & GMC',
-    'description' => 'Clearing agent in Rabdeyling, Gelephu (GMC). Custom clearing and logistics for imports and exports by road and air. Get a free quote from TD Global.',
+    'title' => page_text('agent.metaTitle'),
+    'description' => page_text('agent.metaDescription'),
     'canonical' => '/clearing-agent-gelephu',
 ])
 
@@ -14,17 +14,18 @@
 
 @section('content')
     <x-json-ld :data="\App\Support\Seo::faq(content('faq'))" />
-    <x-page-header title="Clearing agent in Gelephu & GMC" path="/clearing-agent-gelephu" :crumbs="[['label' => 'Clearing agent in Gelephu']]">
-        <x-slot:intro><p>{{ site('name') }} is a customs clearing agent and logistics partner based in {{ site('seo.area') }}, {{ site('seo.region') }} (GMC), Bhutan.</p></x-slot:intro>
+    <x-page-header :title="page_text('agent.title')" path="/clearing-agent-gelephu" :crumbs="[['label' => 'Clearing agent in Gelephu']]">
+        <x-slot:intro><p>{{ page_text('agent.intro') }}</p></x-slot:intro>
     </x-page-header>
 
     <section aria-labelledby="intro-heading" class="py-20 lg:py-28">
         <x-container class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-                <x-section-heading id="intro-heading" title="Custom clearing and logistics in Gelephu, GMC" />
+                <x-section-heading id="intro-heading" :title="page_text('agent.introTitle')" />
                 <div data-reveal class="mt-6 grid max-w-2xl gap-4 text-lg text-muted">
-                    <p>A clearing agent, also called a customs broker, prepares and lodges your customs declaration, works out duties and taxes, and deals with customs until your goods are released. Getting the paperwork right the first time keeps your shipment moving.</p>
-                    <p>We are based in {{ site('seo.area') }}, inside Gelephu Mindfulness City. We clear imports and exports for importers and exporters in Gelephu and GMC. We also arrange transport, storage and onward forwarding, so clearing and logistics are handled by one team.</p>
+                    @foreach (page_text('agent.introParagraphs') as $para)
+                        <p>{{ $para }}</p>
+                    @endforeach
                 </div>
                 <ul data-reveal class="mt-8 grid gap-3 text-ink">
                     @if (is_filled($address))
@@ -64,8 +65,8 @@
 
     <section aria-labelledby="clear-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="clear-heading" eyebrow="What we handle" title="Clearing services for importers and exporters">
-                <x-slot:intro><p>Everything needed to get cargo cleared, by road or by air.</p></x-slot:intro>
+            <x-section-heading id="clear-heading" :eyebrow="page_text('agent.servicesEyebrow')" :title="page_text('agent.servicesTitle')">
+                <x-slot:intro><p>{{ page_text('agent.servicesIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2">
                 @foreach (content('services') as $s)
@@ -81,8 +82,8 @@
 
     <section aria-labelledby="steps-heading" class="py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="steps-heading" eyebrow="How it works" title="Custom clearing in four steps">
-                <x-slot:intro><p>From your first email to release of your goods.</p></x-slot:intro>
+            <x-section-heading id="steps-heading" :eyebrow="page_text('agent.stepsEyebrow')" :title="page_text('agent.stepsTitle')">
+                <x-slot:intro><p>{{ page_text('agent.stepsIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <div class="mt-12">
                 <x-process-steps :steps="content('process')" />
@@ -92,8 +93,8 @@
 
     <section aria-labelledby="faq-heading" class="bg-sand py-20 lg:py-28">
         <x-container class="max-w-4xl">
-            <x-section-heading id="faq-heading" eyebrow="Questions" title="Clearing agent questions, answered">
-                <x-slot:intro><p>Can’t find what you need? Call us or send a message.</p></x-slot:intro>
+            <x-section-heading id="faq-heading" :eyebrow="page_text('agent.faqEyebrow')" :title="page_text('agent.faqTitle')">
+                <x-slot:intro><p>{{ page_text('agent.faqIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <div data-reveal-group class="mt-10 grid gap-3">
                 @foreach (content('faq') as $f)
@@ -111,8 +112,8 @@
 
     <section aria-labelledby="cta-heading" class="on-dark bg-navy-900 py-20 text-white lg:py-24">
         <x-container class="text-center">
-            <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">Need a clearing agent in Gelephu?</h2>
-            <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">Tell us what you are shipping and we will get back to you, usually within one business day.</p>
+            <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">{{ page_text('agent.ctaTitle') }}</h2>
+            <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">{{ page_text('agent.ctaText') }}</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
                 <x-button-link href="/quote">Request a free quote</x-button-link>
                 <x-button-link href="/calculator" variant="outline-light">Estimate the cost</x-button-link>

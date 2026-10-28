@@ -1,12 +1,12 @@
 @extends('layouts.app', [
-    'title' => 'Customs Clearing Guides & Articles',
-    'description' => 'Practical guides on customs documentation, HS codes and avoiding storage charges, from a clearing agent in Gelephu, GMC.',
+    'title' => page_text('blog.metaTitle'),
+    'description' => page_text('blog.metaDescription'),
     'canonical' => '/blog',
 ])
 
 @section('content')
-    <x-page-header title="Blog & articles" path="/blog" :crumbs="[['label' => 'Blog']]">
-        <x-slot:intro><p>Practical guidance on documentation, classification and keeping your cargo moving.</p></x-slot:intro>
+    <x-page-header :title="page_text('blog.title')" path="/blog" :crumbs="[['label' => 'Blog']]">
+        <x-slot:intro><p>{{ page_text('blog.intro') }}</p></x-slot:intro>
     </x-page-header>
     <x-container class="py-16 lg:py-24">
         <ul data-reveal-group class="grid gap-10 md:grid-cols-2 lg:grid-cols-3">

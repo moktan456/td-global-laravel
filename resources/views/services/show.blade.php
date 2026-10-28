@@ -20,13 +20,13 @@
     <section aria-labelledby="overview-heading" class="py-20 lg:py-28">
         <x-container class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-                <x-section-heading id="overview-heading" :title="'How we handle '.$name" />
+                <x-section-heading id="overview-heading" :title="page_text('service.overviewTitle', ['service' => $name])" />
                 <div data-reveal class="mt-6 grid max-w-2xl gap-4 text-lg text-muted">
                     @foreach ($service['body'] as $para)
                         <p>{{ $para }}</p>
                     @endforeach
                 </div>
-                <h3 data-reveal class="mt-8 font-sans text-base font-semibold uppercase tracking-[0.14em] text-brand">What’s included</h3>
+                <h3 data-reveal class="mt-8 font-sans text-base font-semibold uppercase tracking-[0.14em] text-brand">{{ page_text('service.includedLabel') }}</h3>
                 <ul data-reveal class="mt-4 grid gap-3 sm:grid-cols-2">
                     @foreach ($service['includes'] as $item)
                         <li class="flex gap-2">
@@ -50,8 +50,8 @@
 
     <section aria-labelledby="problems-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="problems-heading" eyebrow="Common problems" :title="'Problems we solve with '.$name">
-                <x-slot:intro><p>Most delays come from a handful of avoidable causes. This is how we deal with them.</p></x-slot:intro>
+            <x-section-heading id="problems-heading" :eyebrow="page_text('service.problemsEyebrow')" :title="page_text('service.problemsTitle', ['service' => $name])">
+                <x-slot:intro><p>{{ page_text('service.problemsIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2">
                 @foreach ($service['problems'] as $p)
@@ -66,8 +66,8 @@
 
     <section aria-labelledby="process-heading" class="py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="process-heading" eyebrow="How it works" title="From your first email to release">
-                <x-slot:intro><p>The same four steps for every clearance.</p></x-slot:intro>
+            <x-section-heading id="process-heading" :eyebrow="page_text('service.processEyebrow')" :title="page_text('service.processTitle')">
+                <x-slot:intro><p>{{ page_text('service.processIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <div class="mt-12">
                 <x-process-steps :steps="content('process')" />
@@ -77,7 +77,7 @@
 
     <section aria-labelledby="more-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="more-heading" title="Our other clearing services" />
+            <x-section-heading id="more-heading" :title="page_text('service.moreTitle')" />
             <ul data-reveal-group class="mt-10 grid gap-4 sm:grid-cols-3">
                 @foreach ($others as $s)
                     <li>
@@ -97,8 +97,8 @@
 
     <section aria-labelledby="cta-heading" class="on-dark bg-navy-900 py-20 text-white lg:py-24">
         <x-container class="text-center">
-            <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">Need {{ $name }} in Gelephu?</h2>
-            <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">Tell us what you are shipping and we will get back to you, usually within one business day.</p>
+            <h2 id="cta-heading" class="font-display text-3xl font-semibold sm:text-4xl">{{ page_text('service.ctaTitle', ['service' => $name]) }}</h2>
+            <p class="mx-auto mt-4 max-w-2xl text-lg text-on-dark-muted">{{ page_text('service.ctaText') }}</p>
             <div class="mt-8 flex flex-wrap justify-center gap-3">
                 <x-button-link href="/quote">Request a free quote</x-button-link>
                 <x-button-link href="/contact" variant="outline-light">Contact us</x-button-link>

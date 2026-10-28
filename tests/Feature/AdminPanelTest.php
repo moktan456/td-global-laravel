@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\FaqPage;
 use App\Filament\Pages\HomePage;
 use App\Filament\Pages\Menus;
+use App\Filament\Pages\PageText;
 use App\Filament\Pages\PhotosPage;
 use App\Filament\Pages\PricingPage;
 use App\Filament\Pages\ProcessPage;
@@ -25,7 +26,7 @@ class AdminPanelTest extends TestCase
 {
     use MakesStaff, RefreshDatabase;
 
-    private const PAGES = [SiteSettings::class, Menus::class, HomePage::class, PricingPage::class, ServicesPage::class, ArticlesPage::class, FaqPage::class, ProcessPage::class, PhotosPage::class];
+    private const PAGES = [SiteSettings::class, Menus::class, HomePage::class, PricingPage::class, ServicesPage::class, ArticlesPage::class, FaqPage::class, ProcessPage::class, PhotosPage::class, PageText::class];
 
     private const PUBLIC = ['/', '/about', '/services', '/services/import-clearance', '/blog', '/blog/invoice-and-packing-list-must-match', '/pricing', '/calculator', '/contact', '/quote', '/clearing-agent-gelephu'];
 
@@ -184,5 +185,21 @@ class AdminPanelTest extends TestCase
         $this->assertStringStartsWith('/media/uploads/', image_src($key));
         \Storage::disk('public')->assertExists(substr(image_src($key), strlen('/media/')));
         $this->get('/')->assertOk()->assertSee(image_src($key), false);
+    }
+
+    public function test_page_wording_and_its_tokens_come_from_the_admin(): void
+    {
+        $this->actingAs($this->admin());
+        $page = Livewire::test(PageText::class);
+        $data = $page->get('data');
+        $data['pages']['about']['title'] = 'Who we are';
+        $data['pages']['about']['metaDescription'] = 'We are {name}, UEN {uen}.';
+        $data['pages']['service']['ctaTitle'] = 'Ready for {service}?';
+        $data['pages']['footer']['linksHeading'] = 'Quick links';
+        $page->set('data', $data)->call('save')->assertHasNoFormErrors();
+
+        $this->get('/about')->assertSee('Who we are')->assertSee('We are TD Global Clearing &amp; Logistics Pte. Ltd., UEN A7649744Y.', false);
+        $this->get('/services/import-clearance')->assertSee('Ready for import clearance?');
+        $this->get('/')->assertSee('Quick links');
     }
 }

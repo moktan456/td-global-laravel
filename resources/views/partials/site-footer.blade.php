@@ -11,12 +11,12 @@
     <div class="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr_1fr] lg:px-16">
         <div>
             <x-logo dark />
-            <p class="mt-5 max-w-xs">{{ site('name') }} is a customs clearing agent and logistics partner in Gelephu, GMC, Bhutan, handling documentation, duties and compliance for importers and exporters.</p>
+            <p class="mt-5 max-w-xs">{{ page_text('footer.about') }}</p>
             <x-social-links class="mt-5 flex gap-2" link-class="text-on-dark-muted hover:bg-navy-800 hover:text-white" />
         </div>
 
         <nav aria-labelledby="footer-links">
-            <h2 id="footer-links" class="font-sans text-base font-semibold text-white">Links</h2>
+            <h2 id="footer-links" class="font-sans text-base font-semibold text-white">{{ page_text('footer.linksHeading') }}</h2>
             <ul class="mt-3">
                 @foreach (content('site.footerLinks') as $l)
                     <li><a href="{{ $l['href'] }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>
@@ -25,7 +25,7 @@
         </nav>
 
         <div>
-            <h2 class="font-sans text-base font-semibold text-white">Contact</h2>
+            <h2 class="font-sans text-base font-semibold text-white">{{ page_text('footer.contactHeading') }}</h2>
             <address class="mt-3 grid not-italic">
                 @if (is_filled($address))
                     <span class="py-1.5">{{ $address }}</span>
@@ -48,7 +48,7 @@
         </div>
 
         <nav aria-labelledby="footer-more">
-            <h2 id="footer-more" class="font-sans text-base font-semibold text-white">More</h2>
+            <h2 id="footer-more" class="font-sans text-base font-semibold text-white">{{ page_text('footer.moreHeading') }}</h2>
             <ul class="mt-3">
                 @foreach (content('site.footerSecondary') as $l)
                     <li><a href="{{ $l['href'] }}" class="{{ $linkClass }}">{{ $l['label'] }}</a></li>

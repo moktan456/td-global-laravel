@@ -16,8 +16,8 @@
 <section @if ($withHeading) aria-labelledby="contact-heading" @else aria-label="Contact details and message form" @endif class="on-dark bg-navy-900 text-white {{ $withHeading ? 'py-20 lg:py-28' : 'pb-20 lg:pb-28' }}">
     <x-container>
         @if ($withHeading)
-            <x-section-heading id="contact-heading" :as="$headingLevel" :dark="true" eyebrow="Contact us" title="Talk to a customs broker">
-                <x-slot:intro><p>Send us a message and we’ll get back to you, usually within one business day.</p></x-slot:intro>
+            <x-section-heading id="contact-heading" :as="$headingLevel" :dark="true" :eyebrow="page_text('contactPanel.eyebrow')" :title="page_text('contactPanel.title')">
+                <x-slot:intro><p>{{ page_text('contactPanel.intro') }}</p></x-slot:intro>
             </x-section-heading>
         @endif
         {{-- Two matching panels: same top, same bottom (grid stretch). --}}
@@ -64,8 +64,8 @@
                 </ul>
             </div>
             <div class="rounded-card border border-line-dark bg-navy-950/60 p-6 sm:p-8">
-                <{{ $panelHeading }} class="font-display text-2xl font-semibold text-white">Send us a message</{{ $panelHeading }}>
-                <p class="mt-1 mb-6 text-on-dark-muted">All fields are required.</p>
+                <{{ $panelHeading }} class="font-display text-2xl font-semibold text-white">{{ page_text('contactPanel.formTitle') }}</{{ $panelHeading }}>
+                <p class="mt-1 mb-6 text-on-dark-muted">{{ page_text('contactPanel.formNote') }}</p>
                 @include('forms.contact', ['tone' => 'dark'])
             </div>
         </div>

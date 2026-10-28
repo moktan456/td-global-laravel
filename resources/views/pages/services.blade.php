@@ -1,13 +1,13 @@
 @extends('layouts.app', [
-    'title' => 'Clearing & Logistics Services in Gelephu',
-    'description' => 'Import and export customs clearance, forwarding, transport, warehousing and documentation from a clearing agent in Gelephu, GMC.',
+    'title' => page_text('services.metaTitle'),
+    'description' => page_text('services.metaDescription'),
     'canonical' => '/services',
 ])
 
 @section('content')
     <x-json-ld :data="array_map(fn ($s) => \App\Support\Seo::service($s), content('services'))" />
-    <x-page-header title="Customs clearance & logistics services" path="/services" :crumbs="[['label' => 'Services']]">
-        <x-slot:intro><p>Everything you need to get goods across the border, handled by our clearing agents in Gelephu, GMC.</p></x-slot:intro>
+    <x-page-header :title="page_text('services.title')" path="/services" :crumbs="[['label' => 'Services']]">
+        <x-slot:intro><p>{{ page_text('services.intro') }}</p></x-slot:intro>
     </x-page-header>
     <section aria-label="Our services" class="py-16 lg:py-24">
         <x-container>
