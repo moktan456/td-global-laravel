@@ -50,7 +50,7 @@
 
     <section aria-labelledby="problems-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="problems-heading" :eyebrow="page_text('service.problemsEyebrow')" :title="page_text('service.problemsTitle', ['service' => $name])">
+            <x-section-heading id="problems-heading" class="max-w-none!" :eyebrow="page_text('service.problemsEyebrow')" :title="page_text('service.problemsTitle', ['service' => $name])">
                 <x-slot:intro><p>{{ page_text('service.problemsIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2">
@@ -66,7 +66,7 @@
 
     <section aria-labelledby="process-heading" class="py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="process-heading" :eyebrow="page_text('service.processEyebrow')" :title="page_text('service.processTitle')">
+            <x-section-heading id="process-heading" class="max-w-none!" :eyebrow="page_text('service.processEyebrow')" :title="page_text('service.processTitle')">
                 <x-slot:intro><p>{{ page_text('service.processIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <div class="mt-12">
@@ -77,7 +77,7 @@
 
     <section aria-labelledby="more-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="more-heading" :title="page_text('service.moreTitle')" />
+            <x-section-heading id="more-heading" class="max-w-none!" :title="page_text('service.moreTitle')" />
             <ul data-reveal-group class="mt-10 grid gap-4 sm:grid-cols-3">
                 @foreach ($others as $s)
                     <li>

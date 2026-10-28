@@ -65,7 +65,7 @@
 
     <section aria-labelledby="clear-heading" class="bg-sand py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="clear-heading" :eyebrow="page_text('agent.servicesEyebrow')" :title="page_text('agent.servicesTitle')">
+            <x-section-heading id="clear-heading" class="max-w-none!" :eyebrow="page_text('agent.servicesEyebrow')" :title="page_text('agent.servicesTitle')">
                 <x-slot:intro><p>{{ page_text('agent.servicesIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <ul data-reveal-group class="mt-12 grid gap-6 sm:grid-cols-2">
@@ -82,7 +82,7 @@
 
     <section aria-labelledby="steps-heading" class="py-20 lg:py-28">
         <x-container>
-            <x-section-heading id="steps-heading" :eyebrow="page_text('agent.stepsEyebrow')" :title="page_text('agent.stepsTitle')">
+            <x-section-heading id="steps-heading" class="max-w-none!" :eyebrow="page_text('agent.stepsEyebrow')" :title="page_text('agent.stepsTitle')">
                 <x-slot:intro><p>{{ page_text('agent.stepsIntro') }}</p></x-slot:intro>
             </x-section-heading>
             <div class="mt-12">

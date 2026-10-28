@@ -26,9 +26,9 @@
                 @endforeach
             </ol>
         </nav>
-        <h1 class="mt-4 max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">{{ $title }}</h1>
+        <h1 class="mt-4 text-pretty font-display text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $title }}</h1>
         @if ($intro)
-            <div class="mt-4 max-w-2xl text-lg text-on-dark-muted">{{ $intro }}</div>
+            <div class="mt-4 text-pretty text-lg text-on-dark-muted lg:text-xl">{{ $intro }}</div>
         @endif
     </div>
 </div>
