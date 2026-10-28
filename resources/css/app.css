@@ -246,3 +246,36 @@
 
 /* Staff lists: "Compact rows" (chosen with a button, remembered in the browser). */
 [data-density='compact'] .density-row { padding-block: 0.5rem; row-gap: 0.25rem; }
+
+
+/*
+ * Spot light on hover (see resources/js/spot.js): a soft glow follows the mouse over photos (.spot, white) and cards
+ * (.spot-card, a faint blue). Mouse users only; off for touch screens and for "reduce motion".
+ */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spot,
+  .spot-card {
+    position: relative;
+  }
+  .spot::after,
+  .spot-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out-quart);
+  }
+  .spot::after {
+    background: radial-gradient(16rem circle at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.3), transparent 65%);
+  }
+  .spot-card::after {
+    background: radial-gradient(14rem circle at var(--mx, 50%) var(--my, 50%), rgb(56 83 164 / 0.1), transparent 70%);
+  }
+  .spot:hover::after,
+  .spot-card:hover::after {
+    opacity: 1;
+  }
+}

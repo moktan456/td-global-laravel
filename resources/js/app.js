@@ -1,4 +1,5 @@
 import { initReveal } from './reveal';
+import { initSpot } from './spot';
 import { initHeader } from './header';
 import { initForms } from './forms';
 import { initMenus } from './menus';
@@ -15,6 +16,7 @@ function boot() {
     initCalculator();
     initCertificates();
     initReveal();
+    initSpot();
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

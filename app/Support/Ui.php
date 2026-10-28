@@ -23,7 +23,7 @@ class Ui
 
     /** Card lifts 4px with a soft shadow. Hover effects also apply on keyboard focus inside the card. */
     private const CARD_LIFT = 'transition-[translate,box-shadow,border-color,background-color] duration-(--duration-enter) ease-out-quart '
-        .'hover:-translate-y-1 hover:shadow-lift focus-within:-translate-y-1 focus-within:shadow-lift';
+        .'hover:-translate-y-1 hover:shadow-lift focus-within:-translate-y-1 focus-within:shadow-lift spot-card';
 
     /** Filter chips (stage filters on the staff Shipments page): on = the chosen one, off = another choice, empty = a choice with nothing in it. */
     private const CHIP_BASE = 'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[0.9375rem] font-semibold transition-colors duration-150';
@@ -34,7 +34,7 @@ class Ui
         'empty' => 'border-line bg-surface text-muted hover:border-navy-900 hover:text-navy-900',
     ];
 
-    private const PHOTO_FRAME = 'group relative overflow-hidden rounded-card';
+    private const PHOTO_FRAME = 'group relative overflow-hidden rounded-card spot';
 
     public static function class(string $name, string $variant = 'primary'): string
     {

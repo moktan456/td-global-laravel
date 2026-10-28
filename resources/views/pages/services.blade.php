@@ -15,7 +15,7 @@
                 @foreach (content('services') as $i => $s)
                     <li id="{{ $s['slug'] }}" class="scroll-mt-28">
                         <article class="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-white {{ ui('cardLift') }}">
-                            <div class="relative aspect-[4/3] overflow-hidden">
+                            <div class="relative aspect-[4/3] overflow-hidden spot">
                                 <x-photo :name="$s['image']" sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" :priority="$i < 3" :zoom="true" />
                             </div>
                             <div class="flex flex-1 flex-col p-6">

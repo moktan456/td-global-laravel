@@ -24,14 +24,14 @@
                         </div>
                     </div>
                     <div class="grid h-72 grid-cols-2 gap-3 sm:h-96 lg:h-[28rem]">
-                        <div class="group relative overflow-hidden rounded-card">
+                        <div class="group relative overflow-hidden rounded-card spot">
                             <x-photo :name="$s['photos'][0]" :sizes="$sizes" :priority="$i === 0" :zoom="true" />
                         </div>
                         <div class="grid gap-3">
-                            <div class="group relative overflow-hidden rounded-card">
+                            <div class="group relative overflow-hidden rounded-card spot">
                                 <x-photo :name="$s['photos'][1]" :sizes="$sizes" :priority="$i === 0" :zoom="true" />
                             </div>
-                            <div class="group relative overflow-hidden rounded-card">
+                            <div class="group relative overflow-hidden rounded-card spot">
                                 <x-photo :name="$s['photos'][2]" :sizes="$sizes" :priority="$i === 0" :zoom="true" />
                             </div>
                         </div>

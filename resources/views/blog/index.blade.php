@@ -16,7 +16,7 @@
             @foreach (\App\Support\Content::articles() as $a)
                 <li>
                     <article class="group relative flex h-full flex-col">
-                        <div class="relative aspect-[3/2] overflow-hidden rounded-card">
+                        <div class="relative aspect-[3/2] overflow-hidden rounded-card spot">
                             <x-photo :name="$a['image']" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" :decorative="true" :zoom="true" />
                         </div>
                         <p class="mt-5 text-sm font-semibold uppercase tracking-[0.14em] text-brand">{{ $a['category'] }}</p>
