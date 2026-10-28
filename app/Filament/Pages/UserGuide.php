@@ -13,7 +13,7 @@ class UserGuide extends Page
 
     protected static ?string $navigationLabel = 'User guide';
 
-    protected static ?string $title = 'How to edit your website';
+    protected static ?string $title = 'Website and tracking guide';
 
     protected static ?string $slug = 'guide';
 
@@ -21,6 +21,6 @@ class UserGuide extends Page
 
     public function getSubheading(): ?string
     {
-        return 'A short guide for super admins. Everything here is done from the left menu.';
+        return 'How to edit the website content, and how the shipment tracking system works.';
     }
 }

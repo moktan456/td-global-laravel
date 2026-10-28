@@ -259,7 +259,7 @@ class AdminPanelTest extends TestCase
     {
         $this->get('/admin/guide')->assertRedirect('/admin/login');
         $this->actingAs($this->staff(['role' => 'staff']))->get('/admin/guide')->assertForbidden();
-        $this->actingAs($this->admin())->get('/admin/guide')->assertOk()->assertSee('How to edit your website')->assertSee('Write a new blog article');
+        $this->actingAs($this->admin())->get('/admin/guide')->assertOk()->assertSee('Website and tracking guide')->assertSee('Write a new blog article')->assertSee('Create a request and a tracking number');
         Livewire::test(UserGuide::class)->assertOk();
     }
 }

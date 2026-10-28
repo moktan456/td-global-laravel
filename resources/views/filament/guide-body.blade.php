@@ -6,6 +6,7 @@
         <li><a href="#basics">How every page works</a></li>
         <li><a href="#where">Where to change what</a></li>
         <li><a href="#tasks">Common jobs, step by step</a></li>
+        <li><a href="#tracking">The tracking system</a></li>
         <li><a href="#writing">Writing tips</a></li>
         <li><a href="#help">If something goes wrong</a></li>
         <li><a href="#limits">What you cannot change here</a></li>
@@ -229,12 +230,123 @@
     </dl>
 </section>
 
+<section id="tracking">
+    <h2>The tracking system</h2>
+    <p>Tracking has two sides. <strong>Staff</strong> create requests and update their stage in the staff area at <strong>/staff</strong>. <strong>Clients</strong> follow progress on the public <strong>Track</strong> page at <strong>/track</strong>, with no account and no sign-in. Everything on this tab is done in the staff area, not in this admin. Any staff member can do the jobs below. Only the <em>Team</em> and <em>Telegram</em> pages need a super admin.</p>
+
+    <h3>How a shipment travels through the system</h3>
+    <ol class="steps">
+        <li>Staff <strong>register the client</strong> once (name, email, phone).</li>
+        <li>Staff <strong>create a request</strong> for that client. The system makes a <strong>tracking number</strong> and sends it to the client by email, and by Telegram if the client is connected.</li>
+        <li>As customs and transport move forward, staff <strong>update the stage</strong> and can tick a box to tell the client.</li>
+        <li>The client opens the Track page, types the number and sees the stages, the dates and any notes you chose to show.</li>
+    </ol>
+
+    <h3>Tracking numbers</h3>
+    <p>A number looks like <code>TD-2610-K7QX4M</code>: <code>TD</code>, then the year and month (26 = 2026, 10 = October, Bhutan time), then six letters and digits. Letters that look like digits (O, I, L, 0, 1) are never used, so numbers are easy to read out over the phone. Clients can type it in small letters or without dashes and it still works. Older numbers with four characters at the end keep working too.</p>
+
+    <h3>Find your way around the staff area</h3>
+    <ul>
+        <li>The sidebar has <strong>Shipments</strong>, <strong>New request</strong> and <strong>Clients</strong>. Super admins also see <strong>Team</strong> and <strong>Telegram</strong>.</li>
+        <li><strong>Find a shipment from anywhere:</strong> press <kbd>/</kbd>, type a tracking number or just its six-character code, and press Enter.</li>
+        <li>Your name at the bottom of the sidebar opens a menu with <em>Change password</em>, <em>Dark mode</em>, <em>Edit website content</em> (super admins), <em>View website</em> and <em>Sign out</em>.</li>
+        <li>On a phone the sidebar becomes a menu bar, and the filters fold away until you open them.</li>
+    </ul>
+
+    <article>
+        <h3>Register a client</h3>
+        <ol class="steps">
+            <li>Open <strong>Clients</strong>. Fill in <em>Client's name</em>, <em>Company</em> (optional), <em>Email</em> and <em>Phone</em> (for example <code>17975757</code>).</li>
+            <li>Press <strong>Register client</strong>.</li>
+            <li>Open the client to see their requests, to turn <em>Email updates</em> and <em>Telegram updates</em> on or off, and to connect Telegram.</li>
+        </ol>
+        <p class="note">The email and phone you enter are also how a client finds a lost tracking number, so check them carefully.</p>
+    </article>
+
+    <article>
+        <h3>Create a request and a tracking number</h3>
+        <ol class="steps">
+            <li>Press <strong>New request</strong> in the sidebar, or from a client's page.</li>
+            <li>Choose the <em>Client</em>, <em>Import or export</em> and <em>Shipping method</em>, and describe what is being shipped, for example "2 pallets of auto parts".</li>
+            <li>Under what to track, choose <strong>Customs clearance</strong>, <strong>Transport</strong> or both. At least one must stay on.</li>
+            <li>If you choose Transport, the <em>Transport details</em> are optional now and you can add them later.</li>
+            <li>Choose <em>Looked after by</em> to say who in the team handles it, and add any notes.</li>
+            <li>Press <strong>Create request and tracking number</strong>. The number goes to the client straight away. The <strong>Activity</strong> box on the shipment shows what was delivered.</li>
+        </ol>
+    </article>
+
+    <article>
+        <h3>Update a customs stage</h3>
+        <ol class="steps">
+            <li>Open the shipment from the <strong>Shipments</strong> list, or use the quick <em>Change stage</em> button on the list.</li>
+            <li>Under <strong>Update stage</strong>, choose the <em>Stage</em>.</li>
+            <li>Optionally write a <em>Note for the client</em>. Anyone who has the tracking number can read it, so never put personal or financial details in it.</li>
+            <li>Leave <em>Notify the client about this update</em> ticked to send an email, and a Telegram message if the client is connected. Untick it for an internal correction.</li>
+            <li>Press <strong>Save update</strong>. The <strong>Timeline</strong> records each stage with its date and time (Bhutan time) and your note.</li>
+        </ol>
+        <p>The customs stages, in order:</p>
+        <ol class="steps">
+            <li>Declaration Submitted</li>
+            <li>Pending Valuation</li>
+            <li>Pending Risk</li>
+            <li>Pending Physical Examination</li>
+            <li>Pending Payment</li>
+            <li>Pending Release</li>
+            <li>Released</li>
+        </ol>
+    </article>
+
+    <article>
+        <h3>Track the transport as well</h3>
+        <p>A shipment can follow a second, optional track for the journey itself. Turn it on or off under <strong>What we track</strong> on the shipment, then press Save. Nothing changes until you save.</p>
+        <ol class="steps">
+            <li>Under <strong>Transport details</strong>, enter the carrier, vehicle number, pickup place, destination and expected delivery date. The driver's name and phone are for staff only and are never shown to the client.</li>
+            <li>Move the <em>Transport stage</em> forward as the goods travel: Order Placed, Processing, Ready for Pickup, In Transit, Out for Delivery, Delivered.</li>
+            <li>At <strong>Delivered</strong>, fill in the <em>proof of delivery</em>: who received the goods (<em>Received by</em>) and when (<em>Delivered on</em>, Bhutan time; today and now if you leave it).</li>
+        </ol>
+    </article>
+
+    <article>
+        <h3>A client lost their tracking number</h3>
+        <ul>
+            <li><strong>From the shipment:</strong> open <em>Client lost the tracking number?</em> You can <strong>send it again</strong>, copy the number or the link to the Track page, or send it on WhatsApp.</li>
+            <li><strong>By themselves:</strong> on the Track page the client chooses <em>Lost your tracking number?</em> and enters the phone or email they gave you. The numbers are sent to the email, and Telegram, already on file. The page never says whether anything matched, so nobody can use it to find out who your clients are.</li>
+        </ul>
+    </article>
+
+    <article>
+        <h3>Connect a client to Telegram</h3>
+        <ol class="steps">
+            <li>Open the client and create a <strong>connect link</strong>. It works once.</li>
+            <li>Give it to the client: copy it, send it on WhatsApp, or let them scan the <strong>QR code</strong> on your screen.</li>
+            <li>The client opens it and presses <strong>Start</strong> in Telegram. From then on they get every update there as well as by email.</li>
+            <li>For a new phone or a new Telegram account, create a new link. The old link stops working.</li>
+        </ol>
+        <p>Clients can also message the bot: <code>/status</code> shows their latest shipments and <code>/stop</code> disconnects Telegram. After <code>/stop</code> they need a new connect link to start again.</p>
+    </article>
+
+    <h3>Check that messages arrived</h3>
+    <p>Every message has a line in the shipment's <strong>Activity</strong> box, marked <strong>sent</strong>, <strong>failed</strong> or <strong>skipped</strong>, and nothing is hidden. <em>Skipped</em> comes with a reason, such as the client turned email or Telegram off, or Telegram is not connected yet. If a client says they got nothing, look here first, then use <em>Send tracking number again</em>.</p>
+    <p class="warn">Email to clients needs the website's email service set up with the company's own domain. Until that is done, messages can fail even though everything else works. Activity shows <em>failed</em> when it happens. Telegram does not depend on it.</p>
+
+    <h3>For super admins</h3>
+    <ul>
+        <li><strong>Team:</strong> add a staff member with a name, username, temporary password and role (<em>Staff</em> or <em>Super admin</em>). They must choose their own password at first sign-in. You can reset a password or switch someone off. At least one super admin always remains.</li>
+        <li><strong>Telegram:</strong> shows a checklist of what is set up. Press <strong>Connect the bot</strong> once, and again if the website address changes. The bot's secret keys are kept on the server and are never shown here.</li>
+        <li><strong>Looked after by:</strong> any staff member can assign a shipment to a team member, so everyone knows who is handling it. Filter the list by "Looked after by you".</li>
+        <li><strong>Export CSV:</strong> downloads the shipments or the clients list as a spreadsheet.</li>
+    </ul>
+
+    <h3>What clients can and cannot see</h3>
+    <p>On the Track page, anyone with a tracking number sees the stages, the dates and the notes you chose to write, plus the transport progress if you track it. They never see the client's name, email, phone, the driver's details or your other shipments. The page limits how often one visitor can look up numbers, to stop guessing.</p>
+</section>
+
 <section id="limits">
     <h2>What you cannot change here</h2>
     <ul>
-        <li><strong>Shipment tracking</strong>, clients, notifications and the team. These are in the <a href="/staff">staff area</a>.</li>
+        <li><strong>Shipments, clients, notifications and the team.</strong> These are managed in the <a href="/staff">staff area</a>. The tracking section above explains how.</li>
         <li><strong>Colours, fonts and page layout.</strong> These are part of the website's design. Ask your developer.</li>
-        <li><strong>The tracking page's wording</strong>, staff screens and the emails sent to clients.</li>
+        <li><strong>The wording of the Track page</strong>, the staff screens, the clearance and transport stage names, and the emails and Telegram messages sent to clients.</li>
         <li><strong>Accessibility labels</strong> such as "Main menu" and "Breadcrumb". They are technical and should stay as they are.</li>
         <li><strong>Settings such as the email service, Telegram bot and domain.</strong> These are set on the server.</li>
     </ul>
